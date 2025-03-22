@@ -1,0 +1,40 @@
+.card {
+    border: none;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    height: 100%;
+    text-align: center;
+}
+.card:hover {
+    transform: scale(1.05);
+}
+
+.icon {
+    font-size: 2rem;
+    color: red;
+}
+
+/* Tables */
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+.table {
+    border: none;
+    color: black;
+}
+thead {
+    background: #ED1C24;
+    color: white;
+}
+tbody tr:hover {
+    background: #f8f9fa;
+}
+.table-container .td {
+    color: black;
+}
+.table-container .badge{
+    color: rgb(58, 56, 56);
+}

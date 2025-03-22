@@ -1,0 +1,204 @@
+/* Importing Google Fonts - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-con{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  
+  /* Adding Newspaper Background */
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.9), rgba(214, 214, 214, 0.9)), 
+    url('../assets/bg_news.jpg');
+  background-size: cover;
+  background-blend-mode: overlay;
+}
+
+.login-con .container {
+  max-width: 432px;
+  width: 100%;
+  padding: 25px 30px;
+  
+  /* Transparent & Blurred Background */
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Title Design */
+.login-con .container .title {
+  font-size: 28px;
+  font-weight: bold;
+  position: relative;
+  text-align: center;
+  color: #333;
+  text-transform: uppercase;
+  font-family: 'Georgia', serif;
+}
+
+.login-con .container .title::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -5px;
+  height: 3px;
+  width: 50px;
+  border-radius: 5px;
+  background: #d62828;
+}
+
+.login-con .content form .user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 20px 0 12px 0;
+}
+
+
+.login-con .dont_txt{
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Input Fields */
+.login-con form .user-details .input-box {
+  margin-bottom: 15px;
+  width: calc(100%  - 20px);
+}
+
+.login-con form .input-box span.details {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.login-con .user-details .input-box input {
+  height: 45px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 15px;
+  border: 1px solid #ccc;
+  border-bottom-width: 3px;
+  transition: all 0.3s ease;
+}
+
+.login-con .user-details .input-box input:focus {
+  border-color: #d62828;
+}
+
+/* Gender Selection */
+.login-con form .gender-details .gender-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.login-con form .category {
+  display: flex;
+  width: 80%;
+  margin: 14px 0;
+  justify-content: space-between;
+}
+
+.login-con form .category label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.login-con form .category label .dot {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  margin-right: 10px;
+  background: #d9d9d9;
+  border: 5px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.login-con #dot-1:checked~.category label .one,
+.login-con #dot-2:checked~.category label .two,
+.login-con #dot-3:checked~.category label .three {
+  background: #d62828;
+  border-color: #d9d9d9;
+}
+
+.login-con form input[type="radio"] {
+  display: none;
+}
+
+/* Submit Button */
+.login-con form .button {
+  height: 45px;
+  margin: 35px 0;
+}
+
+.login-con form .button input {
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #d62828, #8e0000);
+  text-transform: uppercase;
+}
+
+.login-con form .button input:hover {
+  background: linear-gradient(-135deg, #8e0000, #d62828);
+}
+
+.login-con .error_mes{
+  color: #ee7e7e;
+}
+
+/* Responsive Design */
+@media(max-width: 584px) {
+  .login-con .container {
+    max-width: 100%;
+  }
+
+  .login-con form .user-details .input-box {
+    margin-bottom: 15px;
+    width: 100%;
+  }
+
+  .login-con form .category {
+    width: 100%;
+  }
+
+  .login-con .content form .user-details {
+    max-height: 300px;
+    overflow-y: scroll;
+  }
+
+  .login-con .user-details::-webkit-scrollbar {
+    width: 5px;
+  }
+}
+
+@media(max-width: 459px) {
+  .login-con .container .content .category {
+    flex-direction: column;
+  }
+}
