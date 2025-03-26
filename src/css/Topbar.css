@@ -1,0 +1,12 @@
+.glow-circle {
+    width: 7px;
+    height: 7px;
+    background-color: red;
+    border-radius: 50%;
+    box-shadow: 0 0 8px red;
+    animation: glow 1s infinite alternate;
+}
+@keyframes glow {
+    from { box-shadow: 0 0 5px red; }
+    to { box-shadow: 0 0 15px red; }
+}

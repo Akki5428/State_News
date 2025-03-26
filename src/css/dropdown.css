@@ -1,0 +1,25 @@
+       /* Mega Dropdown */
+       .dropdown-mega {
+        width: 750px;  /* Fixed width */
+        max-height: 400px;  /* Enable vertical scroll */
+        overflow-y: auto;  /* Only vertical scroll */
+        overflow-x: hidden; /* Prevent horizontal scroll */
+        display: flex;
+        flex-wrap: wrap; /* Auto-wrap to next column */
+    }
+    
+    /* Each column */
+    .dropdown-col {
+        width: 50%; /* Two columns (Change this to 33% for 3 columns) */
+        padding: 10px;
+    }
+    
+    /* State Header */
+    .dropdown-header {
+        font-size: 16px;
+        font-weight: bold;
+        color: #dc3545;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+    }
