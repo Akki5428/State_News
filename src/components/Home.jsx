@@ -5,22 +5,31 @@ import axios from 'axios';
 export const Home = () => {
     const [breakingNews, setBreakingNews] = useState([]);
     const [trendingNews, setTrendingNews] = useState([]);
+    const [popularNews, setPopularNews] = useState([]);
 
 
     // Function to fetch live news from API
     const fetchBreakingNews = async () => {
         try {
             const response = await axios.get("http://127.0.0.1:8000/news/breaking/");
-            const sortedNews = response.data.sort((a, b) => new Date(b.news_date) - new Date(a.news_date));
+            // const sortedNews = response.data.sort((a, b) => new Date(b.news_date) - new Date(a.news_date));
             $(".carousel-item-3").trigger("destroy.owl.carousel");
-            setBreakingNews(sortedNews.slice(0, 5)); // Get the latest 3 news articles
+            // setBreakingNews(sortedNews.slice(0, 5)); // Get the latest 5 news articles
+            setBreakingNews(response.data.slice(0, 5)); // Get the latest 5 news articles   
 
             const res = await axios.get("http://127.0.0.1:8000/news/trending/");
-            const sortNews = res.data.sort((a, b) => new Date(b.news_date) - new Date(a.news_date));
+            // const sortNews = res.data.sort((a, b) => new Date(b.news_date) - new Date(a.news_date));
             $(".carousel-item-4").trigger("destroy.owl.carousel");
-            setTrendingNews(sortNews.slice(0, 5)); // Get the latest 3 news articles
+            setTrendingNews(res.data.slice(0, 5)); // Get the latest 5 news articles
+            // setTrendingNews(sortNews.slice(0, 5)); // Get the latest 5 news articles
             // console.log(response)
             // console.log(sortedNews)
+            // console.log(res)
+            // console.log(sortNews)
+
+            const resp = await axios.get("http://127.0.0.1:8000/news/popular/");
+            // const sortNews = res.data.sort((a, b) => new Date(b.news_date) - new Date(a.news_date));
+            setPopularNews(resp.data.slice(0, 6)); // Get the latest 6 news articles
             setTimeout(initOwlCarousel, 500);
             setTimeout(initOwlCarouselTre, 500);
 
@@ -298,8 +307,8 @@ export const Home = () => {
                         ) : (
                             <div className="text-center w-100 text-secondary">Loading trending news...</div>
                         )}
-                        
-                
+
+
                     </div>
                 </div>
             </div>
@@ -322,128 +331,41 @@ export const Home = () => {
                                         </a>
                                     </div>
                                 </div>
-                                <div className="col-lg-6">
-                                    <div className="position-relative mb-3">
-                                        <img
-                                            className="img-fluid w-100"
-                                            src="img/news-500x280-2.jpg"
-                                            style={{ objectFit: "cover" }}
-                                        />
-                                        <div className="overlay position-relative bg-light">
-                                            <div className="mb-2" style={{ fontSize: 14 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
+
+                                {/* First 2 news items with large images and descriptions */}
+                                {popularNews.slice(0, 2).map((news) => (
+                                    <div className="col-lg-6" key={news.id}>
+                                        <div className="position-relative mb-3">
+                                            <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover" }} alt='News' />
+                                            <div className="overlay position-relative bg-light">
+                                                <div className="mb-2" style={{ fontSize: 14 }}>
+                                                    <a href="">{news.category}</a>
+                                                    <span className="px-1">/</span>
+                                                    <span>{news.date}</span>
+                                                </div>
+                                                <a className="h4" href="">{news.title}</a>
+                                                <p className="m-0">{news.content.slice(0, 50)}...</p>
                                             </div>
-                                            <a className="h4" href="">
-                                                Est stet amet ipsum stet clita rebum duo
-                                            </a>
-                                            <p className="m-0">
-                                                Rebum dolore duo et vero ipsum clita, est ea sed duo diam
-                                                ipsum, clita at justo, lorem amet vero eos sed sit...
-                                            </p>
                                         </div>
                                     </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-1.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
+                                ))}
+
+                                {/* Last 4 news items with only small images and titles */}
+                                {popularNews.slice(2, 6).map((news) => (
+                                    <div className="col-lg-6" key={news.id}>
+                                        <div className="d-flex mb-3">
+                                            <img src="img/news-80x80-4.jpg" style={{ width: 100, height: 100, objectFit: "cover" }} />
+                                            <div className="w-100 d-flex flex-column justify-content-center bg-light px-3" style={{ height: 100 }}>
+                                                <div className="mb-1" style={{ fontSize: 13 }}>
+                                                    <a href="">{news.category}</a>
+                                                    <span className="px-1">/</span>
+                                                    <span>{news.date}</span>
+                                                </div>
+                                                <a className="h6 m-0" href="">{news.title}</a>
                                             </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
                                         </div>
                                     </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-2.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6">
-                                    <div className="position-relative mb-3">
-                                        <img
-                                            className="img-fluid w-100"
-                                            src="img/news-500x280-3.jpg"
-                                            style={{ objectFit: "cover" }}
-                                        />
-                                        <div className="overlay position-relative bg-light">
-                                            <div className="mb-2" style={{ fontSize: 14 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h4" href="">
-                                                Est stet amet ipsum stet clita rebum duo
-                                            </a>
-                                            <p className="m-0">
-                                                Rebum dolore duo et vero ipsum clita, est ea sed duo diam
-                                                ipsum, clita at justo, lorem amet vero eos sed sit...
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-3.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-4.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                             {/* Ads */}
                             {/* <div className="mb-3 pb-3">
