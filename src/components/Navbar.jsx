@@ -122,10 +122,10 @@ export const Navbar = () => {
                                             <div className="row">
                                                 {/* Column 1 */}
                                                 <div className="col-md-3">
-                                                    <a href="#" className="dropdown-header">
+                                                    <Link to="/state/state/67d1318e373d4a02a3104ea3" className="dropdown-header">
                                                         Gujarat
-                                                    </a>
-                                                    <a className="dropdown-item" href="#">
+                                                    </Link>
+                                                    <a className="dropdown-item" href="/state/city/67d1341cd5ac4dd2104fcf7e">
                                                         Ahmedabad
                                                     </a>
                                                     <a className="dropdown-item" href="#">

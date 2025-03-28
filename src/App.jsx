@@ -15,6 +15,8 @@ import { Contact } from './user/Contact'
 import { Category } from './user/Category'
 import { Categories } from './user/Categories'
 import { State_City } from './user/State_City'
+import { State_City_One } from './user/State_City_One'
+import { SingleNews } from './user/SingleNews'
 
 
 // import './App.css'
@@ -50,6 +52,9 @@ function App() {
         <Route path='/category/:categoryName' element={<Category/>}></Route>
         {/* <Route path='/category' element={<Category/>}></Route> */}
         <Route path='/states' element={<State_City/>}></Route>
+        {/* <Route path='/single' element={<SingleNews/>}></Route> */}
+        <Route path="/single/:type/:newsId" element={<SingleNews/>} />
+        <Route path="/state/:type/:name" element={<State_City_One/>} />
         <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/unauthorized' element={<Unauth/>}></Route>
         <Route path='/login' element={<Login setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar}/>}></Route>

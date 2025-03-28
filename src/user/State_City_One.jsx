@@ -1,22 +1,41 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 
-export const Category = () => {
-    const [catNews, setCatNews] = useState([])
+export const State_City_One = () => {
+    const [stateNews, setStateNews] = useState([])
     const [trendingNews, setTrendingNews] = useState([])
+    const [cityBar,setCityBar] = useState(false)
 
-    const category = useParams()
+    const { type, name } = useParams();
 
     const fetchNews = async () => {
-        const news = await axios.get(`http://127.0.0.1:8000/news/category/${category.categoryName}`)
+        try {
+            let apiUrl = "";
+            if (type === "state") {
+                apiUrl = `http://127.0.0.1:8000/news/state/${name}`;
+
+            } else if (type === "city") {
+                apiUrl = `http://127.0.0.1:8000/news/city/${name}`;
+                setCityBar(true)
+            }
+            const response = await axios.get(apiUrl);
+            setStateNews(response.data);
+            console.log(response.data)
+        } catch (error) {
+            console.log("Error fetching news:", error);
+        }
+
+
+        // const news = await axios.get(`http://127.0.0.1:8000/news/category/${category.categoryName}`)
         const res = await axios.get("http://127.0.0.1:8000/news/trending/")
         $(".carousel-item-2").trigger("destroy.owl.carousel");
-        console.log(news.data)
-        console.log(category.categoryName)
+        // console.log(response.data)
+        // console.log(category.categoryName)
         // setTimeout(initOwlCarousel, 500);
-        setCatNews(news.data)
+        // setStateNews(response.data)
+        console.log(res.data[0].city.name)
         setTrendingNews(res.data)
     }
 
@@ -35,12 +54,17 @@ export const Category = () => {
                             Home
                         </a>
                         <a className="breadcrumb-item" href="#">
-                            Category
+                            State_City
                         </a>
                         <span className="breadcrumb-item active">
-                            {catNews.length > 0 ? catNews[0].category : "Loading..."}
+                            {stateNews.length > 0 ? stateNews[0].state.name : "Loading..."}
                         </span>
-
+                        {
+                            cityBar && 
+                            (<span className="breadcrumb-item active">
+                                {stateNews.length > 0 ? stateNews[0].city.name : "Loading..."}
+                            </span>)
+                        }
                     </nav>
                 </div>
             </div>
@@ -53,7 +77,10 @@ export const Category = () => {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
-                                        <h3 className="m-0">{catNews.length > 0 ? catNews[0].category : "Loading..."}</h3>
+                                        {cityBar ? 
+                                        (<h3 className="m-0">{stateNews.length > 0 ? stateNews[0].city.name : "Loading..."}</h3>) :
+                                         (<h3 className="m-0">{stateNews.length > 0 ? stateNews[0].state.name : "Loading..."}</h3>)}
+                                       
                                         <a
                                             className="text-secondary font-weight-medium text-decoration-none"
                                             href=""
@@ -63,31 +90,31 @@ export const Category = () => {
                                     </div>
                                 </div>
                                 {/* <div className="col-lg-6">
-                                    <div className="position-relative mb-3">
-                                        <img
-                                            className="img-fluid w-100"
-                                            // src="img/news-500x280-1.jpg?v=1"
-                                            src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
-                                            style={{ objectFit: "cover" }}
-                                        />
-                                        <div className="overlay position-relative bg-light">
-                                            <div className="mb-2" style={{ fontSize: 14 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h4" href="">
-                                                Est stet amet ipsum stet clita rebum duo
-                                            </a>
-                                            <p className="m-0">
-                                                Rebum dolore duo et vero ipsum clita, est ea sed duo diam
-                                                ipsum, clita at justo, lorem amet vero eos sed sit...
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {catNews.length > 0 ? (
-                                    catNews.slice(0, 4).map((item, index) => (
+                                      <div className="position-relative mb-3">
+                                          <img
+                                              className="img-fluid w-100"
+                                              // src="img/news-500x280-1.jpg?v=1"
+                                              src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
+                                              style={{ objectFit: "cover" }}
+                                          />
+                                          <div className="overlay position-relative bg-light">
+                                              <div className="mb-2" style={{ fontSize: 14 }}>
+                                                  <a href="">Technology</a>
+                                                  <span className="px-1">/</span>
+                                                  <span>January 01, 2045</span>
+                                              </div>
+                                              <a className="h4" href="">
+                                                  Est stet amet ipsum stet clita rebum duo
+                                              </a>
+                                              <p className="m-0">
+                                                  Rebum dolore duo et vero ipsum clita, est ea sed duo diam
+                                                  ipsum, clita at justo, lorem amet vero eos sed sit...
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div> */}
+                                {stateNews.length > 0 ? (
+                                    stateNews.slice(0, 4).map((item, index) => (
                                         <div className="col-lg-6" key={index}>
                                             <div className="position-relative mb-3">
                                                 <img
@@ -99,13 +126,20 @@ export const Category = () => {
                                                 />
                                                 <div className="overlay position-relative bg-light">
                                                     <div className="mb-2" style={{ fontSize: 14 }}>
-                                                        <a href="">{item.category || "Technology"}</a>
+                                                        <a href="">{item.state.name || "Gujarat"}</a>
                                                         <span className="px-1">/</span>
+                                                        {cityBar && 
+                                                        (
+                                                            <>
+                                                                <a href="">{item.city.name || "Gujarat"}</a>
+                                                                <span className="px-1">/</span>
+                                                            </>
+                                                        )}
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
-                                                    <Link className="h4" to={`/single/category/${item._id}`}>
+                                                    <a className="h4" href="">
                                                         {item.title || "Est stet amet ipsum stet clita rebum duo"}
-                                                    </Link>
+                                                    </a>
                                                     <p className="m-0">
                                                         {item.content ||
                                                             "Rebum dolore duo et vero ipsum clita, est ea sed duo diam ipsum, clita at justo, lorem amet vero eos sed sit..."}
@@ -142,7 +176,7 @@ export const Category = () => {
                                             style={{ height: 100 }}
                                         >
                                             <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
+                                                <a href="">Gujarat</a>
                                                 <span className="px-1">/</span>
                                                 <span>January 01, 2045</span>
                                             </div>
@@ -164,7 +198,7 @@ export const Category = () => {
                                             style={{ height: 100 }}
                                         >
                                             <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
+                                                <a href="">Gujarat</a>
                                                 <span className="px-1">/</span>
                                                 <span>January 01, 2045</span>
                                             </div>
@@ -174,8 +208,8 @@ export const Category = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {catNews.length > 4 ? (
-                                    catNews.slice(4, 12).map((item, index) => (
+                                {stateNews.length > 4 ? (
+                                    stateNews.slice(4, 12).map((item, index) => (
                                         <div className="col-lg-6" key={index + 4}>
                                             <div className="d-flex mb-3">
                                                 <img
@@ -189,8 +223,19 @@ export const Category = () => {
                                                     style={{ height: 100 }}
                                                 >
                                                     <div className="mb-1" style={{ fontSize: 13 }}>
-                                                        <a href="">{item.category || "Technology"}</a>
-                                                        <span className="px-1">/</span>
+                                                        {cityBar ? 
+                                                        (
+                                                            <>
+                                                                <a href="">{item.city.name || "Technology"}</a>
+                                                                <span className="px-1">/</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <a href="">{item.state.name || "Technology"}</a>
+                                                                <span className="px-1">/</span>
+                                                            </>
+                                                        ) }
+                                                        
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
                                                     <a className="h6 m-0" href="">
@@ -356,25 +401,25 @@ export const Category = () => {
                                     <h3 className="m-0">Tranding</h3>
                                 </div>
                                 {/* <div className="d-flex mb-3">
-                                    <img
-                                        // src="img/news-100x100-1.jpg"
-                                        src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
-                                        style={{ width: 100, height: 100, objectFit: "cover" }}
-                                    />
-                                    <div
-                                        className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                        style={{ height: 100 }}
-                                    >
-                                        <div className="mb-1" style={{ fontSize: 13 }}>
-                                            <a href="">Technology</a>
-                                            <span className="px-1">/</span>
-                                            <span>January 01, 2045</span>
-                                        </div>
-                                        <a className="h6 m-0" href="">
-                                            Lorem ipsum dolor sit amet consec adipis elit
-                                        </a>
-                                    </div>
-                                </div> */}
+                                      <img
+                                          // src="img/news-100x100-1.jpg"
+                                          src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
+                                          style={{ width: 100, height: 100, objectFit: "cover" }}
+                                      />
+                                      <div
+                                          className="w-100 d-flex flex-column justify-content-center bg-light px-3"
+                                          style={{ height: 100 }}
+                                      >
+                                          <div className="mb-1" style={{ fontSize: 13 }}>
+                                              <a href="">Technology</a>
+                                              <span className="px-1">/</span>
+                                              <span>January 01, 2045</span>
+                                          </div>
+                                          <a className="h6 m-0" href="">
+                                              Lorem ipsum dolor sit amet consec adipis elit
+                                          </a>
+                                      </div>
+                                  </div> */}
                                 {trendingNews.length > 0 ? (
                                     trendingNews.slice(0, 5).map((item, index) => (
                                         <div className="d-flex mb-3" key={index}>
@@ -389,8 +434,9 @@ export const Category = () => {
                                                 style={{ height: 100 }}
                                             >
                                                 <div className="mb-1" style={{ fontSize: 13 }}>
-                                                    <a href="">{item.category || "Technology"}</a>
+                                                    <a href="">{item.state.name || "Technology"}</a>
                                                     <span className="px-1">/</span>
+
                                                     <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                 </div>
                                                 <a className="h6 m-0" href="">
