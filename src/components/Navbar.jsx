@@ -25,20 +25,20 @@ export const Navbar = () => {
                         id="navbarCollapse"
                     >
                         <div className="navbar-nav mr-auto py-0">
-                            <a href="/" className="nav-item nav-link active">
+                            <Link to="/" className="nav-item nav-link active">
                                 Home
-                            </a>
+                            </Link>
                             {/* Category */}
                             <div className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle" data-toggle="dropdown">
+                                <Link to="/categories" className="nav-link dropdown-toggle" data-toggle="dropdown">
                                     Categories
-                                </a>
+                                </Link>
                                 <div className="dropdown-menu rounded-0 m-0 p-3" style={{ minWidth: 600 }}>
                                     <div className="row">
                                         <div className="col-md-3">
-                                            <a href="index.html" className="dropdown-item">
+                                            <Link to="/category" className="dropdown-item">
                                                 Politics
-                                            </a>
+                                            </Link>
                                             <a href="#" className="dropdown-item">
                                                 Business
                                             </a>
@@ -53,9 +53,9 @@ export const Navbar = () => {
                                             <a href="#" className="dropdown-item">
                                                 Sports
                                             </a>
-                                            <a href="#" className="dropdown-item">
+                                            <Link to="/category/Entertainment" className="dropdown-item">
                                                 Entertainment
-                                            </a>
+                                            </Link>
                                             <a href="#" className="dropdown-item">
                                                 Science
                                             </a>
@@ -100,14 +100,14 @@ export const Navbar = () => {
                                 <ul className="navbar-nav">
                                     {/* State-City Mega Dropdown */}
                                     <li className="nav-item dropdown">
-                                        <a
+                                        <Link
                                             className="nav-link dropdown-toggle"
-                                            href="#"
+                                            to="/states"
                                             id="stateCityDropdown"
                                             data-toggle="dropdown"
                                         >
                                             State &amp; City
-                                        </a>
+                                        </Link>
                                         <div
                                             className="dropdown-menu rounded-0 m-0 p-3"
                                             style={{ minWidth: 600, maxHeight: 400, overflowY: "auto" }}

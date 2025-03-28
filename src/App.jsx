@@ -12,6 +12,9 @@ import { RoleBasedRoute } from './RoleBasedRoute'
 import { Unauth } from './components/Unauth'
 import { AdminNavbar } from './admin/AdminNavbar'
 import { Contact } from './user/Contact'
+import { Category } from './user/Category'
+import { Categories } from './user/Categories'
+import { State_City } from './user/State_City'
 
 
 // import './App.css'
@@ -43,6 +46,10 @@ function App() {
       <Routes>
         <Route path='/' element={<Navigate to="/home" />}></Route>
         <Route path='/home' element={<Home/>}></Route>
+        <Route path='/categories' element={<Categories/>}></Route>
+        <Route path='/category/:categoryName' element={<Category/>}></Route>
+        {/* <Route path='/category' element={<Category/>}></Route> */}
+        <Route path='/states' element={<State_City/>}></Route>
         <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/unauthorized' element={<Unauth/>}></Route>
         <Route path='/login' element={<Login setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar}/>}></Route>
