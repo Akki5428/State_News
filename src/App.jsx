@@ -17,6 +17,10 @@ import { Categories } from './user/Categories'
 import { State_City } from './user/State_City'
 import { State_City_One } from './user/State_City_One'
 import { SingleNews } from './user/SingleNews'
+import { JournalistDash } from './Journalist/JournalistDash'
+import { JournalistSubmit } from './Journalist/JournalistSubmit'
+import { JournalistNewsManage } from './Journalist/JournalistNewsManage'
+import { JournalistComment } from './Journalist/JournalistComment'
 
 
 // import './App.css'
@@ -55,6 +59,12 @@ function App() {
         {/* <Route path='/single' element={<SingleNews/>}></Route> */}
         <Route path="/single/:type/:newsId" element={<SingleNews/>} />
         <Route path="/state/:type/:name" element={<State_City_One/>} />
+
+        <Route path='/journDash' element={<JournalistDash/>} />
+        <Route path='/journSubmit' element={<JournalistSubmit/>} />
+        <Route path='/journalistNewsManage' element={<JournalistNewsManage/>} />
+        <Route path='/journalistcomment' element={<JournalistComment/>} />
+
         <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/unauthorized' element={<Unauth/>}></Route>
         <Route path='/login' element={<Login setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar}/>}></Route>
@@ -64,7 +74,6 @@ function App() {
           <Route path='/adminnewsmanage' element={<AdminNewsManage/>}></Route>
           <Route path='/adminusermanage' element={<AdminUserManage/>}></Route>
         </Route>
-        
       </Routes>
       {/* <Home/> */}
     </>
