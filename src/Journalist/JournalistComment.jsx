@@ -34,7 +34,7 @@ export const JournalistComment = () => {
     };
 
     return (
-        <div className="container shadow-lg">
+        <div className="container journ-container shadow-lg">
             <h2 className="text-center text-danger">
                 <i className="fas fa-comments" /> Comments &amp; Feedback
             </h2>

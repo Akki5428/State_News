@@ -21,6 +21,12 @@ import { JournalistDash } from './Journalist/JournalistDash'
 import { JournalistSubmit } from './Journalist/JournalistSubmit'
 import { JournalistNewsManage } from './Journalist/JournalistNewsManage'
 import { JournalistComment } from './Journalist/JournalistComment'
+import { JournalistNavbar } from './Journalist/JournalistNavbar'
+import { CitizenDashboard } from './Citizen/CitizenDashboard'
+import { CitizenSubmit } from './Citizen/CitizenSubmit'
+import { CitizenNewsManage } from './Citizen/CitizenNewsManage'
+import { CitizenComment } from './Citizen/CitizenComment'
+import { CitizenNav } from './Citizen/CitizenNav'
 
 
 // import './App.css'
@@ -40,15 +46,31 @@ function App() {
     navigate("/admindash")
   }
 
+  const handlerole1 = () => {
+    setUserRole("journalist")
+    setIsAuthenticated(true)
+    setShowNavbar(false)
+    navigate("/journdash")
+  }
 
+  const handlerole2 = () => {
+    setUserRole("citizen")
+    setIsAuthenticated(true)
+    setShowNavbar(false)
+    navigate("/citizendash")
+  }
 
   return (
     <>
       <button onClick={handlerole}>Click</button>
+      <button onClick={handlerole1}>Click1</button>
+      <button onClick={handlerole2}>Click2</button>
       {showTopbar && <Topbar />}
       {showNavbar && <Navbar />}
       
       {userRole=="admin" && <AdminNavbar/>}
+      {userRole=="journalist" && <JournalistNavbar/>}
+      {userRole=="citizen" && <CitizenNav/>}
       <Routes>
         <Route path='/' element={<Navigate to="/home" />}></Route>
         <Route path='/home' element={<Home/>}></Route>
@@ -60,10 +82,8 @@ function App() {
         <Route path="/single/:type/:newsId" element={<SingleNews/>} />
         <Route path="/state/:type/:name" element={<State_City_One/>} />
 
-        <Route path='/journDash' element={<JournalistDash/>} />
-        <Route path='/journSubmit' element={<JournalistSubmit/>} />
-        <Route path='/journalistNewsManage' element={<JournalistNewsManage/>} />
-        <Route path='/journalistcomment' element={<JournalistComment/>} />
+        
+
 
         <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/unauthorized' element={<Unauth/>}></Route>
@@ -74,6 +94,23 @@ function App() {
           <Route path='/adminnewsmanage' element={<AdminNewsManage/>}></Route>
           <Route path='/adminusermanage' element={<AdminUserManage/>}></Route>
         </Route>
+
+        <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["journalist"]} userRole={userRole} />}>
+          <Route path='/journDash' element={<JournalistDash/>} />
+          <Route path='/journSubmit' element={<JournalistSubmit/>} />
+          <Route path='/journalistNewsManage' element={<JournalistNewsManage/>} />
+          <Route path='/journalistcomment' element={<JournalistComment/>} />
+        </Route>
+
+        <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["citizen"]} userRole={userRole} />}>
+          <Route path='/citizendash' element={<CitizenDashboard/>} /> 
+          <Route path='/citizensubmit' element={<CitizenSubmit/>} /> 
+          <Route path='/citizennews' element={<CitizenNewsManage/>} /> 
+          <Route path='/citizencomment' element={<CitizenComment/>} /> 
+          {/* <Route path='/citizennav' element={<CitizenNav/>} />  */}
+        </Route>
+
+
       </Routes>
       {/* <Home/> */}
     </>
