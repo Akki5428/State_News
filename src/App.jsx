@@ -27,6 +27,7 @@ import { CitizenSubmit } from './Citizen/CitizenSubmit'
 import { CitizenNewsManage } from './Citizen/CitizenNewsManage'
 import { CitizenComment } from './Citizen/CitizenComment'
 import { CitizenNav } from './Citizen/CitizenNav'
+import { AdminSingleNews } from './admin/AdminSingleNews'
 
 
 // import './App.css'
@@ -81,6 +82,8 @@ function App() {
         {/* <Route path='/single' element={<SingleNews/>}></Route> */}
         <Route path="/single/:type/:newsId" element={<SingleNews/>} />
         <Route path="/state/:type/:name" element={<State_City_One/>} />
+
+        <Route path="/adminsingle" element={<AdminSingleNews/>} />
 
         
 
