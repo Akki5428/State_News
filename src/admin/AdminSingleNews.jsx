@@ -1,11 +1,20 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 import { GetStatusClass } from '../utils/getStatusClass'
 
 export const AdminSingleNews = () => {
     const [news, setNews] = useState({})
+    const [showRejectForm, setShowRejectForm] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState("");
+
+    const [showEditForm, setShowEditForm] = useState(false)
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [images, setImages] = useState([]); // List of image URLs
+    const [selectedImages, setSelectedImages] = useState([]); // Images to remove
+
     const { id } = useParams()
     console.log(id)
     const navigate = useNavigate()
@@ -15,6 +24,9 @@ export const AdminSingleNews = () => {
             const response = await axios.get(`http://127.0.0.1:8000/news/${id}`);
             console.log(response.data)
             setNews(response.data); // Assuming backend sends JSON with these keys
+            setTitle(response.data.title)
+            setContent(response.data.content)
+            setImages(response.data.images || [])
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }
@@ -40,11 +52,47 @@ export const AdminSingleNews = () => {
         try {
             await axios.patch(`http://127.0.0.1:8000/news/approve/${id}`);
             alert("News approved!");
-            navigate('/adminnewsmanage'); 
+            navigate('/adminnewsmanage');
         } catch (error) {
             console.error("Error approving news:", error.response?.data || error.message);
             alert("Failed to approve news.");
         }
+    };
+
+    const handleRejection = async () => {
+        try {
+            await axios.patch("http://127.0.0.1:8000/news/rejected/", { id: id, rejectReason: rejectionReason });
+            alert("News Rejected!");
+            navigate('/adminnewsmanage');
+        } catch (error) {
+            console.error("Error approving news:", error.response?.data || error.message);
+            alert("Failed to approve news.");
+        }
+    };
+
+    const handleUpdate = async () => {
+        try {
+            await axios.put("http://127.0.0.1:8000/news/update/", {
+                id: id,
+                title: title || undefined,
+                content: content || undefined,
+                removeImages: selectedImages, // Send images to remove
+            });
+
+            alert("News updated successfully!");
+            navigate("/adminnewsmanage")
+        } catch (error) {
+            console.error("Error updating news:", error.response?.data || error.message);
+            alert("Failed to update news.");
+        }
+    };
+
+    const toggleSelection = (img) => {
+        setSelectedImages((prevSelected) =>
+            prevSelected.includes(img)
+                ? prevSelected.filter((i) => i !== img) // Remove if exists
+                : [...prevSelected, img] // Add if not exists
+        );
     };
 
 
@@ -61,54 +109,50 @@ export const AdminSingleNews = () => {
                 <hr />
                 {/* Responsive Images */}
                 <div className="row">
-                    <div className="col-md-4">
+                    {/* <div className="col-md-4">
                         <img
                             src="https://via.placeholder.com/800x400"
                             className="img-fluid mb-3"
                             alt="News Image"
                         />
-                    </div>
-                    <div className="col-md-4">
-                        <img
-                            src="https://via.placeholder.com/800x400"
-                            className="img-fluid mb-3"
-                            alt="News Image"
-                        />
-                    </div>
-                    <div className="col-md-4">
-                        <img
-                            src="https://via.placeholder.com/800x400"
-                            className="img-fluid mb-3"
-                            alt="News Image"
-                        />
-                    </div>
+                    </div> */}
+                    {news?.images?.length > 0 ? (
+                        news.images.map((i, index) => (
+                            <div className="col-md-4" key={index}>
+                                <img src={i} className="img-fluid mb-3" alt="News Image" />
+                            </div>
+                        ))
+                    ) : (
+                        <p>No images available</p> // Fallback when images are empty or undefined
+                    )}
+
                 </div>
                 <p className="lead">
                     {news.content}
                 </p>
                 {/* Responsive Buttons */}
                 {news.status === "published" &&
-                    <div className="d-flex flex-wrap gap-2 mt-4">
-                        <button className="btn btn-primary mx-1">
+                    <div className="d-flex flex-column flex-md-row mt-4">
+                        <button className="btn btn-primary mx-1 mb-1">
                             <i className="fas fa-edit" /> Edit
                         </button>
-                        <button className="btn btn-secondary mx-1" onClick={handleDelete}>
+                        <button className="btn btn-secondary mx-1 mb-1" onClick={handleDelete}>
                             <i className="fas fa-trash" /> Delete
                         </button>
                     </div>
                 }
                 {news.status === "inProgress" &&
-                    <div className="d-flex flex-wrap gap-2 mt-4">
-                        <button className="btn btn-success mx-1" onClick={handleApprove}>
+                    <div className="d-flex flex-column flex-md-row gap-2">
+                        <button className="btn btn-success mx-1 mb-1" style={{ width: '120px' }} onClick={handleApprove}>
                             <i className="fas fa-check" /> Approve
                         </button>
-                        <button className="btn btn-danger mx-1">
+                        <button className="btn btn-danger mx-1 mb-1" style={{ width: '120px' }} onClick={() => setShowRejectForm(!showRejectForm)}>
                             <i className="fas fa-times" /> Reject
                         </button>
-                        <button className="btn btn-secondary mx-1">
+                        <button className="btn btn-secondary mx-1 mb-1" style={{ width: '120px' }} onClick={() => setShowEditForm(!showEditForm)}>
                             <i className="fas fa-edit" /> Edit
                         </button>
-                        
+
                     </div>
                 }
                 {/* <div className="d-flex flex-wrap gap-2 mt-4">
@@ -127,12 +171,96 @@ export const AdminSingleNews = () => {
                 </div> */}
             </div>
 
-            
 
+            {showRejectForm && (
+                <div className="mt-3 p-3 border rounded bg-light">
+                    <label className="form-label">Rejection Reason (Optional):</label>
+                    <textarea
+                        className="form-control"
+                        rows="3"
+                        value={rejectionReason}
+                        onChange={(e) => setRejectionReason(e.target.value)}
+                        placeholder="Enter reason for rejection..."
+                    />
+                    <div className="d-flex flex-column flex-md-row gap-2 mt-2">
+                        <button className="btn btn-danger mx-1 mb-1" onClick={handleRejection}>
+                            Submit Rejection
+                        </button>
+                        <button
+                            className="btn btn-secondary mx-1 mb-1"
+                            onClick={() => setShowRejectForm(false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showEditForm && (
+                <div className="mt-3 p-3 border rounded bg-light">
+                    <div className="row">
+                        <div className="col-md-4">
+                            <img
+                                src={images[0]}
+                                className="img-fluid mb-3"
+                                alt="News Image"
+                            />
+                        </div>
+                        {images.slice(1, 3).map((i, index) => {
+
+                            const isSelected = selectedImages.includes(i); // Check from useState
+                            return (
+
+                                <div key={index} className="col-md-4">
+                                    <img
+                                        src={i}
+                                        className="img-fluid mb-3"
+                                        alt="News Image"
+                                    />
+                                    <button
+                                        className={`btn ${isSelected ? "btn-danger" : "btn-success"} btn-sm position-absolute top-0 end-0`}
+                                        onClick={() => toggleSelection(i)}
+                                    >
+                                        {isSelected ? "✖" : "✔"} {/* Toggle icon */}
+                                    </button>
+                                </div>
+
+                            )
+                        })}
+                    </div>
+                    <label className="form-label">Title:</label>
+                    <textarea
+                        className="form-control"
+                        rows="3"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Enter reason for rejection..."
+                    />
+                    <label className="form-label">Content:</label>
+                    <textarea
+                        className="form-control"
+                        rows="3"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Enter reason for rejection..."
+                    />
+                    <div className="d-flex flex-column flex-md-row gap-2 mt-2">
+                        <button className="btn btn-danger mx-1 mb-1" onClick={handleUpdate}>
+                            Save Changes
+                        </button>
+                        <button
+                            className="btn btn-secondary mx-1 mb-1"
+                            onClick={() => setShowEditForm(false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
             <div className="text-center mt-4">
-                <a href="news-management.html" className="btn btn-outline-dark">
+                <Link to="/adminnewsmanage" className="btn btn-outline-dark">
                     <i className="fas fa-arrow-left" /> Back to News Management
-                </a>
+                </Link>
             </div>
         </div>
 
