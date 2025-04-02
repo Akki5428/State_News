@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import '../css/admin.css'
 import axios from 'axios';
 import { GetStatusClass } from '../utils/getStatusClass';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const AdminNewsManage = () => {
     const [news, setNews] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const navigate = useNavigate();
 
     // Fetch dashboard stats from backend
     const fetchNews = async () => {
@@ -38,6 +39,10 @@ export const AdminNewsManage = () => {
             (statusFilter === '' || n.status === statusFilter)
         );
     });
+
+    const handleViewClick = (newsId) => {
+        navigate(`/adminsingle/${newsId}`); // Replace with your actual route
+    };
 
     return (
         <div className="container mt-4">
@@ -96,7 +101,7 @@ export const AdminNewsManage = () => {
                                 <td>
                                     {n.status === "inProgress" &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
-                                            <button className="btn btn-info btn-sm mr-1 mb-1">
+                                            <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id)}>
                                                 <i className="fas fa-eye" />
                                             </button>
                                             <button className="btn btn-secondary btn-sm mr-1 mb-1">
@@ -116,7 +121,7 @@ export const AdminNewsManage = () => {
                                             {/* <button className="btn btn-success btn-sm mr-1 mb-1">
                                         <i className="fas fa-check" />
                                     </button> */}
-                                            <button className="btn btn-info btn-sm mr-1 mb-1">
+                                            <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id)}>
                                                 <i className="fas fa-eye" />
                                             </button>
                                             <button className="btn btn-secondary btn-sm mr-1 mb-1">

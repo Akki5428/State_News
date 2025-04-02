@@ -83,7 +83,7 @@ function App() {
         <Route path="/single/:type/:newsId" element={<SingleNews/>} />
         <Route path="/state/:type/:name" element={<State_City_One/>} />
 
-        <Route path="/adminsingle" element={<AdminSingleNews/>} />
+        <Route path="/adminsingle/:id" element={<AdminSingleNews/>} />
 
         
 
