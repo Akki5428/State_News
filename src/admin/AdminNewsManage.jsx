@@ -91,7 +91,7 @@ export const AdminNewsManage = () => {
                         {filteredNews.length > 0 ? filteredNews.map((n, index) => (
                             <tr key={index}>
                                 <td>{n.title}</td>
-                                <td>{n.user.firstName}</td>
+                                <td>{n.user?.firstName}</td>
                                 <td>{n.category}</td>
                                 <td>
                                     <span className={`badge ${GetStatusClass(n.status)}`}>

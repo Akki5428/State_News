@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { GetStatusClass } from '../utils/getStatusClass';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const AdminUserManage = () => {
     const [user, setUser] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+
+    const navigate = useNavigate()
 
     const fetchUser = async () => {
         try {
@@ -19,6 +21,9 @@ export const AdminUserManage = () => {
         }
     };
 
+    const handleViewClick = (userId) => {
+        navigate(`/adminsingleuser/${userId}`); // Replace with your actual route
+    };
 
 
     useEffect(() => {
@@ -100,8 +105,12 @@ export const AdminUserManage = () => {
                                     <span className={`badge ${GetStatusClass(u.status)}`}>{u.status}</span>
                                 </td>
                                 <td>
+                                    
                                     {u.status === "approved" &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1"  onClick={() => handleViewClick(u._id)}>
+                                                <i className="fas fa-eye" /> View
+                                            </button>
                                             <button className="btn btn-secondary btn-sm text-nowrap mr-1" >
                                                 <i className="fas fa-ban" /> Block
                                             </button>
@@ -111,7 +120,10 @@ export const AdminUserManage = () => {
                                         </div>
                                     }
                                     {u.status === "pending" &&
-                                        <div className="d-flex flex-column flex-md-row gap-2">
+                                        <div className="d-flex flex-column flex-md-row gap-2" onClick={() => handleViewClick(u._id)}>
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1" >
+                                                <i className="fas fa-eye" /> View
+                                            </button>
                                             <button className="btn btn-success btn-sm text-nowrap mr-1" >
                                                 <i className="fas fa-check" /> Approve
                                             </button>
@@ -122,8 +134,24 @@ export const AdminUserManage = () => {
                                     }
                                     {u.status === "rejected" &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
-                                            <button className="btn btn-info btn-sm text-nowrap mr-1" >
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id)}>
+                                                <i className="fas fa-eye" /> View
+                                            </button>
+                                            <button className="btn btn-warning btn-sm text-nowrap mr-1" >
                                                 <i className="fas fa-undo" /> Reconsider
+                                            </button>
+                                            <button className="btn btn-danger btn-sm text-nowrap mr-1">
+                                                <i className="fas fa-trash" /> Delete
+                                            </button>
+                                        </div>
+                                    }
+                                    {u.status === "block" &&
+                                        <div className="d-flex flex-column flex-md-row gap-2">
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id)}>
+                                                <i className="fas fa-eye" /> View
+                                            </button>
+                                            <button className="btn btn-success btn-sm text-nowrap mr-1" >
+                                                <i className="fas fa-undo" /> Unblock
                                             </button>
                                             <button className="btn btn-danger btn-sm text-nowrap mr-1">
                                                 <i className="fas fa-trash" /> Delete
