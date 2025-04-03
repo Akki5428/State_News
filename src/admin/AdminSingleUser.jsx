@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FormatDate } from "../components/FormatDate"
 
 export const AdminSingleUser = () => {
@@ -8,6 +8,7 @@ export const AdminSingleUser = () => {
     const [user, setUser] = useState({})
     const [showRejectForm, setShowRejectForm] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
+    const navigate = useNavigate()
 
     const fetchUser = async () => {
         try {
@@ -18,6 +19,59 @@ export const AdminSingleUser = () => {
             console.error("Error fetching dashboard data:", error);
         }
     };
+
+    const handleDelete = async () => {
+        if (window.confirm("Are you sure you want to delete this User?")) {
+            await axios.delete(`http://127.0.0.1:8000/user/${id}`);
+            alert("User deleted!");
+            navigate('/adminusermanage'); // Redirect to News Management Page
+        }
+    };
+
+    const handleBlock = async () => {
+        if (user.status == "approved") {
+            if (window.confirm("Are you sure you want to Block this User?")) {
+                await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+                alert("User Blocked!");
+                navigate('/adminusermanage');
+            }
+        }
+        else if (user.status == "rejected") {
+            if (window.confirm("Are you sure you want to Reconsider this User?")) {
+                await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+                alert("User Reconsider!");
+                navigate('/adminusermanage');
+            }
+        }
+        else {
+            await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+            alert("User UnBlocked!");
+            navigate('/adminusermanage');
+        }
+    }
+
+    const handleApprove = async () => {
+        try {
+            await axios.patch(`http://127.0.0.1:8000/user/approve/${id}`);
+            alert("User approved!");
+            navigate('/adminusermanage');
+        } catch (error) {
+            console.error("Error approving news:", error.response?.data || error.message);
+            alert("Failed to approve User.");
+        }
+    };
+
+    const handleRejection = async () => {
+        try {
+            await axios.put("http://127.0.0.1:8000/user/rejected/", { id: id, rejectReason: rejectionReason });
+            alert("News Rejected!");
+            navigate('/adminusermanage');
+        } catch (error) {
+            console.error("Error approving news:", error.response?.data || error.message);
+            alert("Failed to approve news.");
+        }
+    };
+
 
     useEffect(() => {
         fetchUser()
@@ -59,17 +113,17 @@ export const AdminSingleUser = () => {
                 <div className="d-flex flex-column flex-md-row gap-2 mt-4">
                     {user.status === "approved" &&
                         <>
-                            <button className="btn btn-secondary mx-1 mb-1">
+                            <button className="btn btn-secondary mx-1 mb-1" onClick={handleBlock}>
                                 <i className="fas fa-ban" /> Block User
                             </button>
-                            <button className="btn btn-primary mx-1 mb-1">
-                                <i className="fas fa-user-trash" /> Delete Details
+                            <button className="btn btn-primary mx-1 mb-1" onClick={handleDelete}>
+                                <i className="fas fa-user-trash" /> Delete User
                             </button>
                         </>
                     }
                     {user.status === "pending" &&
                         <>
-                            <button className="btn btn-success mx-1 mb-1">
+                            <button className="btn btn-success mx-1 mb-1" onClick={handleApprove}>
                                 <i className="fas fa-check" /> Approve User
                             </button>
                             <button className="btn btn-danger mx-1 mb-1" onClick={() => setShowRejectForm(!showRejectForm)}>
@@ -79,20 +133,20 @@ export const AdminSingleUser = () => {
                     }
                     {user.status === "rejected" &&
                         <>
-                            <button className="btn btn-warning mx-1 mb-1">
+                            <button className="btn btn-warning mx-1 mb-1" onClick={handleBlock}>
                                 <i className="fas fa-undo" /> Reconsider User
                             </button>
-                            <button className="btn btn-danger mx-1 mb-1">
+                            <button className="btn btn-danger mx-1 mb-1" onClick={handleDelete}>
                                 <i className="fas fa-trash" /> Delete User
                             </button>
                         </>
                     }
                     {user.status === "block" &&
                         <>
-                            <button className="btn btn-success mx-1 mb-1">
+                            <button className="btn btn-success mx-1 mb-1" onClick={handleBlock}>
                                 <i className="fas fa-check" /> Unblock User
                             </button>
-                            <button className="btn btn-danger mx-1 mb-1">
+                            <button className="btn btn-danger mx-1 mb-1" onClick={handleDelete}>
                                 <i className="fas fa-trash" /> Delete User
                             </button>
                         </>
@@ -115,22 +169,22 @@ export const AdminSingleUser = () => {
 
             {/* Reject Form (Only Styling) */}
             {
-                showRejectForm && 
+                showRejectForm &&
                 <div className="mt-3 p-3 border rounded bg-light">
-                <label className="form-label">Rejection Reason (Optional):</label>
-                <textarea className="form-control" rows="3" value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)} placeholder="Enter reason for rejection..." />
-                <div className="d-flex flex-column flex-md-row gap-2 mt-2">
-                    <button className="btn btn-danger mx-1 mb-1">
-                        Submit Rejection
-                    </button>
-                    <button className="btn btn-secondary mx-1 mb-1" onClick={()=>{setShowRejectForm(false)}}>
-                        Cancel
-                    </button>
+                    <label className="form-label">Rejection Reason (Optional):</label>
+                    <textarea className="form-control" rows="3" value={rejectionReason}
+                        onChange={(e) => setRejectionReason(e.target.value)} placeholder="Enter reason for rejection..." />
+                    <div className="d-flex flex-column flex-md-row gap-2 mt-2">
+                        <button className="btn btn-danger mx-1 mb-1" onClick={handleRejection}>
+                            Submit Rejection
+                        </button>
+                        <button className="btn btn-secondary mx-1 mb-1" onClick={() => { setShowRejectForm(false) }}>
+                            Cancel
+                        </button>
+                    </div>
                 </div>
-            </div>
             }
-            
+
 
             {/* Edit Form (Only Styling) */}
             {/* <div className="mt-3 p-3 border rounded bg-light">
