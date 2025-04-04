@@ -29,6 +29,7 @@ import { CitizenComment } from './Citizen/CitizenComment'
 import { CitizenNav } from './Citizen/CitizenNav'
 import { AdminSingleNews } from './admin/AdminSingleNews'
 import { AdminSingleUser } from './admin/AdminSingleUser'
+import { JournalistSingleNews } from './Journalist/JournalistSingleNews'
 
 
 // import './App.css'
@@ -86,6 +87,8 @@ function App() {
 
         <Route path="/adminsingle/:id" element={<AdminSingleNews/>} />
         <Route path="/adminsingleuser/:id" element={<AdminSingleUser/>} />
+
+        <Route path="/journsinglenews/:id" element={<JournalistSingleNews/>} />
 
         
 

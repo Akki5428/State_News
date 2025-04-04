@@ -16,6 +16,8 @@ export const GetStatusClass = (status) => {
             return "bg-success"; // Green
         case "citizen journalist":
             return "bg-warning"; // Green
+        case "draft":
+            return "bg-info"; // Green
         default:
             return "bg-secondary"; // Gray for unknown statuses
     }

@@ -1,6 +1,52 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { FormatDate } from "../components/FormatDate"
+import { GetStatusClass } from '../utils/getStatusClass';
+
 
 export const JournalistDash = () => {
+    const [stats, setStats] = useState({
+        total_news: 0,
+        publshied_news: 0,
+        draft_news: 0,
+        total_views: 0,
+    });
+    const id = "67d03086eeb4bbc43d6ec3a5"
+
+    const [recentNews, setRecentNews] = useState([]);
+    const [recentComments, setRecentComments] = useState([]);
+
+    // Fetch dashboard stats from backend
+    const fetchStats = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/dash/journ/stats/${id}`);
+            console.log(response.data)
+            setStats(response.data); // Assuming backend sends JSON with these keys
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+        }
+    };
+
+    const fetchRecentData = async () => {
+        try {
+            const newsResponse = await axios.get(`http://127.0.0.1:8000/news/recent/user/${id}`);
+            const commentsResponse = await axios.get(`http://127.0.0.1:8000/comments/recent/${id}`);
+
+            console.log("Recent News:", newsResponse.data);
+            console.log("Recent Comments:", commentsResponse.data);
+
+            setRecentNews(newsResponse.data);
+            setRecentComments(commentsResponse.data);
+        } catch (error) {
+            console.error("Error fetching recent data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchStats();
+        fetchRecentData()
+    }, []);
+
     return (
         <div className="container mt-4 mb-4">
             {/* Summary Cards */}
@@ -10,7 +56,7 @@ export const JournalistDash = () => {
                         <div className="card-body d-flex flex-column justify-content-center align-items-center">
                             <i className="fas fa-newspaper fa-3x text-primary" />
                             <h5 className="card-title mt-2">Total Articles</h5>
-                            <p className="card-text">150</p>
+                            <p className="card-text">{stats.total_news}</p>
                         </div>
                     </div>
                 </div>
@@ -19,7 +65,7 @@ export const JournalistDash = () => {
                         <div className="card-body d-flex flex-column justify-content-center align-items-center">
                             <i className="fas fa-check-circle fa-3x text-success" />
                             <h5 className="card-title mt-2">Published Articles</h5>
-                            <p className="card-text">120</p>
+                            <p className="card-text">{stats.publshied_news}</p>
                         </div>
                     </div>
                 </div>
@@ -28,7 +74,7 @@ export const JournalistDash = () => {
                         <div className="card-body d-flex flex-column justify-content-center align-items-center">
                             <i className="fas fa-file-alt fa-3x text-warning" />
                             <h5 className="card-title mt-2">Draft Articles</h5>
-                            <p className="card-text">30</p>
+                            <p className="card-text">{stats.draft_news}</p>
                         </div>
                     </div>
                 </div>
@@ -37,7 +83,7 @@ export const JournalistDash = () => {
                         <div className="card-body d-flex flex-column justify-content-center align-items-center">
                             <i className="fas fa-eye fa-3x text-danger" />
                             <h5 className="card-title mt-2">Total Views</h5>
-                            <p className="card-text">75,000</p>
+                            <p className="card-text">{stats.total_views}</p>
                         </div>
                     </div>
                 </div>
@@ -54,16 +100,15 @@ export const JournalistDash = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Tech Trends in 2025</td>
-                            <td>2025-03-19</td>
-                            <td><span className="badge bg-success">Published</span></td>
-                        </tr>
-                        <tr>
-                            <td>Political Debate Highlights</td>
-                            <td>2025-03-18</td>
-                            <td><span className="badge bg-warning">Draft</span></td>
-                        </tr>
+                        {
+                            recentNews.map((news, index) => (
+                                <tr key={index}>
+                                    <td>{news.title}</td>
+                                    <td>{FormatDate(news.news_date)}</td>
+                                    <td><span className={`badge ${GetStatusClass(news.status)}`}>{news.status}</span></td>
+                                </tr>
+                            ))
+                        }
                     </tbody>
                 </table>
             </div>
@@ -80,18 +125,15 @@ export const JournalistDash = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Great insights on AI!</td>
-                            <td>Tech Trends in 2025</td>
-                            <td>2025-03-19</td>
-                            <td><button className="btn btn-primary btn-sm">Reply</button></td>
-                        </tr>
-                        <tr>
-                            <td>Well-explained debate summary.</td>
-                            <td>Political Debate Highlights</td>
-                            <td>2025-03-18</td>
-                            <td><button className="btn btn-primary btn-sm">Reply</button></td>
-                        </tr>
+                        {recentComments.map((com, index) => (
+                            <tr key={index}>
+                                <td>{com.comment_text.slice(0,35)}...</td>
+                                <td>{com.news?.title}</td>
+                                <td>{FormatDate(com.created_at)}</td>
+                                <td><button className="btn btn-primary btn-sm">Reply</button></td>
+                            </tr>
+                        ))}
+                        
                     </tbody>
                 </table>
             </div>
