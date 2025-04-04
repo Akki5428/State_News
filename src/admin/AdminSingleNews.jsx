@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 import { GetStatusClass } from '../utils/getStatusClass'
 
@@ -8,6 +8,7 @@ export const AdminSingleNews = () => {
     const [news, setNews] = useState({})
     const [showRejectForm, setShowRejectForm] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
+    const [searchParams] = useSearchParams();
 
     const [showEditForm, setShowEditForm] = useState(false)
     const [title, setTitle] = useState("");
@@ -27,6 +28,8 @@ export const AdminSingleNews = () => {
             setTitle(response.data.title)
             setContent(response.data.content)
             setImages(response.data.images || [])
+            setShowEditForm(searchParams.get("edit") === "true" ? true : false)
+            setShowRejectForm(searchParams.get("reject_form") === "true" ? true : false)
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }

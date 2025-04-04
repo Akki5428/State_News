@@ -22,6 +22,25 @@ export const AdminNewsManage = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this news? You can see details using the 'Eye' button.")) {
+            await axios.delete(`http://127.0.0.1:8000/news/${id}`);
+            alert("News deleted!");
+            fetchNews()
+        }
+    };
+
+    const handleApprove = async (id) => {
+        try {
+            await axios.patch(`http://127.0.0.1:8000/news/approve/${id}`);
+            alert("News approved!");
+            fetchNews()
+        } catch (error) {
+            console.error("Error approving news:", error.response?.data || error.message);
+            alert("Failed to approve news.");
+        }
+    };
+
 
 
     useEffect(() => {
@@ -40,8 +59,12 @@ export const AdminNewsManage = () => {
         );
     });
 
-    const handleViewClick = (newsId) => {
-        navigate(`/adminsingle/${newsId}`); // Replace with your actual route
+    const handleViewClick = (newsId, edit) => {
+        navigate(`/adminsingle/${newsId}?edit=${edit}`); // Replace with your actual route
+    };
+
+    const handleRejection = (newsId, reject) => {
+        navigate(`/adminsingle/${newsId}?reject_form=${reject}`); // Replace with your actual route
     };
 
     return (
@@ -71,7 +94,7 @@ export const AdminNewsManage = () => {
                         <option value="">Filter by Status</option>
                         <option>inProgress</option>
                         <option>published</option>
-                        <option>Rejected</option>
+                        <option>rejected</option>
                     </select>
                 </div>
             </div>
@@ -91,7 +114,7 @@ export const AdminNewsManage = () => {
                         {filteredNews.length > 0 ? filteredNews.map((n, index) => (
                             <tr key={index}>
                                 <td>{n.title}</td>
-                                <td>{n.user?.firstName}</td>
+                                <td>{n.user?.firstName || "John Doe"} </td>
                                 <td>{n.category}</td>
                                 <td>
                                     <span className={`badge ${GetStatusClass(n.status)}`}>
@@ -101,16 +124,16 @@ export const AdminNewsManage = () => {
                                 <td>
                                     {n.status === "inProgress" &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
-                                            <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id)}>
+                                            <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id, false)}>
                                                 <i className="fas fa-eye" />
                                             </button>
-                                            <button className="btn btn-secondary btn-sm mr-1 mb-1">
+                                            <button className="btn btn-secondary btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id, true)}>
                                                 <i className="fas fa-edit" />
                                             </button>
-                                            <button className="btn btn-success btn-sm mr-1 mb-1">
+                                            <button className="btn btn-success btn-sm mr-1 mb-1" onClick={() => handleApprove(n._id)}>
                                                 <i className="fas fa-check" />
                                             </button>
-                                            <button className="btn btn-danger btn-sm  mr-1 mb-1">
+                                            <button className="btn btn-danger btn-sm  mr-1 mb-1" onClick={() => handleRejection(n._id,true)}>
                                                 <i className="fas fa-times" />
                                             </button>
 
@@ -124,10 +147,10 @@ export const AdminNewsManage = () => {
                                             <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id)}>
                                                 <i className="fas fa-eye" />
                                             </button>
-                                            <button className="btn btn-secondary btn-sm mr-1 mb-1">
+                                            <button className="btn btn-secondary btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id, true)}>
                                                 <i className="fas fa-edit" />
                                             </button>
-                                            <button className="btn btn-danger btn-sm  mr-1 mb-1">
+                                            <button className="btn btn-danger btn-sm  mr-1 mb-1" onClick={() => handleDelete(n._id)}>
                                                 <i className="fas fa-trash" />
                                             </button>
                                         </div>
