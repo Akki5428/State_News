@@ -7,28 +7,12 @@ export const JournalistComment = () => {
     const [searchText, setSearchText] = useState("");
     const [articlesData, setArticlesData] = useState([]);
     const [replyText, setReplyText] = useState({});
-    const id = "67d03086eeb4bbc43d6ec3a5"
-
-    // const articlesData = [
-    //     {
-    //         id: 1,
-    //         title: "Breaking News Title 1",
-    //         comments: [
-    //             { id: 1, user: "User1", text: "This is an interesting article!" },
-    //             { id: 2, user: "User2", text: "I agree with this perspective." },
-    //         ],
-    //     },
-    //     {
-    //         id: 2,
-    //         title: "Breaking News Title 2",
-    //         comments: [{ id: 3, user: "User3", text: "Great insights!" }],
-    //     },
-    // ];
+    const id = "67d03086eeb4bbc43d6ec3a5";
 
     const fetchComments = async () => {
         try {
             const response = await axios.get(`http://127.0.0.1:8000/comments/news/${id}`);
-            console.log(response.data)
+            console.log(response.data);
             setArticlesData(response.data);
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
@@ -38,8 +22,8 @@ export const JournalistComment = () => {
     const postReply = async (comment, newsId) => {
         const payload = {
             newsId: newsId,
-            userId: id, // current user's ID (reporter or logged-in user)
-            rId: id, // reporter ID
+            userId: id,
+            rId: id,
             comment_text: replyText[comment.id],
             created_at: new Date().toISOString(),
             parentCommentId: comment.id || null
@@ -48,7 +32,8 @@ export const JournalistComment = () => {
         try {
             await axios.post("http://127.0.0.1:8000/comment/add", payload);
             alert("Reply posted!");
-            setReplyText({ ...replyText, [comment.id]: "" }); // Clear input
+            setReplyText({ ...replyText, [comment.id]: "" });
+            fetchComments(); // Refresh comments
         } catch (error) {
             console.error("Error posting reply:", error);
         }
@@ -67,9 +52,8 @@ export const JournalistComment = () => {
     };
 
     useEffect(() => {
-        fetchComments()
-    }, [])
-
+        fetchComments();
+    }, []);
 
     return (
         <div className="container journ-container shadow-lg">
@@ -102,43 +86,74 @@ export const JournalistComment = () => {
                                 className="comment-section"
                                 style={{ display: commentVisibility[article.id] ? "block" : "none" }}
                             >
-                                {article.comments.map((comment) => (
-                                    <div className="comment" key={comment.id}>
-                                        <strong>{comment.user?.firstName}:</strong> {comment.text}
-                                        <span
-                                            className="reply-btn"
-                                            onClick={() => toggleReply(comment.id)}
-                                            style={{ cursor: "pointer", fontSize: "12px", marginLeft: "10px", color: "#d32f2f" }}
-                                        >
-                                            Reply
-                                        </span>
+                                {article.comments
+                                    .filter(comment => comment.parentCommentId === "None")
+                                    .map((comment) => (
+                                        <div className="comment" key={comment.id} style={{ marginBottom: '10px' }}>
+                                            <strong style={{color:comment.user?._id === id ? "red" : "grey"}}>{comment.user?._id === id ? "(My Comment)" :comment.user?.firstName}:</strong> {comment.text}
+                                            <span
+                                                className="reply-btn"
+                                                onClick={() => toggleReply(comment.id)}
+                                                style={{ cursor: "pointer", fontSize: "12px", marginLeft: "10px", color: "#d32f2f" }}
+                                            >
+                                                Reply
+                                            </span>
+                                            <span
+                                                className="reply-btn"
+                                                onClick={() => toggleComments(comment.id)}
+                                                style={{ cursor: "pointer", fontSize: "12px", marginLeft: "10px", color: "blue" }}
+                                            >
+                                                {commentVisibility[comment.id] ? "Hide Replies" : "Show Replies"}
+                                            </span>
 
-                                        <div
-                                            className="reply-section"
-                                            style={{ display: replyVisibility[comment.id] ? "block" : "none", marginLeft: "40px", marginTop: "10px" }}
-                                        >
-                                            <textarea
-                                                className="form-control mt-2"
-                                                placeholder="Write a reply..."
-                                                value={replyText[comment.id] || ""}
-                                                onChange={(e) =>
-                                                    setReplyText({ ...replyText, [comment.id]: e.target.value })
-                                                }
-                                            />
-                                            <button className="btn btn-primary btn-sm mt-2" onClick={() => postReply(comment, article.id)}>Post Reply</button>
+                                            {/* Reply Input */}
+                                            <div
+                                                className="reply-section"
+                                                style={{
+                                                    display: replyVisibility[comment.id] ? "block" : "none",
+                                                    marginLeft: "40px",
+                                                    marginTop: "10px",
+                                                }}
+                                            >
+                                                <textarea
+                                                    className="form-control mt-2"
+                                                    placeholder="Write a reply..."
+                                                    value={replyText[comment.id] || ""}
+                                                    onChange={(e) =>
+                                                        setReplyText({ ...replyText, [comment.id]: e.target.value })
+                                                    }
+                                                />
+                                                <button
+                                                    className="btn btn-primary btn-sm mt-2"
+                                                    onClick={() => postReply(comment, article.id)}
+                                                >
+                                                    Post Reply
+                                                </button>
+                                            </div>
+
+                                            {/* Replies */}
+                                            <div
+                                                className="nested-replies"
+                                                style={{
+                                                    display: commentVisibility[comment.id] ? "block" : "none",
+                                                    marginLeft: "30px",
+                                                    marginTop: "10px",
+                                                }}
+                                            >
+                                                {article.comments
+                                                    .filter(reply => reply.parentCommentId === comment.id)
+                                                    .map((reply) => (
+                                                        <div className="reply" key={reply.id} style={{ marginBottom: '5px' }} >
+                                                            <strong style={{color:reply.user?._id === id ? "red" : "black"}}>{reply.user?._id === id ? "(My Reply)" : reply.user?.firstName}:</strong> {reply.text}
+                                                        </div>
+                                                    ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                                <textarea
-                                    className="form-control mt-2"
-                                    placeholder="Write a comment..."
-                                />
-                                <button className="btn btn-primary btn-sm mt-2">Post Comment</button>
+                                    ))}
                             </div>
                         </div>
                     ))}
             </div>
-
         </div>
     );
 };
