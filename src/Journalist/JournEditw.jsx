@@ -2,22 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import '../css/journalist.css';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export const JournalistSubmit = () => {
+export const JournEditw = () => {
+  // const newsId = "67f90741c0cdb2465cd4346e"; // Static for testing
+  const { id } = useParams(); // Get newsId from URL params
+  const newsId = id; // Use the newsId from URL params
+  const navigate = useNavigate();
+  const [news, setnews] = useState({});
   const {
     register,
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors },
   } = useForm();
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
   const [uploading, setUploading] = useState(false);
 
   const selectedStateId = watch('stateId');
+
+  useEffect(() => {
+    fetchNewsData(newsId);
+  }, [newsId]);
 
   useEffect(() => {
     fetchStates();
@@ -51,11 +63,15 @@ export const JournalistSubmit = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 3) {
-      alert('You can upload a maximum of 3 images.');
+    if (files.length + existingImages.length > 3) {
+      alert('You can upload a maximum of 3 images (including existing).');
       return;
     }
     setImageFiles(files);
+  };
+
+  const removeExistingImage = (indexToRemove) => {
+    setExistingImages((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
   const uploadImagesToCloudinary = async () => {
@@ -63,12 +79,12 @@ export const JournalistSubmit = () => {
     for (let i = 0; i < imageFiles.length; i++) {
       const formData = new FormData();
       formData.append('file', imageFiles[i]);
-      formData.append('upload_preset', 'images_preset'); // ⬅️ Replace this
-      formData.append('cloud_name', 'dmwmbomir');       // ⬅️ Replace this
+      formData.append('upload_preset', 'images_preset');
+      formData.append('cloud_name', 'dmwmbomir');
 
       try {
         const res = await axios.post(
-          'https://api.cloudinary.com/v1_1/dmwmbomir/image/upload', // ⬅️ Replace this
+          'https://api.cloudinary.com/v1_1/dmwmbomir/image/upload',
           formData
         );
         urls.push(res.data.secure_url);
@@ -79,45 +95,99 @@ export const JournalistSubmit = () => {
     return urls;
   };
 
-  const handleSaveDraft = () => {
-    const data = watch(); // Get all the current form data
-    onSubmit(data, "draft");  // Call the function to handle submission with "draft" status
+  const fetchNewsData = async (id) => {
+    try {
+      const res = await axios.get(`http://127.0.0.1:8000/news/${id}`);
+      const newsData = res.data;
+      setnews(newsData)
+      setValue('title', newsData.title);
+      setValue('content', newsData.content);
+      setValue('category', newsData.category);
+      setValue('stateId', newsData.stateId);
+      setValue('isBreaking', newsData.isBreaking == true ? "yes" : "no");
+
+      setExistingImages(newsData.images || []);
+
+      await fetchCities(newsData.stateId);
+      setTimeout(() => {
+        setValue('cityId', newsData.cityId);
+      }, 100);
+    } catch (err) {
+      console.error('Error fetching news data:', err);
+    }
   };
 
-  const onSubmit = async (data,status) => {
+  const handleSaveDraft = () => {
+    const data = watch();
+    onSubmit(data, "draft");
+  };
+
+  const handleApprove = async () => {
+    try {
+      await axios.patch(`http://127.0.0.1:8000/news/approve/${newsId}`);
+      alert("News Published!");
+      navigate('/journalistNewsManage'); // Redirect to News Management Page
+    } catch (error) {
+      console.error("Error Publishing news:", error.response?.data || error.message);
+      alert("Failed to Published news.");
+    }
+  };
+
+  const onSubmit = async (data, status) => {
     setUploading(true);
     const imageUrls = await uploadImagesToCloudinary();
-    var payload = {}
-    if(status == "draft")
-    {
-        payload = {
-        ...data,
-        images: imageUrls,
-        userId: "67d03086eeb4bbc43d6ec3a5", // change this based on authentication
-        status:"draft"
-      };  
-    }
-    else{
-       payload = {
-        ...data,
-        images: imageUrls,
-        userId: "67d03086eeb4bbc43d6ec3a5", // change this based on authentication
-      };
-    }
+    const allImages = [...existingImages, ...imageUrls];
+    let payload = {};
+    var mess;
 
-    console.log(data)
-    
-
-    try {
-      await axios.post('http://127.0.0.1:8000/news', payload);
-      alert('News submitted successfully!');
-      reset();
-      setImageFiles([]);
-    } catch (err) {
-      console.error('Submission failed:', err);
-      alert('Submission failed.');
-    } finally {
+    if (allImages.length > 3) {
+      alert("You can only submit 3 images.");
       setUploading(false);
+      return;
+    }
+
+    if (newsId) {
+      if (status === "draft") {
+        payload = {
+          ...data,
+          images: allImages,
+          id: newsId,
+          status: "draft",
+        };
+        console.log("Hello")
+        if(news.status === "inProgress")
+          mess = "News saved as draft!";
+        else
+          mess = "Changes Saved!";       
+      }
+      else {
+        payload = {
+          ...data,
+          images: allImages,
+          id: newsId,
+          status: "inProgress",
+        };
+        console.log("Hi")
+        if(news.status === "inProgress")
+          mess = "Changes Saved!";
+        else
+          mess = "News Submitted!!"; 
+      }
+
+      try {
+        await axios.put('http://127.0.0.1:8000/news/update/', payload);
+        console.log(status)
+        alert(mess);
+        reset();
+        setImageFiles([]);
+        setExistingImages([]);
+        navigate("/journalistNewsManage");
+      } catch (err) {
+        console.error('Edit failed:', err);
+        alert('Edit failed.');
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -139,13 +209,14 @@ export const JournalistSubmit = () => {
 
       <div className="container">
         <div className="form-container">
-          <h3 className="mb-3">Submit News</h3>
+          <h3 className="mb-3">Edit News</h3>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-3">
               <label className="form-label">Title</label>
               <input
                 className="form-control"
                 placeholder="Enter news title"
+                value={watch('title')}
                 {...register('title', { required: 'Title is required' })}
               />
               {errors.title && <small className="text-danger">{errors.title.message}</small>}
@@ -205,7 +276,7 @@ export const JournalistSubmit = () => {
                     {selectedStateId ? 'Select City' : 'Please select a state first'}
                   </option>
                   {cities.map((city) => (
-                    <option key={city.id} value={city._id}>
+                    <option key={city._id} value={city._id}>
                       {city.name}
                     </option>
                   ))}
@@ -215,7 +286,41 @@ export const JournalistSubmit = () => {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Upload Images (Max: 3)</label>
+              <label className="form-label">Uploaded Images (Click to Remove)</label>
+              <div className="d-flex gap-3 flex-wrap">
+                {existingImages.map((img, index) => (
+                  <div key={index} style={{ position: 'relative' }}>
+                    <img
+                      src={img}
+                      alt={`uploaded-${index}`}
+                      style={{ height: 200, width: 300, objectFit: 'cover', marginLeft: 10 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingImage(index)}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        backgroundColor: 'red',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: 20,
+                        height: 20,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Upload New Images (Max: 3)</label>
               <input
                 type="file"
                 className="form-control"
@@ -234,12 +339,35 @@ export const JournalistSubmit = () => {
             </div>
 
             <div className="d-flex justify-content-between">
-              <button type="button" className="btn btn-secondary" onClick={handleSaveDraft}>
+              {news.status === "draft" && (
+                <>
+                  <button type="button" className="btn btn-info" onClick={handleSaveDraft}>
+                    <i className="fas fa-save" /> Save Changes
+                  </button>
+                  <button type="submit" className="btn btn-danger" disabled={uploading} onClick={() => { onSubmit(watch(), "inProgress") }}>
+                    <i className="fas fa-paper-plane" /> {uploading ? 'Submitting...' : 'Submit'}
+                  </button>
+                </>
+              )}
+              {news.status === "inProgress" && (
+                <>
+                  <button type="button" className="btn btn-secondary" onClick={handleSaveDraft}>
+                    <i className="fas fa-file-alt" /> Save as Draft
+                  </button>
+                  <button type="submit" className="btn btn-info" disabled={uploading} onClick={() => { onSubmit(watch(), "inProgress") }}>
+                    <i className="fas fa-save" /> Save Changes
+                  </button>
+                  <button type="button" className="btn btn-success" onClick={handleApprove}>
+                    <i className="fas fa-check-circle" /> Approve
+                  </button>
+                </>
+              )}
+              {/* <button type="button" className="btn btn-secondary" onClick={handleSaveDraft}>
                 <i className="fas fa-file-alt" /> Save as Draft
               </button>
-              <button type="submit" className="btn btn-danger" disabled={uploading}>
+              <button type="submit" className="btn btn-danger" disabled={uploading} onClick={() => { onSubmit(watch(), "inProgress") }}>
                 <i className="fas fa-paper-plane" /> {uploading ? 'Submitting...' : 'Submit'}
-              </button>
+              </button> */}
             </div>
           </form>
         </div>

@@ -27,7 +27,7 @@ export const JournalistSingleNews = () => {
             setContent(response.data.content)
             setImages(response.data.images || [])
             setShowEditForm(searchParams.get("edit") === "true" ? true : false)
-            setShowRejectForm(searchParams.get("reject_form") === "true" ? true : false)
+            // setShowRejectForm(searchParams.get("reject_form") === "true" ? true : false)
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }
@@ -39,6 +39,7 @@ export const JournalistSingleNews = () => {
 
     useEffect(() => {
         console.log(news)
+        console.log(news.isBreaking)
     }, [news])
 
     const handleDelete = async () => {
@@ -49,9 +50,31 @@ export const JournalistSingleNews = () => {
         }
     };
 
+    const handleApprove = async () => {
+        try {
+            await axios.patch(`http://127.0.0.1:8000/news/approve/${id}`);
+            alert("News Published!");
+            navigate('/journalistNewsManage'); // Redirect to News Management Page
+        } catch (error) {
+            console.error("Error Publishing news:", error.response?.data || error.message);
+            alert("Failed to Published news.");
+        }
+    };
+
+    const handleSubmit = async () => {
+        try {
+            await axios.patch(`http://127.0.0.1:8000/news/submit/${id}`);
+            alert("News Submitted!");
+            navigate('/journalistNewsManage');
+        } catch (error) {
+            console.error("Error Submiting news:", error.response?.data || error.message);
+            alert("Failed to Submit news.");
+        }
+    };
+
     const handleUpdate = async () => {
         try {
-            await axios.put("http://127.0.0.1:8000/news/update/", {
+            await axios.put("http://127.0.0.1:8000/news/update/short/", {
                 id: id,
                 title: title || undefined,
                 content: content || undefined,
@@ -65,6 +88,10 @@ export const JournalistSingleNews = () => {
             alert("Failed to update news.");
         }
     };
+
+    const handleEdit = (newsId) => {
+        navigate(`/journeditw/${newsId}`); // Redirect to edit page
+    }
 
     const toggleSelection = (img) => {
         setSelectedImages((prevSelected) =>
@@ -99,19 +126,60 @@ export const JournalistSingleNews = () => {
                     )}
 
                 </div>
-                <p className="lead">
+                {/* <p className="lead">
                     {news.content}
-                </p>
+                </p> */}
+                <div style={{ fontSize: "24px", margin: "15px 0px" }}>
+                    <strong>News Content :</strong>
+                </div>
+
+                {news?.content?.split('\n').map((para, index) => (
+                    <p className="lead" key={index}>{para}</p>
+                ))}
+
+                <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                    <strong>State :</strong><span className="lead"> {news.state?.name}</span>
+                </div>
+                <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                    <strong>City :</strong><span className="lead"> {news.city?.name}</span>
+                </div>
+                <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                    <strong>Category :</strong><span className="lead"> {news.category}</span>
+                </div>
+                <div style={{ fontSize: "21px", margin: "4px 0px", marginBottom: "20px" }}>
+                    <strong>Breaking :</strong><span className="lead"> {news?.isBreaking ? "Yes" : "No"}</span>
+                </div>
+                {news.status === "rejected" && news.rejectReason && (
+                    <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                        <strong style={{ color: "red" }}>Reject Reason :</strong><span className="lead"> {news.rejectReason}</span>
+                    </div>
+                )}
+                {/* Desktop Buttons */}
+
                 {/* Responsive Buttons */}
                 {news.status !== "published" &&
                     <div className="d-flex flex-column flex-md-row gap-2">
-                        <button className="btn btn-secondary mx-1 mb-1"  onClick={() => setShowEditForm(!showEditForm)}>
+                        <button className="btn btn-secondary mx-1 mb-1" onClick={() => setShowEditForm(!showEditForm)}>
                             <i className="fas fa-edit" /> Edit
                         </button>
                         <button className="btn btn-danger mx-1 mb-1" onClick={handleDelete}>
                             <i className="fas fa-trash" /> Delete
                         </button>
-
+                        <button className="btn btn-info mx-1 mb-1" onClick={() => handleEdit(id)}>
+                            <i className="fas fa-edit" /> Full Edit
+                        </button>
+                        {
+                            news.status === "draft" &&
+                            <button className="btn btn-primary mx-1 mb-1" onClick={handleSubmit}>
+                                <i className="fas fa-paper-plane" /> Submit
+                            </button>
+                        }
+                        {
+                            news.status === "inProgress" &&
+                            <button className="btn btn-success mx-1 mb-1" onClick={handleApprove}>
+                                <i className="fas fa-check" /> Publish
+                            </button>
+                        }
                     </div>
                 }
             </div>
@@ -180,6 +248,11 @@ export const JournalistSingleNews = () => {
             <div className="text-center mt-4">
                 <Link to="/journalistNewsManage" className="btn btn-outline-dark">
                     <i className="fas fa-arrow-left" /> Back to News Management
+                </Link>
+            </div>
+            <div className="text-center mt-4">
+                <Link to="/journdash" className="btn btn-outline-dark">
+                    <i className="fas fa-arrow-left" /> Back to Dashboard
                 </Link>
             </div>
         </div>

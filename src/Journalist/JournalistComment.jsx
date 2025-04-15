@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 export const JournalistComment = () => {
     const [commentVisibility, setCommentVisibility] = useState({});
@@ -8,6 +9,7 @@ export const JournalistComment = () => {
     const [articlesData, setArticlesData] = useState([]);
     const [replyText, setReplyText] = useState({});
     const id = "67d03086eeb4bbc43d6ec3a5";
+    const { articleId, commentId } = useParams(); 
 
     const fetchComments = async () => {
         try {
@@ -54,6 +56,16 @@ export const JournalistComment = () => {
     useEffect(() => {
         fetchComments();
     }, []);
+
+    useEffect(() => {
+        if (articlesData.length && articleId) {
+            setCommentVisibility((prev) => ({ ...prev, [articleId]: true }));
+            if (commentId) {
+                setCommentVisibility((prev) => ({ ...prev, [commentId]: true }));
+                setReplyVisibility((prev) => ({ ...prev, [commentId]: true }));
+            }
+        }
+    }, [articlesData, articleId, commentId]);
 
     return (
         <div className="container journ-container shadow-lg">

@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { FormatDate } from "../components/FormatDate"
 import { GetStatusClass } from '../utils/getStatusClass';
+import { useNavigate } from 'react-router-dom';
 
 
 export const JournalistDash = () => {
@@ -12,6 +13,7 @@ export const JournalistDash = () => {
         total_views: 0,
     });
     const id = "67d03086eeb4bbc43d6ec3a5"
+    const navigate = useNavigate();
 
     const [recentNews, setRecentNews] = useState([]);
     const [recentComments, setRecentComments] = useState([]);
@@ -40,6 +42,14 @@ export const JournalistDash = () => {
         } catch (error) {
             console.error("Error fetching recent data:", error);
         }
+    };
+
+    const handleRowClick = (id) => {
+        navigate(`/journsinglenews/${id}`);
+    }
+
+    const handleReplyClick = (articleId, commentId) => {
+        navigate(`/comments/${articleId}/${commentId}`);
     };
 
     useEffect(() => {
@@ -102,7 +112,7 @@ export const JournalistDash = () => {
                     <tbody>
                         {
                             recentNews.map((news, index) => (
-                                <tr key={index}>
+                                <tr key={index} onClick={() => handleRowClick(news._id)} style={{ cursor: 'pointer' }}>
                                     <td>{news.title}</td>
                                     <td>{FormatDate(news.news_date)}</td>
                                     <td><span className={`badge ${GetStatusClass(news.status)}`}>{news.status}</span></td>
@@ -127,13 +137,13 @@ export const JournalistDash = () => {
                     <tbody>
                         {recentComments.map((com, index) => (
                             <tr key={index}>
-                                <td>{com.comment_text.slice(0,35)}...</td>
+                                <td>{com.comment_text.slice(0, 35)}...</td>
                                 <td>{com.news?.title}</td>
                                 <td>{FormatDate(com.created_at)}</td>
-                                <td><button className="btn btn-primary btn-sm">Reply</button></td>
+                                <td><button className="btn btn-primary btn-sm" onClick={()=>handleReplyClick(com.newsId,com._id)}>Reply</button></td>
                             </tr>
                         ))}
-                        
+
                     </tbody>
                 </table>
             </div>

@@ -30,6 +30,8 @@ import { CitizenNav } from './Citizen/CitizenNav'
 import { AdminSingleNews } from './admin/AdminSingleNews'
 import { AdminSingleUser } from './admin/AdminSingleUser'
 import { JournalistSingleNews } from './Journalist/JournalistSingleNews'
+import { JournEditq } from './Journalist/JournEditq'
+import { JournEditw } from './Journalist/JournEditw'
 
 
 // import './App.css'
@@ -56,18 +58,18 @@ function App() {
     navigate("/journdash")
   }
 
-  const handlerole2 = () => {
-    setUserRole("citizen")
-    setIsAuthenticated(true)
-    setShowNavbar(false)
-    navigate("/citizendash")
-  }
+  // const handlerole2 = () => {
+  //   setUserRole("citizen")
+  //   setIsAuthenticated(true)
+  //   setShowNavbar(false)
+  //   navigate("/citizendash")
+  // }
 
   return (
     <>
       <button onClick={handlerole}>Click</button>
       <button onClick={handlerole1}>Click1</button>
-      <button onClick={handlerole2}>Click2</button>
+      {/* <button onClick={handlerole2}>Click2</button> */}
       {showTopbar && <Topbar />}
       {showNavbar && <Navbar />}
       
@@ -88,7 +90,8 @@ function App() {
         <Route path="/adminsingle/:id" element={<AdminSingleNews/>} />
         <Route path="/adminsingleuser/:id" element={<AdminSingleUser/>} />
 
-        <Route path="/journsinglenews/:id" element={<JournalistSingleNews/>} />
+        <Route path='/journSubmit/:id' element={<JournalistSubmit/>} />
+        <Route path='/journeditq' element={<JournEditq/>} />
 
         
 
@@ -106,8 +109,11 @@ function App() {
         <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["journalist"]} userRole={userRole} />}>
           <Route path='/journDash' element={<JournalistDash/>} />
           <Route path='/journSubmit' element={<JournalistSubmit/>} />
+          <Route path="/journsinglenews/:id" element={<JournalistSingleNews/>} />  
           <Route path='/journalistNewsManage' element={<JournalistNewsManage/>} />
           <Route path='/journalistcomment' element={<JournalistComment/>} />
+          <Route path="/comments/:articleId/:commentId?" element={<JournalistComment />} />
+          <Route path='/journeditw/:id' element={<JournEditw/>} />
         </Route>
 
         <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["citizen"]} userRole={userRole} />}>

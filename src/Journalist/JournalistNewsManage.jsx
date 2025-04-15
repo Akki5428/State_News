@@ -51,6 +51,10 @@ export const JournalistNewsManage = () => {
     const handleViewClick = (newsId, edit) => {
         navigate(`/journsinglenews/${newsId}?edit=${edit}`); // Replace with your actual route
     };
+    
+    const handleEdit = (newsId) => {
+        navigate(`/journSubmit/${newsId}`); // Replace with your actual route
+    };
 
     const handleRejection = (newsId, reject) => {
         navigate(`/adminsingle/${newsId}?reject_form=${reject}`); // Replace with your actual route
@@ -117,6 +121,9 @@ export const JournalistNewsManage = () => {
                                             <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id, false)}>
                                                 <i className="fas fa-eye" />
                                             </button>
+                                            {/* <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleEdit(n._id)}>
+                                                <i className="fas fa-edit" />
+                                            </button> */}
                                         </div>
                                     }
                                     {(n.status !== "published") &&
