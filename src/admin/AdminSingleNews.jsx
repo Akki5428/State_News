@@ -130,16 +130,44 @@ export const AdminSingleNews = () => {
                     )}
 
                 </div>
-                <p className="lead">
+                {/* <p className="lead">
                     {news.content}
-                </p>
+                </p> */}
+                <div style={{ fontSize: "24px", margin: "15px 0px" }}>
+                    <strong>News Content :</strong>
+                </div>
+
+                {news?.content?.split('\n').map((para, index) => (
+                    <p className="lead" key={index}>{para}</p>
+                ))}
+
+                <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                    <strong>State :</strong><span className="lead"> {news.state?.name}</span>
+                </div>
+                <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                    <strong>City :</strong><span className="lead"> {news.city?.name}</span>
+                </div>
+                <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                    <strong>Category :</strong><span className="lead"> {news.category}</span>
+                </div>
+                <div style={{ fontSize: "21px", margin: "4px 0px", marginBottom: "20px" }}>
+                    <strong>Breaking :</strong><span className="lead"> {news?.isBreaking ? "Yes" : "No"}</span>
+                </div>
+                {news.status === "rejected" && news.rejectReason && (
+                    <div style={{ fontSize: "21px", margin: "4px 0px" }}>
+                        <strong style={{ color: "red" }}>Reject Reason :</strong><span className="lead"> {news.rejectReason}</span>
+                    </div>
+                )}
                 {/* Responsive Buttons */}
                 {news.status === "published" &&
                     <div className="d-flex flex-column flex-md-row mt-4">
-                        <button className="btn btn-primary mx-1 mb-1">
+                        <button className="btn btn-secondary mx-1 mb-1" onClick={() => setShowEditForm(!showEditForm)}>
                             <i className="fas fa-edit" /> Edit
                         </button>
-                        <button className="btn btn-secondary mx-1 mb-1" onClick={handleDelete}>
+                        <button className="btn btn-info mx-1 mb-1" >
+                            <i className="fas fa-edit" /> Full Edit
+                        </button>
+                        <button className="btn btn-primary mx-1 mb-1" onClick={handleDelete}>
                             <i className="fas fa-trash" /> Delete
                         </button>
                     </div>
@@ -154,6 +182,9 @@ export const AdminSingleNews = () => {
                         </button>
                         <button className="btn btn-secondary mx-1 mb-1" style={{ width: '120px' }} onClick={() => setShowEditForm(!showEditForm)}>
                             <i className="fas fa-edit" /> Edit
+                        </button>
+                        <button className="btn btn-info mx-1 mb-1" >
+                            <i className="fas fa-edit" /> Full Edit
                         </button>
 
                     </div>

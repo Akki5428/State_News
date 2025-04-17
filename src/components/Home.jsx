@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../css/style.css'
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export const Home = () => {
     const [breakingNews, setBreakingNews] = useState([]);
@@ -14,8 +15,9 @@ export const Home = () => {
             const response = await axios.get("http://127.0.0.1:8000/news/breaking/");
             // const sortedNews = response.data.sort((a, b) => new Date(b.news_date) - new Date(a.news_date));
             $(".carousel-item-3").trigger("destroy.owl.carousel");
+            $(".carousel-item-1").trigger("destroy.owl.carousel");
             // setBreakingNews(sortedNews.slice(0, 5)); // Get the latest 5 news articles
-            setBreakingNews(response.data.slice(0, 5)); // Get the latest 5 news articles   
+            setBreakingNews(response.data.slice(0, 8)); // Get the latest 5 news articles   
 
             const res = await axios.get("http://127.0.0.1:8000/news/trending/");
             // const sortNews = res.data.sort((a, b) => new Date(b.news_date) - new Date(a.news_date));
@@ -32,6 +34,7 @@ export const Home = () => {
             setPopularNews(resp.data.slice(0, 6)); // Get the latest 6 news articles
             setTimeout(initOwlCarousel, 500);
             setTimeout(initOwlCarouselTre, 500);
+            setTimeout(initOwlCarouselsing, 500);
 
         } catch (error) {
             console.error("Error fetching news:", error);
@@ -100,6 +103,24 @@ export const Home = () => {
         console.log("✅ Owl Carousel reinitialized");
     };
 
+    const initOwlCarouselsing = () => {
+        $(".carousel-item-1").owlCarousel("destroy"); // Destroy old instance
+        $(".carousel-item-1").owlCarousel({
+            autoplay: true,
+            smartSpeed: 1500,
+            items: 1,
+            dots: false,
+            loop: true,
+            nav: true,
+            navText: [
+                '<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+            ]
+        });
+        console.log("✅ Owl Carousel reinitialized");
+    };
+
+
 
 
     return (
@@ -109,7 +130,7 @@ export const Home = () => {
                 <div className="container">
                     <div className="owl-carousel owl-carousel-2 carousel-item-3 position-relative">
                         {breakingNews.length > 0 ? (
-                            breakingNews.map((item, index) => (
+                            breakingNews.slice(0, 5).map((item, index) => (
                                 <div className="d-flex" key={index}>
                                     {/* <img
                                     src={item.image || "/img/default-news.jpg"}
@@ -123,11 +144,17 @@ export const Home = () => {
                                     />
                                     <div
                                         className="d-flex align-items-center bg-light px-3"
-                                        style={{ height: 80 }}
+                                        style={{
+                                            height: 80,
+                                            width: 250, // fixed width
+                                            overflow: "hidden",
+                                            display: "flex",
+                                            alignItems: "center"
+                                        }}
                                     >
-                                        <a className="text-secondary font-weight-semi-bold" href={item.url}>
+                                        <Link className="text-secondary font-weight-semi-bold" to={item.url} >
                                             {item.title}
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
                             ))
@@ -145,7 +172,37 @@ export const Home = () => {
                     <div className="row">
                         <div className="col-lg-8">
                             <div className="owl-carousel owl-carousel-2 carousel-item-1 position-relative mb-3 mb-lg-0">
-                                <div
+                                {breakingNews.length > 0 ? (
+                                    breakingNews.slice(5, 7).map((item, index) => (
+                                        <div key={index}
+                                            className="position-relative overflow-hidden"
+                                            style={{ height: 435 }}
+                                        >
+                                            <img
+                                                className="img-fluid h-100"
+                                                src="/img/news-700x435-1.jpg"
+                                                style={{ objectFit: "cover" }}
+                                            />
+                                            <div className="overlay">
+                                                <div className="mb-1">
+                                                    <a className="text-white" href="">
+                                                        {item.category}
+                                                    </a>
+                                                    <span className="px-2 text-white">/</span>
+                                                    <a className="text-white" href="">
+                                                        January 01, 2045
+                                                    </a>
+                                                </div>
+                                                <a className="h2 m-0 text-white font-weight-bold" href="">
+                                                    {item.title}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>Loading...</p>
+                                )}
+                                {/* <div
                                     className="position-relative overflow-hidden"
                                     style={{ height: 435 }}
                                 >
@@ -194,7 +251,7 @@ export const Home = () => {
                                             sea sed
                                         </a>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                         <div className="col-lg-4">
@@ -300,7 +357,13 @@ export const Home = () => {
                                             <span className="px-1 text-white">/</span>
                                             <a className="text-white" href="#">{new Date(news.news_date).toDateString()}</a>
                                         </div>
-                                        <a className="h4 m-0 text-white" href="#">{news.title}</a>
+                                        <a className="h4 m-0 text-white" style={{
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 3,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }} href="#">{news.title}</a>
                                     </div>
                                 </div>
                             ))
@@ -335,15 +398,21 @@ export const Home = () => {
                                 {/* First 2 news items with large images and descriptions */}
                                 {popularNews.slice(0, 2).map((news) => (
                                     <div className="col-lg-6" key={news.id}>
-                                        <div className="position-relative mb-3">
-                                            <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover" }} alt='News' />
-                                            <div className="overlay position-relative bg-light">
+                                        <div className="position-relative mb-3" style={{ height: 360 }}>
+                                            <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover", height: 200 }} alt='News' />
+                                            <div className="bg-light p-3" style={{ height: 160 }}>
                                                 <div className="mb-2" style={{ fontSize: 14 }}>
                                                     <a href="">{news.category}</a>
                                                     <span className="px-1">/</span>
                                                     <span>{news.date}</span>
                                                 </div>
-                                                <a className="h4" href="">{news.title}</a>
+                                                <a className="h4" href="" style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 3,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>{news.title}</a>
                                                 <p className="m-0">{news.content.slice(0, 50)}...</p>
                                             </div>
                                         </div>

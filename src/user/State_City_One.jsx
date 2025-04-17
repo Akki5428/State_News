@@ -121,10 +121,10 @@ export const State_City_One = () => {
                                                     className="img-fluid w-100"
                                                     // src={item.image || "img/news-500x280-2.jpg?v=1"}
                                                     src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
-                                                    style={{ objectFit: "cover" }}
+                                                    style={{ objectFit: "cover" , height: 220}}
                                                     alt="News"
                                                 />
-                                                <div className="overlay position-relative bg-light">
+                                                <div className="overlay position-relative bg-light" style={{ height: 300 }}>
                                                     <div className="mb-2" style={{ fontSize: 14 }}>
                                                         <a href="">{item.state.name || "Gujarat"}</a>
                                                         <span className="px-1">/</span>
@@ -137,10 +137,22 @@ export const State_City_One = () => {
                                                         )}
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
-                                                    <a className="h4" href="">
+                                                    <a className="h4" href="" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>
                                                         {item.title || "Est stet amet ipsum stet clita rebum duo"}
                                                     </a>
-                                                    <p className="m-0">
+                                                    <p className="m-0" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 6,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>
                                                         {item.content ||
                                                             "Rebum dolore duo et vero ipsum clita, est ea sed duo diam ipsum, clita at justo, lorem amet vero eos sed sit..."}
                                                     </p>
@@ -253,7 +265,7 @@ export const State_City_One = () => {
 
                             </div>
 
-                            <div className="row">
+                            {/* <div className="row">
                                 <div className="col-12">
                                     <nav aria-label="Page navigation">
                                         <ul className="pagination justify-content-center">
@@ -293,7 +305,7 @@ export const State_City_One = () => {
                                         </ul>
                                     </nav>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="col-lg-4 pt-3 pt-lg-0">

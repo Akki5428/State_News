@@ -93,21 +93,29 @@ export const AdminSingleUser = () => {
 
                 {/* Profile Image */}
                 <div className="text-center">
-                    <img
+                    {/* <img
                         src="https://via.placeholder.com/150"
                         className="rounded-circle img-thumbnail mb-3"
                         alt="User Profile"
                         width="150"
-                    />
+                    /> */}
                 </div>
 
                 {/* User Information */}
                 <ul className="list-unstyled">
                     <li><strong>Role:</strong> {user?.role?.role}</li>
-                    <li><strong>User ID:</strong> JRN-12345</li>
-                    <li><strong>Phone:</strong> +91 9876543210</li>
+                    <li><strong>Username:</strong> {user?.firstName}123</li>
+                    {
+                        user?.role?.role !== "reader" &&  
+                        <>
+                            <li><strong>PressId:</strong> {user?.pressId}</li>
+                            <li><strong>Organization Name:</strong> {user?.organization}</li>
+                        </>
+                    }
+                    
+                    {/* <li><strong>Phone:</strong> </li>
                     <li><strong>Address:</strong> New York, USA</li>
-                    <li><strong>Documents Submitted:</strong> Yes ✅</li>
+                    <li><strong>Documents Submitted:</strong> Yes ✅</li> */}
                 </ul>
 
                 <div className="d-flex flex-column flex-md-row gap-2 mt-4">

@@ -1,10 +1,10 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import {FormatDate} from '../components/FormatDate'
+import { FormatDate } from '../components/FormatDate'
 
 export const Categories = () => {
     const [catNews, setCatNews] = useState([])
-    const [trendingNews,setTrendingNews] = useState([])
+    const [trendingNews, setTrendingNews] = useState([])
 
     const fetchNews = async () => {
         const news = await axios.get("http://127.0.0.1:8000/news/category/")
@@ -65,15 +65,27 @@ export const Categories = () => {
                                                     <img
                                                         className="img-fluid w-100"
                                                         src="img/news-500x280-6.jpg"
-                                                        style={{ objectFit: "cover" }}
+                                                        style={{ objectFit: "cover", height: 150 }}
                                                     />
-                                                    <div className="overlay position-relative bg-light">
+                                                    <div className="overlay position-relative bg-light" style={{ height: 170 }}>
                                                         <div className="mb-2" style={{ fontSize: 13 }}>
                                                             <a href="">{news.category}</a>
                                                             <span className="px-1">/</span>
-                                                            <span>{FormatDate(news.news_date)}</span>
+                                                            <span style={{
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 1,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis'
+                                                            }}>{FormatDate(news.news_date)}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="">
+                                                        <a className="h4 m-0" href="" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>
                                                             {news.title}
                                                         </a>
                                                     </div>
@@ -84,8 +96,8 @@ export const Categories = () => {
                                     )
                                 }
 
-                                
-                                <div className="position-relative">
+
+                                {/* <div className="position-relative">
                                     <img
                                         className="img-fluid w-100"
                                         src="img/news-500x280-4.jpg"
@@ -101,7 +113,7 @@ export const Categories = () => {
                                             Sanctus amet sed ipsum lorem
                                         </a>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
@@ -110,25 +122,37 @@ export const Categories = () => {
                                 <h3 className="m-0">Sports</h3>
                             </div>
                             <div className="owl-carousel owl-carousel-3 carousel-item-2 position-relative">
-                            {
+                                {
                                     catNews.length > 0 ? (
                                         catNews
                                             .filter(news => news.category === "Sports") // Filter only Entertainment category
                                             .slice(0, 4) // Take the first 4
                                             .map((news, index) => (
-                                                <div className="position-relative" key={index}> {/* Using index as key */}
+                                                <div className="position-relative" key={index} > {/* Using index as key */}
                                                     <img
                                                         className="img-fluid w-100"
                                                         src="img/news-500x280-6.jpg"
-                                                        style={{ objectFit: "cover" }}
+                                                        style={{ objectFit: "cover", height: 150 }}
                                                     />
-                                                    <div className="overlay position-relative bg-light">
+                                                    <div className="overlay position-relative bg-light" style={{ height: 170 }}>
                                                         <div className="mb-2" style={{ fontSize: 13 }}>
                                                             <a href="">{news.category}</a>
                                                             <span className="px-1">/</span>
-                                                            <span>{news.news_date}</span>
+                                                            <span style={{
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 2,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis'
+                                                            }}>{news.news_date}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="">
+                                                        <a className="h4 m-0" href="" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>
                                                             {news.title}
                                                         </a>
                                                     </div>
@@ -171,7 +195,7 @@ export const Categories = () => {
                                 <h3 className="m-0">Business</h3>
                             </div>
                             <div className="owl-carousel owl-carousel-3 carousel-item-2 position-relative">
-                            {
+                                {
                                     catNews.length > 0 ? (
                                         catNews
                                             .filter(news => news.category === "Business") // Filter only Entertainment category
@@ -181,15 +205,27 @@ export const Categories = () => {
                                                     <img
                                                         className="img-fluid w-100"
                                                         src="img/news-500x280-6.jpg"
-                                                        style={{ objectFit: "cover" }}
+                                                        style={{ objectFit: "cover" ,height: 150}}
                                                     />
-                                                    <div className="overlay position-relative bg-light">
+                                                    <div className="overlay position-relative bg-light" style={{ height: 170 }}>
                                                         <div className="mb-2" style={{ fontSize: 13 }}>
                                                             <a href="">{news.category}</a>
                                                             <span className="px-1">/</span>
-                                                            <span>{FormatDate(news.news_date)}</span>
+                                                            <span style={{
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 2,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis'
+                                                            }}>{FormatDate(news.news_date)}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="">
+                                                        <a className="h4 m-0" href="" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>
                                                             {news.title}
                                                         </a>
                                                     </div>
@@ -236,13 +272,13 @@ export const Categories = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="col-lg-6 py-3">
                             <div className="bg-light py-2 px-4 mb-3">
                                 <h3 className="m-0">Technology</h3>
                             </div>
                             <div className="owl-carousel owl-carousel-3 carousel-item-2 position-relative">
-                            {
+                                {
                                     catNews.length > 0 ? (
                                         catNews
                                             .filter(news => news.category === "Technology") // Filter only Entertainment category
@@ -252,15 +288,27 @@ export const Categories = () => {
                                                     <img
                                                         className="img-fluid w-100"
                                                         src="img/news-500x280-6.jpg"
-                                                        style={{ objectFit: "cover" }}
+                                                        style={{ objectFit: "cover" ,height: 150}}
                                                     />
-                                                    <div className="overlay position-relative bg-light">
+                                                    <div className="overlay position-relative bg-light" height={{height: 170}}>
                                                         <div className="mb-2" style={{ fontSize: 13 }}>
                                                             <a href="">{news.category}</a>
                                                             <span className="px-1">/</span>
-                                                            <span>{FormatDate(news.news_date)}</span>
+                                                            <span style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>{FormatDate(news.news_date)}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="">
+                                                        <a className="h4 m-0" href="" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>
                                                             {news.title}
                                                         </a>
                                                     </div>
@@ -334,8 +382,8 @@ export const Categories = () => {
                                 {trendingNews.slice(0, 2).map((news) => (
                                     <div className="col-lg-6" key={news.id}>
                                         <div className="position-relative mb-3">
-                                            <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover" }} alt='News' />
-                                            <div className="overlay position-relative bg-light">
+                                            <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover" , height:220 }} alt='News' />
+                                            <div className="overlay position-relative bg-light" style={{ height: 200 }}>
                                                 <div className="mb-2" style={{ fontSize: 14 }}>
                                                     <a href="">{news.category}</a>
                                                     <span className="px-1">/</span>

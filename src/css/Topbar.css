@@ -10,3 +10,9 @@
     from { box-shadow: 0 0 5px red; }
     to { box-shadow: 0 0 15px red; }
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  

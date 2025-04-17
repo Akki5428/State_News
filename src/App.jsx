@@ -32,6 +32,7 @@ import { AdminSingleUser } from './admin/AdminSingleUser'
 import { JournalistSingleNews } from './Journalist/JournalistSingleNews'
 import { JournEditq } from './Journalist/JournEditq'
 import { JournEditw } from './Journalist/JournEditw'
+import { AjTopbar } from './components/AjTopbar'
 
 
 // import './App.css'
@@ -41,6 +42,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [userRole, setUserRole] = useState()
   const [showTopbar, setShowTopbar] = useState(true)
+  const [showAjTopbar, setShowAjTopbar] = useState(false)
 
   const navigate = useNavigate()
 
@@ -48,6 +50,8 @@ function App() {
     setUserRole("admin")
     setIsAuthenticated(true)
     setShowNavbar(false)
+    setShowTopbar(false)
+    setShowAjTopbar(true)
     navigate("/admindash")
   }
 
@@ -55,6 +59,8 @@ function App() {
     setUserRole("journalist")
     setIsAuthenticated(true)
     setShowNavbar(false)
+    setShowTopbar(false)
+    setShowAjTopbar(true)
     navigate("/journdash")
   }
 
@@ -72,6 +78,7 @@ function App() {
       {/* <button onClick={handlerole2}>Click2</button> */}
       {showTopbar && <Topbar />}
       {showNavbar && <Navbar />}
+      {showAjTopbar && <AjTopbar/>}
       
       {userRole=="admin" && <AdminNavbar/>}
       {userRole=="journalist" && <JournalistNavbar/>}

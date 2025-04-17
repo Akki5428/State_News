@@ -303,7 +303,13 @@ export const State_City = () => {
                                               <span className="px-1 text-white">/</span>
                                               <a className="text-white" href="#">{new Date(news.news_date).toDateString()}</a>
                                           </div>
-                                          <a className="h4 m-0 text-white" href="#">{news.title}</a>
+                                          <a className="h4 m-0 text-white" href="#" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 3,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>{news.title}</a>
                                       </div>
                                   </div>
                               ))
@@ -339,15 +345,27 @@ export const State_City = () => {
                                   {popularNews.slice(0, 2).map((news) => (
                                       <div className="col-lg-6" key={news.id}>
                                           <div className="position-relative mb-3">
-                                              <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover" }} alt='News' />
-                                              <div className="overlay position-relative bg-light">
+                                              <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover" , height:170}} alt='News' />
+                                              <div className="overlay position-relative bg-light" style={{ height: 170 }}>
                                                   <div className="mb-2" style={{ fontSize: 14 }}>
                                                       <a href="">{news.state.name}</a>
                                                       <span className="px-1">/</span>
                                                       <span>{FormatDate(news.news_date)}</span>
                                                   </div>
-                                                  <a className="h4" href="">{news.title}</a>
-                                                  <p className="m-0">{news.content.slice(0, 50)}...</p>
+                                                  <a className="h4" href="" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>{news.title}</a>
+                                                  <p className="m-0" style={{
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 3,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}>{news.content}</p>
                                               </div>
                                           </div>
                                       </div>
