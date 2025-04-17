@@ -175,7 +175,7 @@ export const JournalistSingleNews = () => {
                             </button>
                         }
                         {
-                            news.status === "inProgress" &&
+                            (news.status === "inProgress" && news.user?.role?.role === "journalist") &&
                             <button className="btn btn-success mx-1 mb-1" onClick={handleApprove}>
                                 <i className="fas fa-check" /> Publish
                             </button>

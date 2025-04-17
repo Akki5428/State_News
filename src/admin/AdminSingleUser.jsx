@@ -221,6 +221,11 @@ export const AdminSingleUser = () => {
                     <i className="fas fa-arrow-left" /> Back to User List
                 </Link>
             </div>
+            <div className="text-center mt-4">
+                <Link to="/admindash" className="btn btn-outline-dark">
+                    <i className="fas fa-arrow-left" /> Back to Dashboard
+                </Link>
+            </div>
         </div>
     );
 }

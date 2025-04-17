@@ -87,8 +87,7 @@ function App() {
         <Route path="/single/:type/:newsId" element={<SingleNews/>} />
         <Route path="/state/:type/:name" element={<State_City_One/>} />
 
-        <Route path="/adminsingle/:id" element={<AdminSingleNews/>} />
-        <Route path="/adminsingleuser/:id" element={<AdminSingleUser/>} />
+        
 
         <Route path='/journSubmit/:id' element={<JournalistSubmit/>} />
         <Route path='/journeditq' element={<JournEditq/>} />
@@ -104,6 +103,8 @@ function App() {
           <Route path='/admindash' element={<AdminDashboard/>}></Route>
           <Route path='/adminnewsmanage' element={<AdminNewsManage/>}></Route>
           <Route path='/adminusermanage' element={<AdminUserManage/>}></Route>
+          <Route path="/adminsingleuser/:id" element={<AdminSingleUser/>} />
+          <Route path="/adminsingle/:id" element={<AdminSingleNews/>} />
         </Route>
 
         <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["journalist"]} userRole={userRole} />}>

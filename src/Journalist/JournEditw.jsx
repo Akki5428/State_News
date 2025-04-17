@@ -155,10 +155,10 @@ export const JournEditw = () => {
           status: "draft",
         };
         console.log("Hello")
-        if(news.status === "inProgress")
+        if (news.status === "inProgress")
           mess = "News saved as draft!";
         else
-          mess = "Changes Saved!";       
+          mess = "Changes Saved!";
       }
       else {
         payload = {
@@ -168,10 +168,10 @@ export const JournEditw = () => {
           status: "inProgress",
         };
         console.log("Hi")
-        if(news.status === "inProgress")
+        if (news.status === "inProgress")
           mess = "Changes Saved!";
         else
-          mess = "News Submitted!!"; 
+          mess = "News Submitted!!";
       }
 
       try {
@@ -357,9 +357,11 @@ export const JournEditw = () => {
                   <button type="submit" className="btn btn-info" disabled={uploading} onClick={() => { onSubmit(watch(), "inProgress") }}>
                     <i className="fas fa-save" /> Save Changes
                   </button>
-                  <button type="button" className="btn btn-success" onClick={handleApprove}>
-                    <i className="fas fa-check-circle" /> Approve
-                  </button>
+                  {news.user?.role?.role === "journalist" &&
+                    <button type="button" className="btn btn-success" onClick={handleApprove}>
+                      <i className="fas fa-check-circle" /> Approve
+                    </button>
+                  }
                 </>
               )}
               {/* <button type="button" className="btn btn-secondary" onClick={handleSaveDraft}>

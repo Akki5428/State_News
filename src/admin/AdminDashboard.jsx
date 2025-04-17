@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react'
 import '../css/admin.css'
 import axios from 'axios';
 import { GetStatusClass } from '../utils/getStatusClass';
+import { useNavigate } from 'react-router-dom';
 
 export const AdminDashboard = () => {
     const [stats, setStats] = useState({
         total_users: 0,
         total_news: 0,
         pending_news: 0,
-        new_registrations: 0,
+        pending_user: 0,
     });
     const [recentNews, setRecentNews] = useState([]);
     const [recentUsers, setRecentUsers] = useState([]);
+    const navigate = useNavigate()
 
     // Fetch dashboard stats from backend
     const fetchStats = async () => {
@@ -38,6 +40,14 @@ export const AdminDashboard = () => {
             console.error("Error fetching recent data:", error);
         }
     };
+
+    const handleNewsClick = (id) => {
+        navigate(`/adminsingle/${id}`);
+    }
+
+    const handleUserClick = (id) => {
+        navigate(`/adminsingleuser/${id}`);
+    }
 
 
     useEffect(() => {
@@ -73,7 +83,7 @@ export const AdminDashboard = () => {
                     <div className="card h-100 text-center shadow">
                         <div className="card-body d-flex flex-column justify-content-center align-items-center">
                             <i className="fas fa-clock fa-3x text-warning" />
-                            <h5 className="card-title mt-2">Pending Approvals</h5>
+                            <h5 className="card-title mt-2">Pending News</h5>
                             <p className="card-text">{stats.pending_news}</p>
                         </div>
                     </div>
@@ -82,8 +92,8 @@ export const AdminDashboard = () => {
                     <div className="card h-100 text-center shadow">
                         <div className="card-body d-flex flex-column justify-content-center align-items-center">
                             <i className="fas fa-user-plus fa-3x text-danger" />
-                            <h5 className="card-title mt-2">New Registrations</h5>
-                            <p className="card-text">{stats.new_registrations}</p>
+                            <h5 className="card-title mt-2">Pending User</h5>
+                            <p className="card-text">{stats.pending_user}</p>
                         </div>
                     </div>
                 </div>
@@ -104,7 +114,7 @@ export const AdminDashboard = () => {
                     </thead>
                     <tbody>
                         {recentNews.map((news, index) => (
-                            <tr key={index}>
+                            <tr key={index} onClick={() => handleNewsClick(news._id)} style={{ cursor: 'pointer' }}>
                                 <td>{news.title}</td>
                                 <td>{news.user.firstName}</td>
                                 <td>{news.news_date.split("T")[0]}</td>
@@ -150,7 +160,7 @@ export const AdminDashboard = () => {
                     </thead>
                     <tbody>
                         {recentUsers.map((user, index) => (
-                            <tr key={index}>
+                            <tr key={index} onClick={() => handleUserClick(user._id)} style={{ cursor: 'pointer' }}>
                                 <td>{user.firstName}</td>
                                 <td>{user.role.role}</td>
                                 <td>{user.created_at.split("T")[0]}</td>

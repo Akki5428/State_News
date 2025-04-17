@@ -98,6 +98,8 @@ export const AdminNewsManage = () => {
                     </select>
                 </div>
             </div>
+
+
             {/* News Table */}
             <div className="table-responsive">
                 <table className="table table-striped table-hover">
@@ -110,8 +112,13 @@ export const AdminNewsManage = () => {
                             <th>Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        {filteredNews.length > 0 ? filteredNews.map((n, index) => (
+
+                        {filteredNews.length > 0 ? filteredNews.filter(news => {
+                            // If user is a journalist and status is inprogress, exclude it
+                            return !(news.user?.role?.role === "journalist" && news.status === "inProgress");
+                        }).map((n, index) => (
                             <tr key={index}>
                                 <td>{n.title}</td>
                                 <td>{n.user?.firstName || "John Doe"} </td>
@@ -133,7 +140,7 @@ export const AdminNewsManage = () => {
                                             <button className="btn btn-success btn-sm mr-1 mb-1" onClick={() => handleApprove(n._id)}>
                                                 <i className="fas fa-check" />
                                             </button>
-                                            <button className="btn btn-danger btn-sm  mr-1 mb-1" onClick={() => handleRejection(n._id,true)}>
+                                            <button className="btn btn-danger btn-sm  mr-1 mb-1" onClick={() => handleRejection(n._id, true)}>
                                                 <i className="fas fa-times" />
                                             </button>
 
