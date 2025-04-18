@@ -15,7 +15,7 @@ export const SingleNews = () => {
     };
 
     const extractTitle = (paragraph) => {
-        const firstSentence = paragraph.split(". ")[0]; // Get the first sentence
+        const firstSentence = paragraph?.split(". ")[0]; // Get the first sentence
         return firstSentence
     };
 
@@ -137,11 +137,11 @@ export const SingleNews = () => {
                                         </p> */}
                                         {para.length > 2 && <p>{para[2]}</p>}
                                         {/* <h5 className="mb-3">Est dolor lorem et ea</h5> */}
-                                        <img
+                                        {/* <img
                                             className="img-fluid w-50 float-right ml-4 mb-2"
                                             // src="img/news-500x280-2.jpg"
                                             src={`/img/news-500x280-2.jpg?v=${new Date().getTime()}`}
-                                        />
+                                        /> */}
                                         {/* <p>
                                             Diam dolor est labore duo invidunt ipsum clita et, sed et
                                             lorem voluptua tempor invidunt at est sanctus sanctus. Clita

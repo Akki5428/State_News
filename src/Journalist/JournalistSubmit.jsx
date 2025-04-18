@@ -171,8 +171,20 @@ export const JournalistSubmit = () => {
                 <option value="">Select Category</option>
                 <option>Politics</option>
                 <option>Sports</option>
-                <option>Technology</option>
+                <option>LifeStyle</option>
+                <option>Food</option>
+                <option>Business</option>
                 <option>Entertainment</option>
+                <option>Education</option>
+                <option>Fashion</option>
+                <option>Technology</option>
+                <option>Science</option>
+                <option>Environment</option>
+                <option>Finance</option>
+                <option>Health</option>
+                <option>World</option>
+                <option>Travel</option>
+                <option>Culture</option>
               </select>
               {errors.category && <small className="text-danger">{errors.category.message}</small>}
             </div>

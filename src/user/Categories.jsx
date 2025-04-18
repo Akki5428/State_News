@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { FormatDate } from '../components/FormatDate'
+import { Link } from 'react-router-dom'
 
 export const Categories = () => {
     const [catNews, setCatNews] = useState([])
@@ -79,15 +80,15 @@ export const Categories = () => {
                                                                 textOverflow: 'ellipsis'
                                                             }}>{FormatDate(news.news_date)}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="" style={{
+                                                        <Link className="h4 m-0" href="" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>
+                                                        }} to={`/single/category/${news._id}`}>
                                                             {news.title}
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </div>
                                             ))
@@ -146,15 +147,15 @@ export const Categories = () => {
                                                                 textOverflow: 'ellipsis'
                                                             }}>{news.news_date}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="" style={{
+                                                        <Link className="h4 m-0" href="" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>
+                                                        }} to={`/single/category/${news._id}`}>
                                                             {news.title}
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </div>
                                             ))
@@ -219,15 +220,15 @@ export const Categories = () => {
                                                                 textOverflow: 'ellipsis'
                                                             }}>{FormatDate(news.news_date)}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="" style={{
+                                                        <Link className="h4 m-0" href="" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>
+                                                        }} to={`/single/category/${news._id}`}>
                                                             {news.title}
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </div>
                                             ))
@@ -236,7 +237,7 @@ export const Categories = () => {
                                     )
                                 }
 
-                                <div className="position-relative">
+                                {/* <div className="position-relative">
                                     <img
                                         className="img-fluid w-100"
                                         src="img/news-500x280-2.jpg"
@@ -269,7 +270,7 @@ export const Categories = () => {
                                             Sanctus amet sed ipsum lorem
                                         </a>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
@@ -302,15 +303,15 @@ export const Categories = () => {
                                                             textOverflow: 'ellipsis'
                                                         }}>{FormatDate(news.news_date)}</span>
                                                         </div>
-                                                        <a className="h4 m-0" href="" style={{
+                                                        <Link className="h4 m-0" href="" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>
+                                                        }} to={`/single/category/${news._id}`}>
                                                             {news.title}
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </div>
                                             ))
@@ -318,7 +319,7 @@ export const Categories = () => {
                                         <div className="text-center w-100 text-secondary">Loading trending news...</div>
                                     )
                                 }
-                                <div className="position-relative">
+                                {/* <div className="position-relative">
                                     <img
                                         className="img-fluid w-100"
                                         src="img/news-500x280-5.jpg"
@@ -351,7 +352,7 @@ export const Categories = () => {
                                             Sanctus amet sed ipsum lorem
                                         </a>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -389,7 +390,7 @@ export const Categories = () => {
                                                     <span className="px-1">/</span>
                                                     <span>{FormatDate(news.news_date)}</span>
                                                 </div>
-                                                <a className="h4" href="">{news.title}</a>
+                                                <Link className="h4" to={`/single/category/${news._id}`}>{news.title}</Link>
                                                 <p className="m-0">{news.content.slice(0, 50)}...</p>
                                             </div>
                                         </div>
@@ -407,7 +408,7 @@ export const Categories = () => {
                                                     <span className="px-1">/</span>
                                                     <span>{FormatDate(news.news_date)}</span>
                                                 </div>
-                                                <a className="h6 m-0" href="">{news.title}</a>
+                                                <Link className="h6 m-0" to={`/single/category/${news._id}`}>{news.title}</Link>
                                             </div>
                                         </div>
                                     </div>

@@ -123,14 +123,16 @@ export const JournEditw = () => {
   };
 
   const handleApprove = async () => {
-    try {
-      await axios.patch(`http://127.0.0.1:8000/news/approve/${newsId}`);
-      alert("News Published!");
-      navigate('/journalistNewsManage'); // Redirect to News Management Page
-    } catch (error) {
-      console.error("Error Publishing news:", error.response?.data || error.message);
-      alert("Failed to Published news.");
-    }
+    // try {
+    //   await axios.patch(`http://127.0.0.1:8000/news/approve/${newsId}`);
+    //   alert("News Published!");
+    //   navigate('/journalistNewsManage'); // Redirect to News Management Page
+    // } catch (error) {
+    //   console.error("Error Publishing news:", error.response?.data || error.message);
+    //   alert("Failed to Published news.");
+    // }
+    const data = watch();
+    onSubmit(data, "published");
   };
 
   const onSubmit = async (data, status) => {
@@ -159,6 +161,16 @@ export const JournEditw = () => {
           mess = "News saved as draft!";
         else
           mess = "Changes Saved!";
+      }
+      else if(status === "published"){
+        payload = {
+          ...data,
+          images: allImages,
+          id: newsId,
+          status: "published",
+
+        };
+        mess = "News Published!";
       }
       else {
         payload = {
@@ -242,8 +254,20 @@ export const JournEditw = () => {
                 <option value="">Select Category</option>
                 <option>Politics</option>
                 <option>Sports</option>
-                <option>Technology</option>
+                <option>LifeStyle</option>
+                <option>Food</option>
+                <option>Business</option>
                 <option>Entertainment</option>
+                <option>Education</option>
+                <option>Fashion</option>
+                <option>Technology</option>
+                <option>Science</option>
+                <option>Environment</option>
+                <option>Finance</option>
+                <option>Health</option>
+                <option>World</option>
+                <option>Travel</option>
+                <option>Culture</option>
               </select>
               {errors.category && <small className="text-danger">{errors.category.message}</small>}
             </div>

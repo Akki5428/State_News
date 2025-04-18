@@ -146,7 +146,7 @@ export const AdminNewsManage = () => {
 
                                         </div>
                                     }
-                                    {(n.status === "published" || n.status === "rejected") &&
+                                    {(n.status === "published") &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
                                             {/* <button className="btn btn-success btn-sm mr-1 mb-1">
                                         <i className="fas fa-check" />
@@ -161,6 +161,12 @@ export const AdminNewsManage = () => {
                                                 <i className="fas fa-trash" />
                                             </button>
                                         </div>
+                                    }
+                                    {
+                                        n.status === "rejected" &&
+                                        <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id)}>
+                                            <i className="fas fa-eye" />
+                                        </button>
                                     }
 
                                     {/* <div className="d-flex flex-column flex-md-row gap-2">

@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-export const Signup = ({ setShowNavbar ,setShowTopbar}) => {
+export const Signup = ({ setShowNavbar, setShowTopbar }) => {
   useEffect(() => {
     setShowNavbar(false); // Hide navbar when Login is mounted
     setShowTopbar(false); // Hide topbar when Login is mounted
@@ -17,7 +17,11 @@ export const Signup = ({ setShowNavbar ,setShowTopbar}) => {
 
   const navigate = useNavigate()
 
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({ defaultValues: { role_id: '' } })
+
+  const role = watch('role_id');
+  const isJournalist = role === '67cf072ccbd63e6e033ef9e4';
+  const isCitizen = role === '67d12b0041ced2ad826813d1';
 
   const sign_data = async (data) => {
     console.log(data)
@@ -37,8 +41,8 @@ export const Signup = ({ setShowNavbar ,setShowTopbar}) => {
     firstName: { required: "First Name is required", minLength: { value: 3, message: "Minimum 3 characters" }, maxLength: { value: 50, message: "Maximum 50 characters" } },
     lastName: { required: "Last Name is required", minLength: { value: 3, message: "Minimum 3 characters" }, maxLength: { value: 50, message: "Maximum 50 characters" } },
     email: { required: "Email is required", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" } },
-    pressId: { required: "Press ID is required", minLength: { value: 5, message: "Minimum 5 characters" }, maxLength: { value: 20, message: "Maximum 20 characters" } },
-    organization: { required: "Organization is required" },
+    // pressId: { required: "Press ID is required", minLength: { value: 5, message: "Minimum 5 characters" }, maxLength: { value: 20, message: "Maximum 20 characters" } },
+    // organization: { required: "Organization is required" },
     role: { required: "Role is required" },
     password: {
       required: "Password is required",
@@ -46,7 +50,16 @@ export const Signup = ({ setShowNavbar ,setShowTopbar}) => {
       pattern: {
         value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
         message: "Must contain at least 1 letter, 1 number, and 1 special character"
-      }
+      },
+      role_id: { required: 'Role is required' },
+      ...(isJournalist && {
+        pressId: { required: 'Press ID is required', minLength: { value: 5, message: 'Minimum 5 characters' }, maxLength: { value: 20, message: 'Maximum 20 characters' } },
+        organization: { required: 'Organization is required' },
+      }),
+      ...(isCitizen && {
+        proofId: { required: 'Proof ID is required' },
+        workLink: { required: 'Work Link is required', pattern: { value: /^https?:\/\//, message: 'Must be a valid URL' } },
+      }),
     }
 
   }
@@ -86,23 +99,43 @@ export const Signup = ({ setShowNavbar ,setShowTopbar}) => {
                 {errors.password && <p className='error_mes'>*{errors.password.message}</p>}
               </div>
 
-              <div className="input-box">
-                <span className="details">Press ID</span>
-                <input type="text" placeholder="Enter your PressID" {...register("pressId", validationRules.pressId)} />
-                {errors.pressId && <p className='error_mes'>*{errors.pressId.message}</p>}
-              </div>
+              {isJournalist &&
+                <>
+                  <div className="input-box">
+                    <span className="details">Press ID</span>
+                    <input type="text" placeholder="Enter your PressID" {...register("pressId", validationRules.pressId)} />
+                    {errors.pressId && <p className='error_mes'>*{errors.pressId.message}</p>}
+                  </div>
 
-              <div className="input-box">
-                <span className="details">Oragnization Name</span>
-                <input type="text" placeholder="Enter your Org Name"  {...register("organization", validationRules.organization)} />
-                {errors.organization && <p className='error_mes'>*{errors.organization.message}</p>}
-              </div>
+                  <div className="input-box">
+                    <span className="details">Oragnization Name</span>
+                    <input type="text" placeholder="Enter your Org Name"  {...register("organization", validationRules.organization)} />
+                    {errors.organization && <p className='error_mes'>*{errors.organization.message}</p>}
+                  </div>
+                </>
+              }
+
+              {isCitizen && (
+                <>
+                  <div className="input-box">
+                    <span className="details">Proof ID</span>
+                    <input placeholder="Provide proof document link" {...register('proofId', validationRules.proofId)} />
+                    {errors.proofId && <p className="error_mes">* {errors.proofId.message}</p>}
+                  </div>
+                  <div className="input-box">
+                    <span className="details">Work Link</span>
+                    <input placeholder="Link to sample work" {...register('workLink', validationRules.workLink)} />
+                    {errors.workLink && <p className="error_mes">* {errors.workLink.message}</p>}
+                  </div>
+                </>
+              )}
+
             </div>
             <div className="gender-details">
               {/* Radio buttons for gender selection */}
               <input type="radio" name="role_id" id="dot-1" {...register("role_id", validationRules.role)} value="67cf074ecbd63e6e033ef9e6" />
               <input type="radio" name="role_id" id="dot-2" {...register("role_id", validationRules.role)} value="67cf072ccbd63e6e033ef9e4" />
-              <input type="radio" name="role_id" id="dot-3" {...register("role_id", validationRules.role)} value="Citizen Reporter" />
+              <input type="radio" name="role_id" id="dot-3" {...register("role_id", validationRules.role)} value="67d12b0041ced2ad826813d1" />
               <span className="gender-title">Role</span>
               <div className="category">
                 {/* Label for Male */}

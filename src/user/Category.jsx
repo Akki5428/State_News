@@ -109,8 +109,8 @@ export const Category = () => {
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>
-                                                        {item.title || "Est stet amet ipsum stet clita rebum duo"}
+                                                        }} >
+                                                        {item.title || "Est stet amet ipsum stet clita rebum duo"} 
                                                     </Link>
                                                     <p className="m-0" style={{
                                                             display: '-webkit-box',
@@ -205,9 +205,9 @@ export const Category = () => {
                                                         <span className="px-1">/</span>
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
-                                                    <a className="h6 m-0" href="">
+                                                    <Link className="h6 m-0" to={`/single/category/${item._id}`}>
                                                         {item.title || "Lorem ipsum dolor sit amet consec adipis elit"}
-                                                    </a>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>

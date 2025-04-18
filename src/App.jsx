@@ -33,6 +33,7 @@ import { JournalistSingleNews } from './Journalist/JournalistSingleNews'
 import { JournEditq } from './Journalist/JournEditq'
 import { JournEditw } from './Journalist/JournEditw'
 import { AjTopbar } from './components/AjTopbar'
+import { AdminFullEdit } from './admin/AdminFullEdit'
 
 
 // import './App.css'
@@ -112,6 +113,7 @@ function App() {
           <Route path='/adminusermanage' element={<AdminUserManage/>}></Route>
           <Route path="/adminsingleuser/:id" element={<AdminSingleUser/>} />
           <Route path="/adminsingle/:id" element={<AdminSingleNews/>} />
+          <Route path='/adminfulledit/:id' element={<AdminFullEdit/>} />
         </Route>
 
         <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["journalist"]} userRole={userRole} />}>

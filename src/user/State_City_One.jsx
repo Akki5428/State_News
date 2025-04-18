@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 
 export const State_City_One = () => {
@@ -137,15 +137,15 @@ export const State_City_One = () => {
                                                         )}
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
-                                                    <a className="h4" href="" style={{
+                                                    <Link className="h4" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>
+                                                        }} to={`/single/category/${item._id}`}>
                                                         {item.title || "Est stet amet ipsum stet clita rebum duo"}
-                                                    </a>
+                                                    </Link>
                                                     <p className="m-0" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 6,
@@ -250,9 +250,9 @@ export const State_City_One = () => {
                                                         
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
-                                                    <a className="h6 m-0" href="">
+                                                    <Link className="h6 m-0" to={`/single/category/${item._id}`}>
                                                         {item.title || "Lorem ipsum dolor sit amet consec adipis elit"}
-                                                    </a>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../css/style.css'
 import axios from 'axios';
 import { FormatDate } from '../components/FormatDate';
+import { Link } from 'react-router-dom';
 
 export const State_City = () => {
   const [breakingNews, setBreakingNews] = useState([]);
@@ -303,13 +304,13 @@ export const State_City = () => {
                                               <span className="px-1 text-white">/</span>
                                               <a className="text-white" href="#">{new Date(news.news_date).toDateString()}</a>
                                           </div>
-                                          <a className="h4 m-0 text-white" href="#" style={{
+                                          <Link className="h4 m-0 text-white" href="#" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 3,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>{news.title}</a>
+                                                        }} to={`/single/category/${news._id}`}>{news.title}</Link>
                                       </div>
                                   </div>
                               ))
@@ -346,19 +347,19 @@ export const State_City = () => {
                                       <div className="col-lg-6" key={news.id}>
                                           <div className="position-relative mb-3">
                                               <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover" , height:170}} alt='News' />
-                                              <div className="overlay position-relative bg-light" style={{ height: 170 }}>
+                                              <div className="overlay position-relative bg-light" style={{ height: 220 }}>
                                                   <div className="mb-2" style={{ fontSize: 14 }}>
                                                       <a href="">{news.state.name}</a>
                                                       <span className="px-1">/</span>
                                                       <span>{FormatDate(news.news_date)}</span>
                                                   </div>
-                                                  <a className="h4" href="" style={{
+                                                  <Link className="h4" to={`/single/category/${news._id}`} style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
-                                                        }}>{news.title}</a>
+                                                        }}>{news.title}</Link>
                                                   <p className="m-0" style={{
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 3,
@@ -382,7 +383,7 @@ export const State_City = () => {
                                                       <span className="px-1">/</span>
                                                       <span>{FormatDate(news.news_date)}</span>
                                                   </div>
-                                                  <a className="h6 m-0" href="">{news.title}</a>
+                                                  <Link className="h6 m-0" to={`/single/category/${news._id}`}>{news.title}</Link>
                                               </div>
                                           </div>
                                       </div>

@@ -90,6 +90,10 @@ export const AdminSingleNews = () => {
         }
     };
 
+    const handleEdit = (newsId) => {
+        navigate(`/adminfulledit/${newsId}`); // Redirect to edit page
+    }
+
     const toggleSelection = (img) => {
         setSelectedImages((prevSelected) =>
             prevSelected.includes(img)
@@ -164,7 +168,7 @@ export const AdminSingleNews = () => {
                         <button className="btn btn-secondary mx-1 mb-1" onClick={() => setShowEditForm(!showEditForm)}>
                             <i className="fas fa-edit" /> Edit
                         </button>
-                        <button className="btn btn-info mx-1 mb-1" >
+                        <button className="btn btn-info mx-1 mb-1" onClick={() => handleEdit(id)}>
                             <i className="fas fa-edit" /> Full Edit
                         </button>
                         <button className="btn btn-primary mx-1 mb-1" onClick={handleDelete}>
@@ -183,7 +187,7 @@ export const AdminSingleNews = () => {
                         <button className="btn btn-secondary mx-1 mb-1" style={{ width: '120px' }} onClick={() => setShowEditForm(!showEditForm)}>
                             <i className="fas fa-edit" /> Edit
                         </button>
-                        <button className="btn btn-info mx-1 mb-1" >
+                        <button className="btn btn-info mx-1 mb-1" onClick={() => handleEdit(id)}>
                             <i className="fas fa-edit" /> Full Edit
                         </button>
 

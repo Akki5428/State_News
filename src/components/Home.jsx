@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../css/style.css'
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { FormatDate } from './FormatDate';
 
 export const Home = () => {
     const [breakingNews, setBreakingNews] = useState([]);
@@ -125,6 +126,7 @@ export const Home = () => {
 
     return (
         <>
+            {breakingNews.length}
             {/* Top News Slider Start */}
             <div className="container-fluid py-3">
                 <div className="container">
@@ -152,7 +154,7 @@ export const Home = () => {
                                             alignItems: "center"
                                         }}
                                     >
-                                        <Link className="text-secondary font-weight-semi-bold" to={item.url} >
+                                        <Link className="text-secondary font-weight-semi-bold" to={`/single/category/${item._id}`}>
                                             {item.title}
                                         </Link>
                                     </div>
@@ -190,12 +192,12 @@ export const Home = () => {
                                                     </a>
                                                     <span className="px-2 text-white">/</span>
                                                     <a className="text-white" href="">
-                                                        January 01, 2045
+                                                        {FormatDate(item.news_date)}
                                                     </a>
                                                 </div>
-                                                <a className="h2 m-0 text-white font-weight-bold" href="">
+                                                <Link className="h2 m-0 text-white font-weight-bold" to={`/single/category/${item._id}`}>
                                                     {item.title}
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                     ))
@@ -357,13 +359,13 @@ export const Home = () => {
                                             <span className="px-1 text-white">/</span>
                                             <a className="text-white" href="#">{new Date(news.news_date).toDateString()}</a>
                                         </div>
-                                        <a className="h4 m-0 text-white" style={{
+                                        <Link className="h4 m-0 text-white" style={{
                                             display: '-webkit-box',
                                             WebkitLineClamp: 3,
                                             WebkitBoxOrient: 'vertical',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis'
-                                        }} href="#">{news.title}</a>
+                                        }} to={`/single/category/${news._id}`}>{news.title}</Link>
                                     </div>
                                 </div>
                             ))
@@ -406,13 +408,13 @@ export const Home = () => {
                                                     <span className="px-1">/</span>
                                                     <span>{news.date}</span>
                                                 </div>
-                                                <a className="h4" href="" style={{
+                                                <Link className="h4" to={`/single/category/${news._id}`} style={{
                                                     display: '-webkit-box',
                                                     WebkitLineClamp: 3,
                                                     WebkitBoxOrient: 'vertical',
                                                     overflow: 'hidden',
                                                     textOverflow: 'ellipsis'
-                                                }}>{news.title}</a>
+                                                }}>{news.title}</Link>
                                                 <p className="m-0">{news.content.slice(0, 50)}...</p>
                                             </div>
                                         </div>
@@ -430,7 +432,7 @@ export const Home = () => {
                                                     <span className="px-1">/</span>
                                                     <span>{news.date}</span>
                                                 </div>
-                                                <a className="h6 m-0" href="">{news.title}</a>
+                                                <Link className="h6 m-0" to={`/single/category/${news._id}`}>{news.title}</Link>
                                             </div>
                                         </div>
                                     </div>
@@ -649,20 +651,19 @@ export const Home = () => {
                                 </div>
                                 <div className="bg-light text-center p-4 mb-3">
                                     <p>
-                                        Aliqu justo et labore at eirmod justo sea erat diam dolor diam
-                                        vero kasd
+                                        Just Sign up and get news related notification from our website 
                                     </p>
-                                    <div className="input-group" style={{ width: "100%" }}>
-                                        <input
+                                    <div className="input-group d-flex justify-content-center mt-3" style={{ width: "100%" }}>
+                                        {/* <input
                                             type="text"
                                             className="form-control form-control-lg"
                                             placeholder="Your Email"
-                                        />
+                                        /> */}
                                         <div className="input-group-append">
-                                            <button className="btn btn-primary">Sign Up</button>
+                                            <button className="btn btn-primary px-5 py-2 fs-5">Sign Up</button>
                                         </div>
                                     </div>
-                                    <small>Sit eirmod nonumy kasd eirmod</small>
+                                    <small>Very Easy Signup Process</small>
                                 </div>
                             </div>
                             {/* Newsletter End */}
