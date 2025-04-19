@@ -3,21 +3,29 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 
-export const Category = () => {
-    const [catNews, setCatNews] = useState([])
-    const [trendingNews, setTrendingNews] = useState([])
+export const ManyNews = () => {
+    const [newsFirst, setNewsFirst] = useState([])
+    const [newsSecond, setNewsSecond] = useState([])
 
-    const category = useParams()
+    const {isTrend,isPop} = useParams()
 
     const fetchNews = async () => {
-        const news = await axios.get(`http://127.0.0.1:8000/news/category/${category.categoryName}`)
-        const res = await axios.get("http://127.0.0.1:8000/news/trending/")
+        const pop = await axios.get("http://127.0.0.1:8000/news/popular/")
+        const trend = await axios.get("http://127.0.0.1:8000/news/trending/")
         $(".carousel-item-2").trigger("destroy.owl.carousel");
-        console.log(news.data)
-        console.log(category.categoryName)
+        console.log(pop.data)
+        console.log(trend.data)
+        console.log("isTrend:",isTrend)
+        console.log("isPop:",isPop)
         // setTimeout(initOwlCarousel, 500);
-        setCatNews(news.data)
-        setTrendingNews(res.data)
+        if(isTrend == "yes"){
+            setNewsFirst(trend.data)
+            setNewsSecond(pop.data)
+        }
+        else{
+            setNewsFirst(pop.data)
+            setNewsSecond(trend.data)
+        }
     }
 
     useEffect(() => {
@@ -31,14 +39,11 @@ export const Category = () => {
             <div className="container-fluid">
                 <div className="container">
                     <nav className="breadcrumb bg-transparent m-0 p-0">
-                        <a className="breadcrumb-item" href="#">
+                        <Link className="breadcrumb-item" to="/home">
                             Home
-                        </a>
-                        <a className="breadcrumb-item" href="#">
-                            Category
-                        </a>
+                        </Link>
                         <span className="breadcrumb-item active">
-                            {catNews.length > 0 ? catNews[0].category : "Loading..."}
+                            {newsFirst.length > 0 ? (isPop == "yes" ? "Popular": "Trending" ): "Loading..."}
                         </span>
 
                     </nav>
@@ -53,13 +58,13 @@ export const Category = () => {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
-                                        <h3 className="m-0">{catNews.length > 0 ? catNews[0].category : "Loading..."}</h3>
-                                        {/* <a
+                                        <h3 className="m-0">{newsFirst.length > 0 ? (isPop == "yes" ? "Popular": "Trending" ) : "Loading..."}</h3>
+                                        <a
                                             className="text-secondary font-weight-medium text-decoration-none"
                                             href=""
                                         >
                                             View All
-                                        </a> */}
+                                        </a>
                                     </div>
                                 </div>
                                 {/* <div className="col-lg-6">
@@ -86,21 +91,20 @@ export const Category = () => {
                                         </div>
                                     </div>
                                 </div> */}
-                                {catNews.length > 0 ? (
-                                    catNews.slice(0, 4).map((item, index) => (
+                                {newsFirst.length > 0 ? (
+                                    newsFirst.slice(0, 4).map((item, index) => (
                                         <div className="col-lg-6" key={index}>
                                             <div className="position-relative mb-3">
                                                 <img
                                                     className="img-fluid w-100"
                                                     // src={item.image || "img/news-500x280-2.jpg?v=1"}
-                                                    // src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
-                                                    src={item.images[0]}
+                                                    src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
                                                     style={{ objectFit: "cover" ,height: 170}}
                                                     alt="News"
                                                 />
-                                                <div className="overlay position-relative bg-light justify-content-start" style={{ height: 250  }}>
+                                                <div className="overlay position-relative bg-light" style={{ height: 250  }}>
                                                     <div className="mb-2" style={{ fontSize: 14 }}>
-                                                        <Link to="">{item.category || "Technology"}</Link>
+                                                        <a href="">{item.category || "Technology"}</a>
                                                         <span className="px-1">/</span>
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
@@ -187,14 +191,13 @@ export const Category = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {catNews.length > 4 ? (
-                                    catNews.slice(4, 12).map((item, index) => (
+                                {newsFirst.length > 4 ? (
+                                    newsFirst.slice(4, 12).map((item, index) => (
                                         <div className="col-lg-6" key={index + 4}>
                                             <div className="d-flex mb-3">
                                                 <img
                                                     // src={item.image || "img/news-100x100-1.jpg"}
-                                                    // src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
-                                                    src={item.images[0]}
+                                                    src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
                                                     style={{ width: 100, height: 100, objectFit: "cover" }}
                                                     alt="News"
                                                 />
@@ -203,7 +206,7 @@ export const Category = () => {
                                                     style={{ height: 100 }}
                                                 >
                                                     <div className="mb-1" style={{ fontSize: 13 }}>
-                                                        <Link to={`/category/${item.category}/`}>{item.category || "Technology"}</Link>
+                                                        <a href="">{item.category || "Technology"}</a>
                                                         <span className="px-1">/</span>
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
@@ -367,7 +370,7 @@ export const Category = () => {
                             {/* Popular News Start */}
                             <div className="pb-3">
                                 <div className="bg-light py-2 px-4 mb-3">
-                                    <h3 className="m-0">Tranding</h3>
+                                    <h3 className="m-0">{isPop == "yes" ? "Trending": "Popular" }</h3>
                                 </div>
                                 {/* <div className="d-flex mb-3">
                                     <img
@@ -389,8 +392,8 @@ export const Category = () => {
                                         </a>
                                     </div>
                                 </div> */}
-                                {trendingNews.length > 0 ? (
-                                    trendingNews.slice(0, 5).map((item, index) => (
+                                {newsSecond.length > 0 ? (
+                                    newsSecond.slice(0, 5).map((item, index) => (
                                         <div className="d-flex mb-3" key={index}>
                                             <img
                                                 // src={item.image || "img/news-100x100-2.jpg"}

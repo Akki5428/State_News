@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import '../css/style.css'
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FormatDate } from './FormatDate';
 
 export const Home = () => {
     const [breakingNews, setBreakingNews] = useState([]);
     const [trendingNews, setTrendingNews] = useState([]);
     const [popularNews, setPopularNews] = useState([]);
+    const navigate = useNavigate()
 
 
     // Function to fetch live news from API
@@ -126,7 +127,6 @@ export const Home = () => {
 
     return (
         <>
-            {breakingNews.length}
             {/* Top News Slider Start */}
             <div className="container-fluid py-3">
                 <div className="container">
@@ -140,7 +140,8 @@ export const Home = () => {
                                     alt="news"
                                 /> */}
                                     <img
-                                        src="img/news-80x80-1.jpg"
+                                        // src="img/news-80x80-1.jpg"
+                                        src={item.images[0]}
                                         style={{ width: 80, height: 80, objectFit: "cover" }}
                                         alt="news"
                                     />
@@ -154,7 +155,13 @@ export const Home = () => {
                                             alignItems: "center"
                                         }}
                                     >
-                                        <Link className="text-secondary font-weight-semi-bold" to={`/single/category/${item._id}`}>
+                                        <Link className="text-secondary font-weight-semi-bold" to={`/single/category/${item._id}`} style={{
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
                                             {item.title}
                                         </Link>
                                     </div>
@@ -182,18 +189,20 @@ export const Home = () => {
                                         >
                                             <img
                                                 className="img-fluid h-100"
-                                                src="/img/news-700x435-1.jpg"
+                                                // src="/img/news-700x435-1.jpg"
+                                                src={item.images[0]}
                                                 style={{ objectFit: "cover" }}
+                                                alt='News'
                                             />
                                             <div className="overlay">
                                                 <div className="mb-1">
-                                                    <a className="text-white" href="">
+                                                    <Link className="text-white" to={`/category/${item.category}`}>
                                                         {item.category}
-                                                    </a>
+                                                    </Link>
                                                     <span className="px-2 text-white">/</span>
-                                                    <a className="text-white" href="">
+                                                    <span className="text-white" href="#">
                                                         {FormatDate(item.news_date)}
-                                                    </a>
+                                                    </span>
                                                 </div>
                                                 <Link className="h2 m-0 text-white font-weight-bold" to={`/single/category/${item._id}`}>
                                                     {item.title}
@@ -256,15 +265,17 @@ export const Home = () => {
                                 </div> */}
                             </div>
                         </div>
+
+                        {/* Category Choosing bar */}
                         <div className="col-lg-4">
                             <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                                 <h3 className="m-0">Categories</h3>
-                                <a
+                                <Link
                                     className="text-secondary font-weight-medium text-decoration-none"
-                                    href=""
+                                    to="/categories"
                                 >
                                     View All
-                                </a>
+                                </Link>
                             </div>
                             <div
                                 className="position-relative overflow-hidden mb-3"
@@ -275,12 +286,12 @@ export const Home = () => {
                                     src="/img/cat-500x80-1.jpg"
                                     style={{ objectFit: "cover" }}
                                 />
-                                <a
-                                    href=""
+                                <Link
+                                    to="/category/Business"
                                     className="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none"
                                 >
                                     Business
-                                </a>
+                                </Link>
                             </div>
                             <div
                                 className="position-relative overflow-hidden mb-3"
@@ -291,12 +302,12 @@ export const Home = () => {
                                     src="/img/cat-500x80-2.jpg"
                                     style={{ objectFit: "cover" }}
                                 />
-                                <a
-                                    href=""
+                                <Link
+                                    to="/category/Technology"
                                     className="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none"
                                 >
                                     Technology
-                                </a>
+                                </Link>
                             </div>
                             <div
                                 className="position-relative overflow-hidden mb-3"
@@ -307,12 +318,12 @@ export const Home = () => {
                                     src="/img/cat-500x80-3.jpg"
                                     style={{ objectFit: "cover" }}
                                 />
-                                <a
-                                    href=""
+                                <Link
+                                    to="/category/Entertainment"
                                     className="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none"
                                 >
                                     Entertainment
-                                </a>
+                                </Link>
                             </div>
                             <div
                                 className="position-relative overflow-hidden"
@@ -323,12 +334,12 @@ export const Home = () => {
                                     src="/img/cat-500x80-4.jpg"
                                     style={{ objectFit: "cover" }}
                                 />
-                                <a
-                                    href=""
+                                <Link
+                                    to="/category/Sports"
                                     className="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none"
                                 >
                                     Sports
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -341,21 +352,21 @@ export const Home = () => {
                 <div className="container">
                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                         <h3 className="m-0">Trending</h3>
-                        <a
+                        <Link
                             className="text-secondary font-weight-medium text-decoration-none"
-                            href=""
+                            to="/manynews/yes/no"
                         >
                             View All
-                        </a>
+                        </Link>
                     </div>
                     <div className="owl-carousel owl-carousel-2 carousel-item-4 position-relative">
                         {trendingNews.length > 0 ? (
                             trendingNews.map((news, index) => (
                                 <div key={index} className="position-relative overflow-hidden" style={{ height: 300 }}>
-                                    <img className="img-fluid w-100 h-100" src={news.image_url} style={{ objectFit: "cover" }} alt="News" />
+                                    <img className="img-fluid w-100 h-100" src={news.images[0]} style={{ objectFit: "cover" }} alt="News" />
                                     <div className="overlay">
                                         <div className="mb-1" style={{ fontSize: 13 }}>
-                                            <a className="text-white" href="#">{news.category}</a>
+                                            <Link className="text-white" to={`/category/${news.category}`}>{news.category}</Link>
                                             <span className="px-1 text-white">/</span>
                                             <a className="text-white" href="#">{new Date(news.news_date).toDateString()}</a>
                                         </div>
@@ -388,25 +399,28 @@ export const Home = () => {
                                 <div className="col-12">
                                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                                         <h3 className="m-0">Popular</h3>
-                                        <a
+                                        <Link
                                             className="text-secondary font-weight-medium text-decoration-none"
-                                            href=""
+                                            to="/manynews/no/yes"
                                         >
                                             View All
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
 
                                 {/* First 2 news items with large images and descriptions */}
                                 {popularNews.slice(0, 2).map((news) => (
                                     <div className="col-lg-6" key={news.id}>
-                                        <div className="position-relative mb-3" style={{ height: 360 }}>
-                                            <img className="img-fluid w-100" src="img/news-500x280-1.jpg" style={{ objectFit: "cover", height: 200 }} alt='News' />
-                                            <div className="bg-light p-3" style={{ height: 160 }}>
+                                        <div className="position-relative mb-3">
+                                            <img className="img-fluid w-100" 
+                                            // src="img/news-500x280-1.jpg" 
+                                            src={news.images[0]}
+                                            style={{ objectFit: "cover", height: 200 }} alt='News' />
+                                            <div className="bg-light p-3" style={{ height: 180 }}>
                                                 <div className="mb-2" style={{ fontSize: 14 }}>
-                                                    <a href="">{news.category}</a>
+                                                    <Link to={`/category/${news.category}`}>{news.category}</Link>
                                                     <span className="px-1">/</span>
-                                                    <span>{news.date}</span>
+                                                    <span>{FormatDate(news.news_date)}</span>
                                                 </div>
                                                 <Link className="h4" to={`/single/category/${news._id}`} style={{
                                                     display: '-webkit-box',
@@ -425,14 +439,23 @@ export const Home = () => {
                                 {popularNews.slice(2, 6).map((news) => (
                                     <div className="col-lg-6" key={news.id}>
                                         <div className="d-flex mb-3">
-                                            <img src="img/news-80x80-4.jpg" style={{ width: 100, height: 100, objectFit: "cover" }} />
+                                            <img 
+                                            // src="img/news-80x80-4.jpg" 
+                                            src={news.images[0]}
+                                            style={{ width: 100, height: 100, objectFit: "cover" }} />
                                             <div className="w-100 d-flex flex-column justify-content-center bg-light px-3" style={{ height: 100 }}>
                                                 <div className="mb-1" style={{ fontSize: 13 }}>
-                                                    <a href="">{news.category}</a>
+                                                    <Link to={`/category/${news.category}`}>{news.category}</Link>
                                                     <span className="px-1">/</span>
-                                                    <span>{news.date}</span>
+                                                    <span>{FormatDate(news.news_date)}</span>
                                                 </div>
-                                                <Link className="h6 m-0" to={`/single/category/${news._id}`}>{news.title}</Link>
+                                                <Link className="h6 m-0" to={`/single/category/${news._id}`} style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>{news.title}</Link>
                                             </div>
                                         </div>
                                     </div>
@@ -651,7 +674,7 @@ export const Home = () => {
                                 </div>
                                 <div className="bg-light text-center p-4 mb-3">
                                     <p>
-                                        Just Sign up and get news related notification from our website 
+                                        Just Sign up and get news related notification from our website
                                     </p>
                                     <div className="input-group d-flex justify-content-center mt-3" style={{ width: "100%" }}>
                                         {/* <input
@@ -660,7 +683,7 @@ export const Home = () => {
                                             placeholder="Your Email"
                                         /> */}
                                         <div className="input-group-append">
-                                            <button className="btn btn-primary px-5 py-2 fs-5">Sign Up</button>
+                                            <button className="btn btn-primary px-5 py-2 fs-5" onClick={() => { navigate("/signup") }}>Sign Up</button>
                                         </div>
                                     </div>
                                     <small>Very Easy Signup Process</small>
@@ -782,42 +805,43 @@ export const Home = () => {
                                     <h3 className="m-0">Tags</h3>
                                 </div>
                                 <div className="d-flex flex-wrap m-n1">
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    <Link to="/category/Politics" className="btn btn-sm btn-outline-secondary m-1">
                                         Politics
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Business
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Corporate
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Sports" className="btn btn-sm btn-outline-secondary m-1">
                                         Sports
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Health
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Education
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Science
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Technology
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Foods
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Entertainment" className="btn btn-sm btn-outline-secondary m-1">
                                         Entertainment
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Travel
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Lifestyle" className="btn btn-sm btn-outline-secondary m-1">
                                         Lifestyle
-                                    </a>
+                                    </Link>
+                                    <Link to="/category/Technology" className="btn btn-sm btn-outline-secondary m-1">
+                                        Technology
+                                    </Link>
+                                    <Link to="/category/Business" className="btn btn-sm btn-outline-secondary m-1">
+                                        Business
+                                    </Link>
+                                    <Link to="/category/Health" className="btn btn-sm btn-outline-secondary m-1">
+                                        Health
+                                    </Link>
+                                    <Link to="/category/Science" className="btn btn-sm btn-outline-secondary m-1">
+                                        Science
+                                    </Link>
+                                    <Link to="/category/Education" className="btn btn-sm btn-outline-secondary m-1">
+                                        Education
+                                    </Link>
+                                    <Link to="/category/World" className="btn btn-sm btn-outline-secondary m-1">
+                                        World
+                                    </Link>
+                                    <Link to="/category/Food" className="btn btn-sm btn-outline-secondary m-1">
+                                        Food
+                                    </Link>
+                                    <Link to="/category/Finance" className="btn btn-sm btn-outline-secondary m-1">
+                                        Finance
+                                    </Link>
+
                                 </div>
                             </div>
                             {/* Tags End */}

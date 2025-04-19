@@ -34,6 +34,7 @@ import { JournEditq } from './Journalist/JournEditq'
 import { JournEditw } from './Journalist/JournEditw'
 import { AjTopbar } from './components/AjTopbar'
 import { AdminFullEdit } from './admin/AdminFullEdit'
+import { ManyNews } from './user/ManyNews'
 
 
 // import './App.css'
@@ -94,6 +95,7 @@ function App() {
         {/* <Route path='/single' element={<SingleNews/>}></Route> */}
         <Route path="/single/:type/:newsId" element={<SingleNews/>} />
         <Route path="/state/:type/:name" element={<State_City_One/>} />
+        <Route path="/manynews/:isTrend/:isPop" element={<ManyNews/>} />
 
         
 
