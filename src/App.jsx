@@ -95,7 +95,7 @@ function App() {
         {/* <Route path='/single' element={<SingleNews/>}></Route> */}
         <Route path="/single/:type/:newsId" element={<SingleNews/>} />
         <Route path="/state/:type/:name" element={<State_City_One/>} />
-        <Route path="/manynews/:isTrend/:isPop" element={<ManyNews/>} />
+        <Route path="/manynews/:isTrend/:isPop/:val" element={<ManyNews/>} />
 
         
 

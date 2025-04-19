@@ -354,7 +354,7 @@ export const Home = () => {
                         <h3 className="m-0">Trending</h3>
                         <Link
                             className="text-secondary font-weight-medium text-decoration-none"
-                            to="/manynews/yes/no"
+                            to="/manynews/yes/no/category"
                         >
                             View All
                         </Link>
@@ -401,7 +401,7 @@ export const Home = () => {
                                         <h3 className="m-0">Popular</h3>
                                         <Link
                                             className="text-secondary font-weight-medium text-decoration-none"
-                                            to="/manynews/no/yes"
+                                            to="/manynews/no/yes/category"
                                         >
                                             View All
                                         </Link>

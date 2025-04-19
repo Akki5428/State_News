@@ -7,7 +7,7 @@ export const ManyNews = () => {
     const [newsFirst, setNewsFirst] = useState([])
     const [newsSecond, setNewsSecond] = useState([])
 
-    const {isTrend,isPop} = useParams()
+    const { isTrend, isPop, val } = useParams()
 
     const fetchNews = async () => {
         const pop = await axios.get("http://127.0.0.1:8000/news/popular/")
@@ -15,14 +15,14 @@ export const ManyNews = () => {
         $(".carousel-item-2").trigger("destroy.owl.carousel");
         console.log(pop.data)
         console.log(trend.data)
-        console.log("isTrend:",isTrend)
-        console.log("isPop:",isPop)
+        console.log("isTrend:", isTrend)
+        console.log("isPop:", isPop)
         // setTimeout(initOwlCarousel, 500);
-        if(isTrend == "yes"){
+        if (isTrend == "yes") {
             setNewsFirst(trend.data)
             setNewsSecond(pop.data)
         }
-        else{
+        else {
             setNewsFirst(pop.data)
             setNewsSecond(trend.data)
         }
@@ -43,7 +43,7 @@ export const ManyNews = () => {
                             Home
                         </Link>
                         <span className="breadcrumb-item active">
-                            {newsFirst.length > 0 ? (isPop == "yes" ? "Popular": "Trending" ): "Loading..."}
+                            {newsFirst.length > 0 ? (isPop == "yes" ? "Popular" : "Trending") : "Loading..."}
                         </span>
 
                     </nav>
@@ -58,7 +58,7 @@ export const ManyNews = () => {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
-                                        <h3 className="m-0">{newsFirst.length > 0 ? (isPop == "yes" ? "Popular": "Trending" ) : "Loading..."}</h3>
+                                        <h3 className="m-0">{newsFirst.length > 0 ? (isPop == "yes" ? "Popular" : "Trending") : "Loading..."}</h3>
                                         <a
                                             className="text-secondary font-weight-medium text-decoration-none"
                                             href=""
@@ -99,31 +99,43 @@ export const ManyNews = () => {
                                                     className="img-fluid w-100"
                                                     // src={item.image || "img/news-500x280-2.jpg?v=1"}
                                                     src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
-                                                    style={{ objectFit: "cover" ,height: 170}}
+                                                    style={{ objectFit: "cover", height: 170 }}
                                                     alt="News"
                                                 />
-                                                <div className="overlay position-relative bg-light" style={{ height: 250  }}>
+                                                <div className="overlay position-relative bg-light" style={{ height: 250 }}>
                                                     <div className="mb-2" style={{ fontSize: 14 }}>
-                                                        <a href="">{item.category || "Technology"}</a>
+                                                        {val == "category" ?
+                                                            (
+                                                                <a href="">{item.category || "Technology"}</a>
+                                                            ) :
+                                                            (
+                                                                <>
+                                                                    <a href="">{item.state.name || "Gujarat"}</a>
+                                                                    <span className="px-1">/</span>
+                                                                    <a href="">{item.city.name || "Ahmedabad"}</a>
+                                                                </>
+
+                                                            )}
+
                                                         <span className="px-1">/</span>
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
                                                     <Link className="h4" to={`/single/category/${item._id}`} style={{
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 2,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis'
-                                                        }} >
-                                                        {item.title || "Est stet amet ipsum stet clita rebum duo"} 
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }} >
+                                                        {item.title || "Est stet amet ipsum stet clita rebum duo"}
                                                     </Link>
                                                     <p className="m-0" style={{
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 4,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis'
-                                                        }}>
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 4,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }}>
                                                         {item.content ||
                                                             "Rebum dolore duo et vero ipsum clita, est ea sed duo diam ipsum, clita at justo, lorem amet vero eos sed sit..."}
                                                     </p>
@@ -206,7 +218,18 @@ export const ManyNews = () => {
                                                     style={{ height: 100 }}
                                                 >
                                                     <div className="mb-1" style={{ fontSize: 13 }}>
-                                                        <a href="">{item.category || "Technology"}</a>
+                                                    {val == "category" ?
+                                                            (
+                                                                <a href="">{item.category || "Technology"}</a>
+                                                            ) :
+                                                            (
+                                                                <>
+                                                                    <a href="">{item.state.name || "Gujarat"}</a>
+                                                                    {/* <span className="px-1">/</span>
+                                                                    <a href="">{item.city.name || "Ahmedabad"}</a> */}
+                                                                </>
+
+                                                            )}
                                                         <span className="px-1">/</span>
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
@@ -370,7 +393,7 @@ export const ManyNews = () => {
                             {/* Popular News Start */}
                             <div className="pb-3">
                                 <div className="bg-light py-2 px-4 mb-3">
-                                    <h3 className="m-0">{isPop == "yes" ? "Trending": "Popular" }</h3>
+                                    <h3 className="m-0">{isPop == "yes" ? "Trending" : "Popular"}</h3>
                                 </div>
                                 {/* <div className="d-flex mb-3">
                                     <img

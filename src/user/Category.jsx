@@ -1,11 +1,12 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 
 export const Category = () => {
     const [catNews, setCatNews] = useState([])
     const [trendingNews, setTrendingNews] = useState([])
+    const navigate = useNavigate()
 
     const category = useParams()
 
@@ -23,7 +24,7 @@ export const Category = () => {
     useEffect(() => {
         fetchNews();
 
-    }, [])
+    }, [category])
 
     return (
         <>
@@ -95,31 +96,31 @@ export const Category = () => {
                                                     // src={item.image || "img/news-500x280-2.jpg?v=1"}
                                                     // src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
                                                     src={item.images[0]}
-                                                    style={{ objectFit: "cover" ,height: 170}}
+                                                    style={{ objectFit: "cover", height: 170 }}
                                                     alt="News"
                                                 />
-                                                <div className="overlay position-relative bg-light justify-content-start" style={{ height: 250  }}>
+                                                <div className="overlay position-relative bg-light justify-content-start" style={{ height: 250 }}>
                                                     <div className="mb-2" style={{ fontSize: 14 }}>
                                                         <Link to="">{item.category || "Technology"}</Link>
                                                         <span className="px-1">/</span>
                                                         <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                     </div>
                                                     <Link className="h4" to={`/single/category/${item._id}`} style={{
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 2,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis'
-                                                        }} >
-                                                        {item.title || "Est stet amet ipsum stet clita rebum duo"} 
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }} >
+                                                        {item.title || "Est stet amet ipsum stet clita rebum duo"}
                                                     </Link>
                                                     <p className="m-0" style={{
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 4,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis'
-                                                        }}>
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 4,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }}>
                                                         {item.content ||
                                                             "Rebum dolore duo et vero ipsum clita, est ea sed duo diam ipsum, clita at justo, lorem amet vero eos sed sit..."}
                                                     </p>
@@ -335,20 +336,19 @@ export const Category = () => {
                                 </div>
                                 <div className="bg-light text-center p-4 mb-3">
                                     <p>
-                                        Aliqu justo et labore at eirmod justo sea erat diam dolor diam
-                                        vero kasd
+                                        Just Sign up and get news related notification from our website
                                     </p>
-                                    <div className="input-group" style={{ width: "100%" }}>
-                                        <input
+                                    <div className="input-group d-flex justify-content-center mt-3" style={{ width: "100%" }}>
+                                        {/* <input
                                             type="text"
                                             className="form-control form-control-lg"
                                             placeholder="Your Email"
-                                        />
+                                        /> */}
                                         <div className="input-group-append">
-                                            <button className="btn btn-primary">Sign Up</button>
+                                            <button className="btn btn-primary px-5 py-2 fs-5" onClick={() => { navigate("/signup") }}>Sign Up</button>
                                         </div>
                                     </div>
-                                    <small>Sit eirmod nonumy kasd eirmod</small>
+                                    <small>Very Easy Signup Process</small>
                                 </div>
                             </div>
                             {/* Newsletter End */}
@@ -426,42 +426,42 @@ export const Category = () => {
                                     <h3 className="m-0">Tags</h3>
                                 </div>
                                 <div className="d-flex flex-wrap m-n1">
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    <Link to="/category/Politics" className="btn btn-sm btn-outline-secondary m-1">
                                         Politics
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Business
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Corporate
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Sports" className="btn btn-sm btn-outline-secondary m-1">
                                         Sports
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Health
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Education
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Science
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Technology
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Foods
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Entertainment" className="btn btn-sm btn-outline-secondary m-1">
                                         Entertainment
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Travel
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Lifestyle" className="btn btn-sm btn-outline-secondary m-1">
                                         Lifestyle
-                                    </a>
+                                    </Link>
+                                    <Link to="/category/Technology" className="btn btn-sm btn-outline-secondary m-1">
+                                        Technology
+                                    </Link>
+                                    <Link to="/category/Business" className="btn btn-sm btn-outline-secondary m-1">
+                                        Business
+                                    </Link>
+                                    <Link to="/category/Health" className="btn btn-sm btn-outline-secondary m-1">
+                                        Health
+                                    </Link>
+                                    <Link to="/category/Science" className="btn btn-sm btn-outline-secondary m-1">
+                                        Science
+                                    </Link>
+                                    <Link to="/category/Education" className="btn btn-sm btn-outline-secondary m-1">
+                                        Education
+                                    </Link>
+                                    <Link to="/category/World" className="btn btn-sm btn-outline-secondary m-1">
+                                        World
+                                    </Link>
+                                    <Link to="/category/Food" className="btn btn-sm btn-outline-secondary m-1">
+                                        Food
+                                    </Link>
+                                    <Link to="/category/Finance" className="btn btn-sm btn-outline-secondary m-1">
+                                        Finance
+                                    </Link>
                                 </div>
                             </div>
                             {/* Tags End */}

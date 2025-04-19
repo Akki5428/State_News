@@ -1,11 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FormatDate } from '../components/FormatDate';
 
 export const SingleNews = () => {
     const [news, setnews] = useState({})
     const [para, setPara] = useState([])
+    const [trending, setTrending] = useState([])
+    const navigate = useNavigate()
 
     const { type, newsId } = useParams()
     console.log(type, newsId)
@@ -21,15 +23,17 @@ export const SingleNews = () => {
 
     const fetchNews = async () => {
         const news = await axios.get(`http://127.0.0.1:8000/news/${newsId}`)
+        const res = await axios.get("http://127.0.0.1:8000/news/trending/")
         console.log(news.data)
         setnews(news.data)
         setPara(splitDescription(news.data.content))
+        setTrending(res.data)
 
     }
 
     useEffect(() => {
         fetchNews()
-    }, [])
+    }, [newsId])
 
     const title1 = extractTitle(para[2])
     const title2 = extractTitle(para[3])
@@ -59,7 +63,10 @@ export const SingleNews = () => {
                                         State_City
                                     </a>
                                     <a className="breadcrumb-item" href="#">
-                                        {news.state.name}
+                                        {news.state?.name}
+                                    </a>
+                                    <a className="breadcrumb-item" href="#">
+                                        {news.city?.name}
                                     </a>
                                 </>
                             )
@@ -86,12 +93,14 @@ export const SingleNews = () => {
                                 <img
                                     className="img-fluid w-100"
                                     // src="img/news-700x435-2.jpg"
-                                    src={`/img/news-700x435-2.jpg?v=${new Date().getTime()}`}
-                                    style={{ objectFit: "cover" }}
+                                    // src={`/img/news-700x435-2.jpg?v=${new Date().getTime()}`}
+                                    src={news.images?.[0]}
+                                    style={{ objectFit: "cover", height: "400px" }}
+                                    alt='news'
                                 />
                                 <div className="overlay position-relative bg-light">
                                     <div className="mb-3">
-                                        
+
                                         {
                                             type === "category" ? (
                                                 <>
@@ -100,8 +109,12 @@ export const SingleNews = () => {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <a href="">{news.state.name}</a>
+                                                    <a href="">{news.state?.name}</a>
                                                     <span className="px-1">/</span>
+
+                                                    <a href="">{news.city?.name}</a>
+                                                    <span className="px-1">/</span>
+
                                                 </>
                                             )
                                         }
@@ -115,11 +128,28 @@ export const SingleNews = () => {
                                         {para.length > 0 && <p>{para[0]}</p>}
                                         {para.length > 1 && <p>{para[1]}</p>}
                                         {/* <h4 className="mb-3">{title1}</h4> */}
-                                        <img
-                                            className="img-fluid w-50 float-left mr-4 mb-2"
-                                            // src="img/news-500x280-1.jpg"
-                                            src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
-                                        />
+                                        {news.images?.length > 1 && (
+                                            <div className="d-flex flex-wrap gap-3 mb-4" style={{ gap: 20 }}>
+                                                {news.images.slice(1).map((img, idx) => (
+                                                    <div key={idx} style={{ flex: "1 1 calc(50% - 12px)" }}>
+                                                        <img
+                                                            className="img-fluid"
+                                                            src={img}
+                                                            alt={`News ${idx + 2}`}
+                                                            style={{
+                                                                width: "100%",
+                                                                height: "auto",
+                                                                maxWidth: "330px",
+                                                                maxHeight: "200px",
+                                                                objectFit: "cover",
+                                                                borderRadius: "10px",
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
                                         {/* <p>
                                             Diam dolor est labore duo invidunt ipsum clita et, sed et
                                             lorem voluptua tempor invidunt at est sanctus sanctus. Clita
@@ -305,20 +335,19 @@ export const SingleNews = () => {
                                 </div>
                                 <div className="bg-light text-center p-4 mb-3">
                                     <p>
-                                        Aliqu justo et labore at eirmod justo sea erat diam dolor diam
-                                        vero kasd
+                                        Just Sign up and get news related notification from our website
                                     </p>
-                                    <div className="input-group" style={{ width: "100%" }}>
-                                        <input
+                                    <div className="input-group d-flex justify-content-center mt-3" style={{ width: "100%" }}>
+                                        {/* <input
                                             type="text"
                                             className="form-control form-control-lg"
                                             placeholder="Your Email"
-                                        />
+                                        /> */}
                                         <div className="input-group-append">
-                                            <button className="btn btn-primary">Sign Up</button>
+                                            <button className="btn btn-primary px-5 py-2 fs-5" onClick={() => { navigate("/signup") }}>Sign Up</button>
                                         </div>
                                     </div>
-                                    <small>Sit eirmod nonumy kasd eirmod</small>
+                                    <small>Very Easy Signup Process</small>
                                 </div>
                             </div>
                             {/* Newsletter End */}
@@ -353,82 +382,42 @@ export const SingleNews = () => {
                                         </a>
                                     </div>
                                 </div>
-                                <div className="d-flex mb-3">
-                                    <img
-                                        src="img/news-100x100-2.jpg"
-                                        style={{ width: 100, height: 100, objectFit: "cover" }}
-                                    />
-                                    <div
-                                        className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                        style={{ height: 100 }}
-                                    >
-                                        <div className="mb-1" style={{ fontSize: 13 }}>
-                                            <a href="">Technology</a>
-                                            <span className="px-1">/</span>
-                                            <span>January 01, 2045</span>
+                                {trending.length > 0 ? (
+                                    trending.slice(0, 5).map((item, index) => (
+                                        <div className="d-flex mb-3" key={index}>
+                                            <img
+                                                // src={item.image || "img/news-100x100-2.jpg"}
+                                                // src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
+                                                src={item.images[0]}
+                                                style={{ width: 100, height: 100, objectFit: "cover" }}
+                                                alt="Trending News"
+                                            />
+                                            <div
+                                                className="w-100 d-flex flex-column justify-content-center bg-light px-3"
+                                                style={{ height: 100 }}
+                                            >
+                                                <div className="mb-1" style={{ fontSize: 13 }}>
+                                                    <Link to={`/state/state/${item.stateId}`}>{item.state.name || "Gujarat"}</Link>
+                                                    <span className="px-1">/</span>
+
+                                                    <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
+                                                </div>
+                                                <Link className="h6 m-0" to={`/single/category/${item._id}`} style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>
+                                                    {item.title || "Lorem ipsum dolor sit amet consec adipis elit"}
+                                                </Link>
+                                            </div>
                                         </div>
-                                        <a className="h6 m-0" href="">
-                                            Lorem ipsum dolor sit amet consec adipis elit
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="d-flex mb-3">
-                                    <img
-                                        src="img/news-100x100-3.jpg"
-                                        style={{ width: 100, height: 100, objectFit: "cover" }}
-                                    />
-                                    <div
-                                        className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                        style={{ height: 100 }}
-                                    >
-                                        <div className="mb-1" style={{ fontSize: 13 }}>
-                                            <a href="">Technology</a>
-                                            <span className="px-1">/</span>
-                                            <span>January 01, 2045</span>
-                                        </div>
-                                        <a className="h6 m-0" href="">
-                                            Lorem ipsum dolor sit amet consec adipis elit
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="d-flex mb-3">
-                                    <img
-                                        src="img/news-100x100-4.jpg"
-                                        style={{ width: 100, height: 100, objectFit: "cover" }}
-                                    />
-                                    <div
-                                        className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                        style={{ height: 100 }}
-                                    >
-                                        <div className="mb-1" style={{ fontSize: 13 }}>
-                                            <a href="">Technology</a>
-                                            <span className="px-1">/</span>
-                                            <span>January 01, 2045</span>
-                                        </div>
-                                        <a className="h6 m-0" href="">
-                                            Lorem ipsum dolor sit amet consec adipis elit
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="d-flex mb-3">
-                                    <img
-                                        src="img/news-100x100-5.jpg"
-                                        style={{ width: 100, height: 100, objectFit: "cover" }}
-                                    />
-                                    <div
-                                        className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                        style={{ height: 100 }}
-                                    >
-                                        <div className="mb-1" style={{ fontSize: 13 }}>
-                                            <a href="">Technology</a>
-                                            <span className="px-1">/</span>
-                                            <span>January 01, 2045</span>
-                                        </div>
-                                        <a className="h6 m-0" href="">
-                                            Lorem ipsum dolor sit amet consec adipis elit
-                                        </a>
-                                    </div>
-                                </div>
+                                    ))
+                                ) : (
+                                    <p>Loading trending news...</p>
+                                )}
+
                             </div>
                             {/* Popular News End */}
                             {/* Tags Start */}
@@ -437,42 +426,42 @@ export const SingleNews = () => {
                                     <h3 className="m-0">Tags</h3>
                                 </div>
                                 <div className="d-flex flex-wrap m-n1">
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    <Link to="/category/Politics" className="btn btn-sm btn-outline-secondary m-1">
                                         Politics
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Business
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Corporate
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Sports" className="btn btn-sm btn-outline-secondary m-1">
                                         Sports
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Health
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Education
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Science
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Technology
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Foods
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Entertainment" className="btn btn-sm btn-outline-secondary m-1">
                                         Entertainment
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
-                                        Travel
-                                    </a>
-                                    <a href="" className="btn btn-sm btn-outline-secondary m-1">
+                                    </Link>
+                                    <Link to="/category/Lifestyle" className="btn btn-sm btn-outline-secondary m-1">
                                         Lifestyle
-                                    </a>
+                                    </Link>
+                                    <Link to="/category/Technology" className="btn btn-sm btn-outline-secondary m-1">
+                                        Technology
+                                    </Link>
+                                    <Link to="/category/Business" className="btn btn-sm btn-outline-secondary m-1">
+                                        Business
+                                    </Link>
+                                    <Link to="/category/Health" className="btn btn-sm btn-outline-secondary m-1">
+                                        Health
+                                    </Link>
+                                    <Link to="/category/Science" className="btn btn-sm btn-outline-secondary m-1">
+                                        Science
+                                    </Link>
+                                    <Link to="/category/Education" className="btn btn-sm btn-outline-secondary m-1">
+                                        Education
+                                    </Link>
+                                    <Link to="/category/World" className="btn btn-sm btn-outline-secondary m-1">
+                                        World
+                                    </Link>
+                                    <Link to="/category/Food" className="btn btn-sm btn-outline-secondary m-1">
+                                        Food
+                                    </Link>
+                                    <Link to="/category/Finance" className="btn btn-sm btn-outline-secondary m-1">
+                                        Finance
+                                    </Link>
                                 </div>
                             </div>
                             {/* Tags End */}

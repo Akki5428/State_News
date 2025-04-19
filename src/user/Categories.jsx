@@ -380,7 +380,7 @@ export const Categories = () => {
                                         <h3 className="m-0">Popular</h3>
                                         <Link
                                             className="text-secondary font-weight-medium text-decoration-none"
-                                            to="/manynews/no/yes"
+                                            to="/manynews/no/yes/category"
                                         >
                                             View All
                                         </Link>

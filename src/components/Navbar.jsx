@@ -1,8 +1,40 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import "../css/dropdown.css"
+import axios from 'axios';
 
 export const Navbar = () => {
+
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [groupedCities, setGroupedCities] = useState({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const stateRes = await axios.get('http://127.0.0.1:8000/getStates'); // Adjust endpoint
+                const cityRes = await axios.get('http://127.0.0.1:8000/city');  // Adjust endpoint
+                setStates(stateRes.data);
+                setCities(cityRes.data);
+                console.log(cityRes.data)
+
+                // Group cities by stateId
+                const grouped = {};
+                cityRes.data.forEach(city => {
+                    if (!grouped[city.state_id]) {
+                        grouped[city.state_id] = [];
+                    }
+                    grouped[city.state_id].push(city);
+                });
+                setGroupedCities(grouped);
+            } catch (error) {
+                console.error('Failed to fetch states or cities:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <>
             <div className="container-fluid p-0 mb-3">
@@ -25,7 +57,7 @@ export const Navbar = () => {
                         id="navbarCollapse"
                     >
                         <div className="navbar-nav mr-auto py-0">
-                            <Link to="/" className="nav-item nav-link active">
+                            <Link to="/" className="nav-item nav-link">
                                 Home
                             </Link>
                             {/* Category */}
@@ -36,60 +68,60 @@ export const Navbar = () => {
                                 <div className="dropdown-menu rounded-0 m-0 p-3" style={{ minWidth: 600 }}>
                                     <div className="row">
                                         <div className="col-md-3">
-                                            <Link to="/category" className="dropdown-item">
+                                            <Link to="/category/Politics" className="dropdown-item">
                                                 Politics
                                             </Link>
-                                            <a href="#" className="dropdown-item">
+                                            <Link className="dropdown-item">
                                                 Business
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Technology" className="dropdown-item">
                                                 Technology
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Health" className="dropdown-item">
                                                 Health
-                                            </a>
+                                            </Link>
                                         </div>
                                         <div className="col-md-3">
-                                            <a href="#" className="dropdown-item">
+                                            <Link to="/category/Sports" className="dropdown-item">
                                                 Sports
-                                            </a>
+                                            </Link>
                                             <Link to="/category/Entertainment" className="dropdown-item">
                                                 Entertainment
                                             </Link>
-                                            <a href="#" className="dropdown-item">
-                                                Science
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            <Link to="/category/Sports" className="dropdown-item">
+                                                Sports
+                                            </Link>
+                                            <Link to="/category/World" className="dropdown-item">
                                                 World
-                                            </a>
+                                            </Link>
                                         </div>
                                         <div className="col-md-3">
-                                            <a href="#" className="dropdown-item">
+                                            <Link to="/category/Lifestyle" className="dropdown-item">
                                                 Lifestyle
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Education" className="dropdown-item">
                                                 Education
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Environment" className="dropdown-item">
                                                 Environment
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Travel" className="dropdown-item">
                                                 Travel
-                                            </a>
+                                            </Link>
                                         </div>
                                         <div className="col-md-3">
-                                            <a href="#" className="dropdown-item">
+                                            <Link to="/category/Food" className="dropdown-item">
                                                 Food
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Fashion" className="dropdown-item">
                                                 Fashion
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Finance" className="dropdown-item">
                                                 Finance
-                                            </a>
-                                            <a href="#" className="dropdown-item">
+                                            </Link>
+                                            <Link to="/category/Culture" className="dropdown-item">
                                                 Culture
-                                            </a>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -119,8 +151,8 @@ export const Navbar = () => {
                                                 id="searchStateCity"
                                                 placeholder="Search State or City..."
                                             />
-                                            <div className="row">
-                                                {/* Column 1 */}
+                                            {/* <div className="row">
+                                                
                                                 <div className="col-md-3">
                                                     <Link to="/state/state/67d1318e373d4a02a3104ea3" className="dropdown-header">
                                                         Gujarat
@@ -144,7 +176,7 @@ export const Navbar = () => {
                                                         Jamnagar
                                                     </a>
                                                 </div>
-                                                {/* Column 2 */}
+                                              
                                                 <div className="col-md-3">
                                                     <a href="#" className="dropdown-header">
                                                         Maharashtra
@@ -168,7 +200,7 @@ export const Navbar = () => {
                                                         Thane
                                                     </a>
                                                 </div>
-                                                {/* Column 3 */}
+                                              
                                                 <div className="col-md-3">
                                                     <a href="#" className="dropdown-header">
                                                         Rajasthan
@@ -192,7 +224,7 @@ export const Navbar = () => {
                                                         Ajmer
                                                     </a>
                                                 </div>
-                                                {/* Column 4 */}
+                                              
                                                 <div className="col-md-3">
                                                     <a href="#" className="dropdown-header">
                                                         Delhi
@@ -233,7 +265,23 @@ export const Navbar = () => {
                                                         West Delhi
                                                     </a>
                                                 </div>
+                                            </div> */}
+
+                                            <div className="row">
+                                                {states.map((state, index) => (
+                                                    <div className="col-md-3" key={state._id}>
+                                                        <Link to={`/state/state/${state._id}`} className="dropdown-header">
+                                                            {state.name}
+                                                        </Link>
+                                                        {(groupedCities[state._id] || []).map((city) => (
+                                                            <Link key={city._id} to={`/state/city/${city._id}`} className="dropdown-item">
+                                                                {city.name}
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                ))}
                                             </div>
+
                                         </div>
                                     </li>
                                 </ul>
