@@ -8,6 +8,46 @@ export const SingleNews = () => {
     const [para, setPara] = useState([])
     const [trending, setTrending] = useState([])
     const navigate = useNavigate()
+    const [showReplyBoxFor, setShowReplyBoxFor] = useState(null);
+    const [showRepliesFor, setShowRepliesFor] = useState({});
+    const [getComments, setGetComments] = useState([])
+    const [replyText, setReplyText] = useState({});
+    const [commentText, setCommentText] = useState("");
+    const [replyTexts, setReplyTexts] = useState({});
+    // user_id = localStorage.getItem("userId")
+    const user_id = "67d028a7d2ada10a6e36079e"
+
+    const handleReplySubmit = (commentId) => {
+        const reply = replyText[commentId];
+        if (reply?.trim()) {
+            console.log("Reply posted to:", commentId, "=>", reply);
+            // post reply to backend here
+            setReplyText((prev) => ({ ...prev, [commentId]: "" }));
+            setShowReplyBoxFor(null);
+        }
+    };
+
+    var comments = getComments;
+    const parentComments = comments.filter(
+        (c) => c.parentCommentId === null || c.parentCommentId === "None"
+    );
+    const replies = comments.filter(
+        (c) => c.parentCommentId !== null && c.parentCommentId !== "None"
+    );
+
+
+
+    const handleToggleReplyBox = (commentId) => {
+        setShowReplyBoxFor(showReplyBoxFor === commentId ? null : commentId);
+    };
+
+    const handleToggleReplies = (commentId) => {
+        setShowRepliesFor(prev => ({
+            ...prev,
+            [commentId]: !prev[commentId],
+        }));
+    };
+
 
     const { type, newsId } = useParams()
     console.log(type, newsId)
@@ -24,15 +64,72 @@ export const SingleNews = () => {
     const fetchNews = async () => {
         const news = await axios.get(`http://127.0.0.1:8000/news/${newsId}`)
         const res = await axios.get("http://127.0.0.1:8000/news/trending/")
-        console.log(news.data)
+        // console.log(news.data)
         setnews(news.data)
         setPara(splitDescription(news.data.content))
         setTrending(res.data)
 
     }
 
+    const fetchComments = async () => {
+        const comments = await axios.get(`http://127.0.0.1:8000/comments/newsonly/${newsId}`)
+        console.log("data: ", comments.data[0].comments)
+        setGetComments(comments.data[0].comments)
+    }
+
+    const handlePostComment = async (e) => {
+        e.preventDefault();
+        if (!commentText.trim()) return;
+
+        const payload = {
+            newsId: newsId,
+            userId: user_id,
+            rId: news?.userId,
+            comment_text: commentText,
+            created_at: new Date().toISOString(),
+            parentCommentId: null
+        };
+
+        try {
+            await axios.post("http://127.0.0.1:8000/comment/add", payload);
+            setCommentText("");
+            alert("Comment posted!");
+            // Optionally reload comments here
+        } catch (error) {
+            console.error("Failed to post comment", error);
+        }
+        fetchComments()
+    };
+
+    const handlePostReply = async (comment) => {
+        const text = replyTexts[comment.id];
+        if (!text?.trim()) return;
+
+        const payload = {
+            newsId: newsId,
+            userId: user_id,
+            rId: news?.userId,
+            comment_text: text,
+            created_at: new Date().toISOString(),
+            parentCommentId: comment.id || null
+        };
+
+        try {
+            await axios.post("http://127.0.0.1:8000/comment/add", payload);
+            setReplyTexts(prev => ({ ...prev, [comment.id]: "" }));
+            setShowReplyBoxFor(null);
+            alert("Reply posted!");
+            // Optionally reload replies here
+        } catch (error) {
+            console.error("Failed to post reply", error);
+        }
+        fetchComments()
+    };
+
+
     useEffect(() => {
         fetchNews()
+        fetchComments()
     }, [newsId])
 
     const title1 = extractTitle(para[2])
@@ -199,43 +296,120 @@ export const SingleNews = () => {
                             </div>
                             {/* News Detail End */}
                             {/* Comment List Start */}
-                            {/* <div class="bg-light mb-3" style="padding: 30px;">
-                  <h3 class="mb-4">3 Comments</h3>
-                  <div class="media mb-4">
-                      <img src="img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
-                      <div class="media-body">
-                          <h6><a href="">John Doe</a> <small><i>01 Jan 2045</i></small></h6>
-                          <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor labore
-                              accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.
-                              Gubergren clita aliquyam consetetur sadipscing, at tempor amet ipsum diam tempor
-                              consetetur at sit.</p>
-                          <button class="btn btn-sm btn-outline-secondary">Reply</button>
-                      </div>
-                  </div>
-                  <div class="media">
-                      <img src="img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
-                      <div class="media-body">
-                          <h6><a href="">John Doe</a> <small><i>01 Jan 2045 at 12:00pm</i></small></h6>
-                          <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor labore
-                              accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.
-                              Gubergren clita aliquyam consetetur sadipscing, at tempor amet ipsum diam tempor
-                              consetetur at sit.</p>
-                          <button class="btn btn-sm btn-outline-secondary">Reply</button>
-                          <div class="media mt-4">
-                              <img src="img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1"
-                                  style="width: 45px;">
-                              <div class="media-body">
-                                  <h6><a href="">John Doe</a> <small><i>01 Jan 2045 at 12:00pm</i></small></h6>
-                                  <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor
-                                      labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed
-                                      eirmod ipsum. Gubergren clita aliquyam consetetur sadipscing, at tempor amet
-                                      ipsum diam tempor consetetur at sit.</p>
-                                  <button class="btn btn-sm btn-outline-secondary">Reply</button>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div> */}
+                            <div className="bg-light mb-3 p-4">
+                                <h3 className="mb-4">{parentComments.length} Comments</h3>
+
+                                {/* Comment Form */}
+                                <div className="mb-4">
+                                    <h5>Leave a Comment</h5>
+                                    <form onSubmit={handlePostComment}>
+                                        <div className="form-group">
+                                            <textarea
+                                                className="form-control"
+                                                rows="3"
+                                                placeholder="Your Comment"
+                                                value={commentText}
+                                                onChange={(e) => setCommentText(e.target.value)}
+                                            ></textarea>
+                                        </div>
+                                        <input type="submit" className="btn btn-primary" value="Post Comment" />
+                                    </form>
+                                </div>
+
+                                {/* All Parent Comments */}
+                                {parentComments.map((comment) => (
+                                    <div key={comment.id} className="media mb-4">
+                                        <img
+                                            src="/img/newslogo.jpg"
+                                            alt="User"
+                                            className="img-fluid mr-3 mt-1"
+                                            style={{ width: 45, borderRadius: "50%" }}
+                                        />
+                                        <div className="media-body">
+                                            <h6>
+                                                <a href="#">
+                                                    {comment.user.firstName} {comment.user.lastName}
+                                                </a>{" "}
+                                                <small>
+                                                    <i>{new Date(comment.created_at).toLocaleString()}</i>
+                                                </small>
+                                            </h6>
+                                            <p>{comment.text}</p>
+
+                                            <button
+                                                className="btn btn-sm btn-outline-secondary mr-2"
+                                                onClick={() => handleToggleReplyBox(comment.id)}
+                                            >
+                                                Reply
+                                            </button>
+
+                                            {replies.some((r) => r.parentCommentId === comment.id) && (
+                                                <button
+                                                    className="btn btn-sm btn-outline-info"
+                                                    onClick={() => handleToggleReplies(comment.id)}
+                                                >
+                                                    {showRepliesFor[comment.id] ? "Hide Replies" : "Show Replies"}
+                                                </button>
+                                            )}
+
+                                            {/* Reply Input Box */}
+                                            {showReplyBoxFor === comment.id && (
+                                                <div className="mt-3">
+                                                    <textarea
+                                                        className="form-control mb-2"
+                                                        rows="2"
+                                                        placeholder="Write a reply..."
+                                                        value={replyTexts[comment.id] || ""}
+                                                        onChange={(e) =>
+                                                            setReplyTexts((prev) => ({
+                                                                ...prev,
+                                                                [comment.id]: e.target.value,
+                                                            }))
+                                                        }
+                                                    ></textarea>
+                                                    <button
+                                                        className="btn btn-sm btn-success"
+                                                        onClick={() => handlePostReply(comment)}
+                                                    >
+                                                        Post Reply
+                                                    </button>
+                                                </div>
+                                            )}
+
+
+                                            {/* Replies Section */}
+                                            {showRepliesFor[comment.id] &&
+                                                replies
+                                                    .filter((reply) => reply.parentCommentId === comment.id)
+                                                    .map((reply) => (
+                                                        <div className="media mt-4" key={reply.id}>
+                                                            {/* <img
+                                                                src="img/user.jpg"
+                                                                alt="User"
+                                                                className="img-fluid mr-3 mt-1"
+                                                                style={{ width: 45 }}
+                                                            /> */}
+                                                            <div className="media-body">
+                                                                <h6>
+                                                                    <a href="#">
+                                                                        {reply.user.firstName} {reply.user.lastName}
+                                                                    </a>{" "}
+                                                                    <small>
+                                                                        <i>{new Date(reply.created_at).toLocaleString()}</i>
+                                                                    </small>
+                                                                </h6>
+                                                                <p>{reply.text}</p>
+                                                                {/* No reply button here to prevent replying to a reply */}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+
+
                             {/* Comment List End */}
                             {/* Comment Form Start */}
                             {/* <div class="bg-light mb-3" style="padding: 30px;">
@@ -263,7 +437,7 @@ export const SingleNews = () => {
                               class="btn btn-primary font-weight-semi-bold py-2 px-3">
                       </div>
                   </form>
-              </div> */}
+              </div>
                             {/* Comment Form End */}
                         </div>
                         <div className="col-lg-4 pt-3 pt-lg-0">

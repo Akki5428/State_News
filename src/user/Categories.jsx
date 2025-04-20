@@ -6,6 +6,8 @@ import { Link, useNavigate } from 'react-router-dom'
 export const Categories = () => {
     const [catNews, setCatNews] = useState([])
     const [trendingNews, setTrendingNews] = useState([])
+    const [currentPage, setCurrentPage] = useState(0)
+    const itemsPerPage = 6 // 2 big + 4 small
     const navigate = useNavigate()
 
     const fetchNews = async () => {
@@ -45,7 +47,22 @@ export const Categories = () => {
         // console.log("✅ Owl Carousel reinitialized");
     };
 
+    const handleNext = () => {
+        if ((currentPage + 1) * itemsPerPage < trendingNews.length) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
+    const handlePrevious = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const paginatedNews = trendingNews.slice(
+        currentPage * itemsPerPage,
+        (currentPage + 1) * itemsPerPage
+    );
 
     return (
         <>
@@ -377,212 +394,113 @@ export const Categories = () => {
                             <div className="row mb-3">
                                 <div className="col-12">
                                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
-                                        <h3 className="m-0">Popular</h3>
+                                        <h3 className="m-0">Trending</h3>
                                         <Link
                                             className="text-secondary font-weight-medium text-decoration-none"
-                                            to="/manynews/no/yes/category"
+                                            to="/manynews/yes/no/category"
                                         >
                                             View All
                                         </Link>
                                     </div>
                                 </div>
 
-                                {/* First 2 news items with large images and descriptions */}
-                                {trendingNews.slice(0, 2).map((news) => (
+                                {/* First 2 big news items */}
+                                {paginatedNews.slice(0, 2).map((news) => (
                                     <div className="col-lg-6" key={news.id}>
                                         <div className="position-relative mb-3">
-                                            <img className="img-fluid w-100"
-                                                // src="img/news-500x280-1.jpg" 
+                                            <img
+                                                className="img-fluid w-100"
                                                 src={news.images[0]}
-                                                style={{ objectFit: "cover", height: 200 }} alt='News' />
-                                            <div className="overlay position-relative bg-light justify-content-start" style={{ height: 200 }}>
+                                                style={{ objectFit: "cover", height: 200 }}
+                                                alt="News"
+                                            />
+                                            <div
+                                                className="overlay position-relative bg-light justify-content-start"
+                                                style={{ height: 200 }}
+                                            >
                                                 <div className="mb-2" style={{ fontSize: 14 }}>
-                                                    <Link to={`/category/${news.category}`}>{news.category}</Link>
+                                                    <Link to={`/category/${news.category}`}>
+                                                        {news.category}
+                                                    </Link>
                                                     <span className="px-1">/</span>
                                                     <span>{FormatDate(news.news_date)}</span>
                                                 </div>
-                                                <Link className="h4" to={`/single/category/${news._id}`}>{news.title}</Link>
-                                                <p className="m-0" style={{
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis'
-                                                }}>{news.content}</p>
+                                                <Link className="h4" to={`/single/category/${news._id}`}>
+                                                    {news.title}
+                                                </Link>
+                                                <p
+                                                    className="m-0"
+                                                    style={{
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: "vertical",
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                    }}
+                                                >
+                                                    {news.content}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
 
-                                {/* Last 4 news items with only small images and titles */}
-                                {trendingNews.slice(2, 8).map((news) => (
+                                {/* Last 4 small news items */}
+                                {paginatedNews.slice(2, 6).map((news) => (
                                     <div className="col-lg-6" key={news.id}>
                                         <div className="d-flex mb-3">
                                             <img
-                                                // src="img/news-80x80-4.jpg"
                                                 src={news.images[0]}
-                                                style={{ width: 100, height: 100, objectFit: "cover" }} />
-                                            <div className="w-100 d-flex flex-column justify-content-center bg-light px-3" style={{ height: 100 }}>
+                                                style={{ width: 100, height: 100, objectFit: "cover" }}
+                                                alt="News"
+                                            />
+                                            <div
+                                                className="w-100 d-flex flex-column justify-content-center bg-light px-3"
+                                                style={{ height: 100 }}
+                                            >
                                                 <div className="mb-1" style={{ fontSize: 13 }}>
-                                                    <Link to={`/category/${news.category}`}>{news.category}</Link>
+                                                    <Link to={`/category/${news.category}`}>
+                                                        {news.category}
+                                                    </Link>
                                                     <span className="px-1">/</span>
                                                     <span>{FormatDate(news.news_date)}</span>
                                                 </div>
-                                                <Link className="h6 m-0" to={`/single/category/${news._id}`} style={{
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis'
-                                                }}>{news.title}</Link>
+                                                <Link
+                                                    className="h6 m-0"
+                                                    to={`/single/category/${news._id}`}
+                                                    style={{
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: "vertical",
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                    }}
+                                                >
+                                                    {news.title}
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-                            {/* Ads */}
-                            {/* <div className="mb-3 pb-3">
-                                <a href="">
-                                    <img className="img-fluid w-100" src="img/ads-700x70.jpg" alt="" />
-                                </a>
-                            </div> */}
 
-                            {/* Latest */}
-                            {/* <div className="row">
-                                <div className="col-12">
-                                    <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
-                                        <h3 className="m-0">Latest</h3>
-                                        <a
-                                            className="text-secondary font-weight-medium text-decoration-none"
-                                            href=""
-                                        >
-                                            View All
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6">
-                                    <div className="position-relative mb-3">
-                                        <img
-                                            className="img-fluid w-100"
-                                            src="img/news-500x280-5.jpg"
-                                            style={{ objectFit: "cover" }}
-                                        />
-                                        <div className="overlay position-relative bg-light">
-                                            <div className="mb-2" style={{ fontSize: 14 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h4" href="">
-                                                Est stet amet ipsum stet clita rebum duo
-                                            </a>
-                                            <p className="m-0">
-                                                Rebum dolore duo et vero ipsum clita, est ea sed duo diam
-                                                ipsum, clita at justo, lorem amet vero eos sed sit...
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-5.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-1.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6">
-                                    <div className="position-relative mb-3">
-                                        <img
-                                            className="img-fluid w-100"
-                                            src="img/news-500x280-6.jpg"
-                                            style={{ objectFit: "cover" }}
-                                        />
-                                        <div className="overlay position-relative bg-light">
-                                            <div className="mb-2" style={{ fontSize: 14 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h4" href="">
-                                                Est stet amet ipsum stet clita rebum duo
-                                            </a>
-                                            <p className="m-0">
-                                                Rebum dolore duo et vero ipsum clita, est ea sed duo diam
-                                                ipsum, clita at justo, lorem amet vero eos sed sit...
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-2.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            src="img/news-100x100-3.jpg"
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
+                            {/* Pagination Buttons */}
+                            <div className="d-flex justify-content-between">
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={handlePrevious}
+                                    disabled={currentPage === 0}
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={handleNext}
+                                    disabled={(currentPage + 1) * itemsPerPage >= trendingNews.length}
+                                >
+                                    Next
+                                </button>
+                            </div>
                         </div>
                         <div className="col-lg-4 pt-3 pt-lg-0">
                             {/* Social Follow Start */}

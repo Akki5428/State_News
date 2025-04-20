@@ -6,6 +6,8 @@ import { FormatDate } from '../components/FormatDate'
 export const Category = () => {
     const [catNews, setCatNews] = useState([])
     const [trendingNews, setTrendingNews] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 14; // 4 big + 10 small
     const navigate = useNavigate()
 
     const category = useParams()
@@ -13,10 +15,6 @@ export const Category = () => {
     const fetchNews = async () => {
         const news = await axios.get(`http://127.0.0.1:8000/news/category/${category.categoryName}`)
         const res = await axios.get("http://127.0.0.1:8000/news/trending/")
-        $(".carousel-item-2").trigger("destroy.owl.carousel");
-        console.log(news.data)
-        console.log(category.categoryName)
-        // setTimeout(initOwlCarousel, 500);
         setCatNews(news.data)
         setTrendingNews(res.data)
     }
@@ -25,6 +23,22 @@ export const Category = () => {
         fetchNews();
 
     }, [category])
+
+    const handleNext = () => {
+        if (currentPage * itemsPerPage < catNews.length) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const bigNews = catNews.slice(startIndex, startIndex + 4);
+    const smallNews = catNews.slice(startIndex + 4, startIndex + itemsPerPage);
 
     return (
         <>
@@ -55,46 +69,14 @@ export const Category = () => {
                                 <div className="col-12">
                                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                                         <h3 className="m-0">{catNews.length > 0 ? catNews[0].category : "Loading..."}</h3>
-                                        {/* <a
-                                            className="text-secondary font-weight-medium text-decoration-none"
-                                            href=""
-                                        >
-                                            View All
-                                        </a> */}
                                     </div>
                                 </div>
-                                {/* <div className="col-lg-6">
-                                    <div className="position-relative mb-3">
-                                        <img
-                                            className="img-fluid w-100"
-                                            // src="img/news-500x280-1.jpg?v=1"
-                                            src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
-                                            style={{ objectFit: "cover" }}
-                                        />
-                                        <div className="overlay position-relative bg-light">
-                                            <div className="mb-2" style={{ fontSize: 14 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h4" href="">
-                                                Est stet amet ipsum stet clita rebum duo
-                                            </a>
-                                            <p className="m-0">
-                                                Rebum dolore duo et vero ipsum clita, est ea sed duo diam
-                                                ipsum, clita at justo, lorem amet vero eos sed sit...
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {catNews.length > 0 ? (
-                                    catNews.slice(0, 4).map((item, index) => (
+                                {bigNews.length > 0 ? (
+                                    bigNews.map((item, index) => (
                                         <div className="col-lg-6" key={index}>
                                             <div className="position-relative mb-3">
                                                 <img
                                                     className="img-fluid w-100"
-                                                    // src={item.image || "img/news-500x280-2.jpg?v=1"}
-                                                    // src={`/img/news-500x280-1.jpg?v=${new Date().getTime()}`}
                                                     src={item.images[0]}
                                                     style={{ objectFit: "cover", height: 170 }}
                                                     alt="News"
@@ -144,57 +126,11 @@ export const Category = () => {
                                 </a>
                             </div>
                             <div className="row">
-                                <div className="col-lg-6">
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            // src="img/news-100x100-1.jpg"
-                                            src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6">
-                                    <div className="d-flex mb-3">
-                                        <img
-                                            // src="img/news-100x100-1.jpg"
-                                            src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
-                                            style={{ width: 100, height: 100, objectFit: "cover" }}
-                                        />
-                                        <div
-                                            className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                            style={{ height: 100 }}
-                                        >
-                                            <div className="mb-1" style={{ fontSize: 13 }}>
-                                                <a href="">Technology</a>
-                                                <span className="px-1">/</span>
-                                                <span>January 01, 2045</span>
-                                            </div>
-                                            <a className="h6 m-0" href="">
-                                                Lorem ipsum dolor sit amet consec adipis elit
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                {catNews.length > 4 ? (
-                                    catNews.slice(4, 12).map((item, index) => (
+                                {smallNews.length > 0 ? (
+                                    smallNews.map((item, index) => (
                                         <div className="col-lg-6" key={index + 4}>
                                             <div className="d-flex mb-3">
                                                 <img
-                                                    // src={item.image || "img/news-100x100-1.jpg"}
-                                                    // src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
                                                     src={item.images[0]}
                                                     style={{ width: 100, height: 100, objectFit: "cover" }}
                                                     alt="News"
@@ -220,50 +156,23 @@ export const Category = () => {
                                         <p>Loading news...</p>
                                     </div>
                                 )}
-
                             </div>
-
-                            {/* <div className="row">
-                                <div className="col-12">
-                                    <nav aria-label="Page navigation">
-                                        <ul className="pagination justify-content-center">
-                                            <li className="page-item disabled">
-                                                <a className="page-link" href="#" aria-label="Previous">
-                                                    <span
-                                                        className="fa fa-angle-double-left"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span className="sr-only">Previous</span>
-                                                </a>
-                                            </li>
-                                            <li className="page-item active">
-                                                <a className="page-link" href="#">
-                                                    1
-                                                </a>
-                                            </li>
-                                            <li className="page-item">
-                                                <a className="page-link" href="#">
-                                                    2
-                                                </a>
-                                            </li>
-                                            <li className="page-item">
-                                                <a className="page-link" href="#">
-                                                    3
-                                                </a>
-                                            </li>
-                                            <li className="page-item">
-                                                <a className="page-link" href="#" aria-label="Next">
-                                                    <span
-                                                        className="fa fa-angle-double-right"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span className="sr-only">Next</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div> */}
+                            <div className="d-flex justify-content-between mt-4">
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={handlePrevious}
+                                    disabled={currentPage === 1}
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={handleNext}
+                                    disabled={currentPage * itemsPerPage >= catNews.length}
+                                >
+                                    Next
+                                </button>
+                            </div>
                         </div>
 
                         <div className="col-lg-4 pt-3 pt-lg-0">
@@ -339,11 +248,6 @@ export const Category = () => {
                                         Just Sign up and get news related notification from our website
                                     </p>
                                     <div className="input-group d-flex justify-content-center mt-3" style={{ width: "100%" }}>
-                                        {/* <input
-                                            type="text"
-                                            className="form-control form-control-lg"
-                                            placeholder="Your Email"
-                                        /> */}
                                         <div className="input-group-append">
                                             <button className="btn btn-primary px-5 py-2 fs-5" onClick={() => { navigate("/signup") }}>Sign Up</button>
                                         </div>
@@ -357,7 +261,6 @@ export const Category = () => {
                             <div className="mb-3 pb-3">
                                 <a href="">
                                     <img className="img-fluid"
-                                        //  src="img/news-500x280-4.jpg" 
                                         src={`/img/news-500x280-4.jpg?v=${new Date().getTime()}`}
                                         alt="" />
                                 </a>
@@ -369,32 +272,11 @@ export const Category = () => {
                                 <div className="bg-light py-2 px-4 mb-3">
                                     <h3 className="m-0">Tranding</h3>
                                 </div>
-                                {/* <div className="d-flex mb-3">
-                                    <img
-                                        // src="img/news-100x100-1.jpg"
-                                        src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
-                                        style={{ width: 100, height: 100, objectFit: "cover" }}
-                                    />
-                                    <div
-                                        className="w-100 d-flex flex-column justify-content-center bg-light px-3"
-                                        style={{ height: 100 }}
-                                    >
-                                        <div className="mb-1" style={{ fontSize: 13 }}>
-                                            <a href="">Technology</a>
-                                            <span className="px-1">/</span>
-                                            <span>January 01, 2045</span>
-                                        </div>
-                                        <a className="h6 m-0" href="">
-                                            Lorem ipsum dolor sit amet consec adipis elit
-                                        </a>
-                                    </div>
-                                </div> */}
                                 {trendingNews.length > 0 ? (
                                     trendingNews.slice(0, 5).map((item, index) => (
                                         <div className="d-flex mb-3" key={index}>
                                             <img
-                                                // src={item.image || "img/news-100x100-2.jpg"}
-                                                src={`/img/news-100x100-1.jpg?v=${new Date().getTime()}`}
+                                                src={item.images[0]}
                                                 style={{ width: 100, height: 100, objectFit: "cover" }}
                                                 alt="Trending News"
                                             />
@@ -403,13 +285,19 @@ export const Category = () => {
                                                 style={{ height: 100 }}
                                             >
                                                 <div className="mb-1" style={{ fontSize: 13 }}>
-                                                    <a href="">{item.category || "Technology"}</a>
+                                                    <Link to={`/category/${item.category}`}>{item.category || "Technology"}</Link>
                                                     <span className="px-1">/</span>
                                                     <span>{FormatDate(item.news_date) || "January 01, 2045"}</span>
                                                 </div>
-                                                <a className="h6 m-0" href="">
+                                                <Link className="h6 m-0" to={`/single/category/${item._id}`} style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>
                                                     {item.title || "Lorem ipsum dolor sit amet consec adipis elit"}
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                     ))
