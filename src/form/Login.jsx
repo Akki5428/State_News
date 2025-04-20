@@ -4,10 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
-export const Login = ({ setShowNavbar , setShowTopbar}) => {
+export const Login = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
   useEffect(() => {
     setShowNavbar(false); // Hide navbar when Login is mounted
     setShowTopbar(false); // Hide topbar when Login is mounted
+    setShowAjTopbar(false); // Hide AjTopbar when Login is mounted
     return () => 
       {setShowNavbar(true)
       setShowTopbar(true)
@@ -21,11 +22,22 @@ export const Login = ({ setShowNavbar , setShowTopbar}) => {
   const login_data = async (data) => {
     console.log(data)
 
-    const res = await axios.post("http://127.0.0.1:8000/user/login", data);
+    const res = await axios.post("http://127.0.0.1:8000/user/login/", data);
     console.log(res.data.user._id); 
     console.log(res.data); 
     if(res.status === 200){
-        navigate('/home')
+        
+        localStorage.setItem('userId', res.data.user._id); // Store the user ID in local storage
+        localStorage.setItem('name', res.data.user.firstName); // Store the token in local storage
+        localStorage.setItem('role', res.data.user.role.role)
+        if(res.data.user.role.role === "admin"){
+          navigate('/admindash')
+        }
+        else if(res.data.user.role.role === "journalist" || res.data.user.role.role === "citizen_journalist"){
+          navigate('/journalistdash')
+        }
+        else {navigate('/home')}
+
     }
   }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Home } from './components/Home'
 import { Navbar } from './components/Navbar'
 import { Topbar } from './components/Topbar'
@@ -45,26 +45,68 @@ function App() {
   const [userRole, setUserRole] = useState()
   const [showTopbar, setShowTopbar] = useState(true)
   const [showAjTopbar, setShowAjTopbar] = useState(false)
+  const [showLoginBtn,setShowLoginBtn] = useState(false)
 
   const navigate = useNavigate()
 
-  const handlerole = () => {
-    setUserRole("admin")
-    setIsAuthenticated(true)
-    setShowNavbar(false)
-    setShowTopbar(false)
-    setShowAjTopbar(true)
-    navigate("/admindash")
-  }
+  var id = localStorage.getItem('userId')
+  var name = localStorage.getItem('name')
+  const role = localStorage.getItem('role')
+  useEffect(() => {
 
-  const handlerole1 = () => {
-    setUserRole("journalist")
-    setIsAuthenticated(true)
-    setShowNavbar(false)
-    setShowTopbar(false)
-    setShowAjTopbar(true)
-    navigate("/journdash")
-  }
+    if (role === "admin") {
+      setUserRole("admin")
+      setIsAuthenticated(true)
+      setShowNavbar(false)
+      setShowTopbar(false)
+      setShowAjTopbar(true)
+      navigate("/admindash")
+    } else if (role === "journalist") {
+      setUserRole("journalist")
+      setIsAuthenticated(true)
+      setShowNavbar(false)
+      setShowTopbar(false)
+      setShowAjTopbar(true)
+      navigate("/journdash")
+    } else if (role === "citizen_journalist") {
+      setUserRole("citizen_journalist")
+      setIsAuthenticated(true)
+      setShowNavbar(false)
+      setShowTopbar(false)
+      setShowAjTopbar(true)
+      navigate("/journdash")
+    }
+    else if (role === "reader") {
+      setUserRole("reader")
+      setShowNavbar(true)
+      setShowTopbar(true)
+      setShowAjTopbar(false)
+      setIsAuthenticated(false)
+    }
+    else if (role === null) {
+      setUserRole(null)
+      setIsAuthenticated(false)
+      setShowLoginBtn(true)
+    }
+    }, [role])
+
+  // const handlerole = () => {
+  //   setUserRole("admin")
+  //   setIsAuthenticated(true)
+  //   setShowNavbar(false)
+  //   setShowTopbar(false)
+  //   setShowAjTopbar(true)
+  //   navigate("/admindash")
+  // }
+
+  // const handlerole1 = () => {
+  //   setUserRole("journalist")
+  //   setIsAuthenticated(false)
+  //   setShowNavbar(false)
+  //   setShowTopbar(false)
+  //   setShowAjTopbar(true)
+  //   navigate("/journdash")
+  // }
 
   // const handlerole2 = () => {
   //   setUserRole("citizen")
@@ -75,64 +117,65 @@ function App() {
 
   return (
     <>
-      <button onClick={handlerole}>Click</button>
-      <button onClick={handlerole1}>Click1</button>
+      {showAjTopbar ?"Hello" : "Bye"}
+      {/* <button onClick={handlerole}>Click</button>
+      <button onClick={handlerole1}>Click1</button> */}
       {/* <button onClick={handlerole2}>Click2</button> */}
       {showTopbar && <Topbar />}
-      {showNavbar && <Navbar />}
-      {showAjTopbar && <AjTopbar/>}
-      
-      {userRole=="admin" && <AdminNavbar/>}
-      {userRole=="journalist" && <JournalistNavbar/>}
-      {userRole=="citizen" && <CitizenNav/>}
+      {showNavbar && <Navbar login={showLoginBtn}/>}
+      {showAjTopbar ? <AjTopbar />: <></>}
+
+      {userRole == "admin" && <AdminNavbar />}
+      {userRole == "journalist" && <JournalistNavbar />}
+      {userRole == "citizen" && <CitizenNav />}
       <Routes>
         <Route path='/' element={<Navigate to="/home" />}></Route>
-        <Route path='/home' element={<Home/>}></Route>
-        <Route path='/categories' element={<Categories/>}></Route>
-        <Route path='/category/:categoryName' element={<Category/>}></Route>
+        <Route path='/home' element={<Home />}></Route>
+        <Route path='/categories' element={<Categories />}></Route>
+        <Route path='/category/:categoryName' element={<Category />}></Route>
         {/* <Route path='/category' element={<Category/>}></Route> */}
-        <Route path='/states' element={<State_City/>}></Route>
+        <Route path='/states' element={<State_City />}></Route>
         {/* <Route path='/single' element={<SingleNews/>}></Route> */}
-        <Route path="/single/:type/:newsId" element={<SingleNews/>} />
-        <Route path="/state/:type/:name" element={<State_City_One/>} />
-        <Route path="/manynews/:isTrend/:isPop/:val" element={<ManyNews/>} />
-
-        
-
-        <Route path='/journSubmit/:id' element={<JournalistSubmit/>} />
-        <Route path='/journeditq' element={<JournEditq/>} />
-
-        
+        <Route path="/single/:type/:newsId" element={<SingleNews />} />
+        <Route path="/state/:type/:name" element={<State_City_One />} />
+        <Route path="/manynews/:isTrend/:isPop/:val" element={<ManyNews />} />
 
 
-        <Route path='/contact' element={<Contact/>}></Route>
-        <Route path='/unauthorized' element={<Unauth/>}></Route>
-        <Route path='/login' element={<Login setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar}/>}></Route>
-        <Route path='/signup' element={<Signup setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar}/>}></Route>
+
+        {/* <Route path='/journeditq' element={<JournEditq/>} /> */}
+
+
+
+
+        <Route path='/contact' element={<Contact />}></Route>
+        <Route path='/unauthorized' element={<Unauth />}></Route>
+        <Route path='/login' element={<Login setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar} setShowAjTopbar={setShowAjTopbar} />}></Route>
+        <Route path='/signup' element={<Signup setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar} />}></Route>
         <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["admin"]} userRole={userRole} />}>
-          <Route path='/admindash' element={<AdminDashboard/>}></Route>
-          <Route path='/adminnewsmanage' element={<AdminNewsManage/>}></Route>
-          <Route path='/adminusermanage' element={<AdminUserManage/>}></Route>
-          <Route path="/adminsingleuser/:id" element={<AdminSingleUser/>} />
-          <Route path="/adminsingle/:id" element={<AdminSingleNews/>} />
-          <Route path='/adminfulledit/:id' element={<AdminFullEdit/>} />
+          <Route path='/admindash' element={<AdminDashboard />}></Route>
+          <Route path='/adminnewsmanage' element={<AdminNewsManage />}></Route>
+          <Route path='/adminusermanage' element={<AdminUserManage />}></Route>
+          <Route path="/adminsingleuser/:id" element={<AdminSingleUser />} />
+          <Route path="/adminsingle/:id" element={<AdminSingleNews />} />
+          <Route path='/adminfulledit/:id' element={<AdminFullEdit />} />
         </Route>
 
-        <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["journalist"]} userRole={userRole} />}>
-          <Route path='/journDash' element={<JournalistDash/>} />
-          <Route path='/journSubmit' element={<JournalistSubmit/>} />
-          <Route path="/journsinglenews/:id" element={<JournalistSingleNews/>} />  
-          <Route path='/journalistNewsManage' element={<JournalistNewsManage/>} />
-          <Route path='/journalistcomment' element={<JournalistComment/>} />
+        <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["journalist","citizen_journalist"]} userRole={userRole} />}>
+          <Route path='/journDash' element={<JournalistDash />} />
+          <Route path='/journSubmit' element={<JournalistSubmit />} />
+          <Route path="/journsinglenews/:id" element={<JournalistSingleNews />} />
+          <Route path='/journalistNewsManage' element={<JournalistNewsManage />} />
+          <Route path='/journalistcomment' element={<JournalistComment />} />
           <Route path="/comments/:articleId/:commentId?" element={<JournalistComment />} />
-          <Route path='/journeditw/:id' element={<JournEditw/>} />
+          <Route path='/journeditw/:id' element={<JournEditw />} />
+          <Route path='/journSubmit/:id' element={<JournalistSubmit />} />
         </Route>
 
         <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["citizen"]} userRole={userRole} />}>
-          <Route path='/citizendash' element={<CitizenDashboard/>} /> 
-          <Route path='/citizensubmit' element={<CitizenSubmit/>} /> 
-          <Route path='/citizennews' element={<CitizenNewsManage/>} /> 
-          <Route path='/citizencomment' element={<CitizenComment/>} /> 
+          <Route path='/citizendash' element={<CitizenDashboard />} />
+          <Route path='/citizensubmit' element={<CitizenSubmit />} />
+          <Route path='/citizennews' element={<CitizenNewsManage />} />
+          <Route path='/citizencomment' element={<CitizenComment />} />
           {/* <Route path='/citizennav' element={<CitizenNav/>} />  */}
         </Route>
 

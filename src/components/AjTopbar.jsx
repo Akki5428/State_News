@@ -4,6 +4,7 @@ import "../css/Topbar.css"
 export const AjTopbar = () => {
     const [currentDate, setCurrentDate] = useState("");
     // const [liveNews, setLiveNews] = useState([]);
+    const name = localStorage.getItem('name')
 
     // Function to get the current day and date in "Monday, January 01, 2045" format
     const updateDate = () => {
@@ -93,7 +94,7 @@ export const AjTopbar = () => {
                                     animation: "fadeIn 1s ease-in-out"
                                 }}
                             >
-                                👋 Welcome Akshat, thanks for logging in!
+                                👋 Welcome {name}, thanks for logging in!
                             </div>
 
 

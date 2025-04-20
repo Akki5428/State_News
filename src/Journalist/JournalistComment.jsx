@@ -8,7 +8,8 @@ export const JournalistComment = () => {
     const [searchText, setSearchText] = useState("");
     const [articlesData, setArticlesData] = useState([]);
     const [replyText, setReplyText] = useState({});
-    const id = "67d03086eeb4bbc43d6ec3a5";
+    // const id = "67d03086eeb4bbc43d6ec3a5";
+    const id = localStorage.getItem("userId")
     const { articleId, commentId } = useParams(); 
 
     const fetchComments = async () => {

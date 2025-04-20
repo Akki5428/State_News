@@ -1,7 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export const JournalistNavbar = () => {
+    const navigate = useNavigate()
+    
     return (
         <>
             <div className="container-fluid p-0 mb-3">
@@ -49,7 +51,14 @@ export const JournalistNavbar = () => {
                                 <Link to='/login'>
                                     <button
                                         className="input-group-text text-secondary ms-auto"
-                                    >
+                                        onClick={() => {
+                                            
+                                            localStorage.removeItem("role")
+                                            localStorage.removeItem("userId")
+                                            localStorage.removeItem("name")
+                                            navigate("/login")
+    
+                                        }}>
                                         <i className="fa fa-user" />
                                         LogOut
                                     </button>

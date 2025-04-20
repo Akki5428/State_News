@@ -9,7 +9,8 @@ export const JournalistNewsManage = () => {
     const [categoryFilter, setCategoryFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const navigate = useNavigate();
-    const id = "67d03086eeb4bbc43d6ec3a5"
+    // const id = "67d03086eeb4bbc43d6ec3a5"
+    const id = localStorage.getItem("userId")
 
     // Fetch dashboard stats from backend
     const fetchNews = async () => {

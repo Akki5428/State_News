@@ -12,7 +12,8 @@ export const JournalistDash = () => {
         draft_news: 0,
         total_views: 0,
     });
-    const id = "67d03086eeb4bbc43d6ec3a5"
+    // const id = "67d03086eeb4bbc43d6ec3a5"
+    const id = localStorage.getItem("userId")
     const navigate = useNavigate();
 
     const [recentNews, setRecentNews] = useState([]);

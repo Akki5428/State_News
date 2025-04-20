@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import "../css/dropdown.css"
 import axios from 'axios';
 
-export const Navbar = () => {
+export const Navbar = ({ login }) => {
 
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
     const [groupedCities, setGroupedCities] = useState({});
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,6 +31,7 @@ export const Navbar = () => {
             } catch (error) {
                 console.error('Failed to fetch states or cities:', error);
             }
+
         };
 
         fetchData();
@@ -302,15 +304,31 @@ export const Navbar = () => {
                                 </button>
                             </div>
                             <div className="input-group-append">
-                                <Link to='/login'>
+                                {login ?
+                                    <Link to='/login'>
+                                        <button
+                                            className="input-group-text text-secondary"
+                                            style={{ marginLeft: 10 }}
+                                        >
+                                            <i className="fa fa-user" />
+                                            Login
+                                        </button>
+                                    </Link> :
+
                                     <button
                                         className="input-group-text text-secondary"
                                         style={{ marginLeft: 10 }}
+                                        onClick={() => {
+                                             
+                                            localStorage.removeItem('userId'); // Remove the user ID from local storage
+                                            localStorage.removeItem('name'); // Remove the name from local storage
+                                            localStorage.removeItem('role'); // Remove the role from local storage
+                                            navigate('/login')
+                                        }}
                                     >
                                         <i className="fa fa-user" />
-                                        Login
-                                    </button>
-                                </Link>
+                                        Logout
+                                    </button>}
                             </div>
                         </div>
                     </div>

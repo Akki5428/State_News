@@ -11,6 +11,7 @@ export const JournalistSubmit = () => {
     reset,
     formState: { errors },
   } = useForm();
+  const user_id = localStorage.getItem('userId'); // Get the user ID from local storage
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -93,7 +94,7 @@ export const JournalistSubmit = () => {
         payload = {
         ...data,
         images: imageUrls,
-        userId: "67d03086eeb4bbc43d6ec3a5", // change this based on authentication
+        userId: user_id, // change this based on authentication
         status:"draft"
       };  
     }
@@ -101,7 +102,7 @@ export const JournalistSubmit = () => {
        payload = {
         ...data,
         images: imageUrls,
-        userId: "67d03086eeb4bbc43d6ec3a5", // change this based on authentication
+        userId: user_id, // change this based on authentication
       };
     }
 
