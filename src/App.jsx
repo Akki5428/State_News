@@ -36,6 +36,9 @@ import { AjTopbar } from './components/AjTopbar'
 import { AdminFullEdit } from './admin/AdminFullEdit'
 import { ManyNews } from './user/ManyNews'
 import PendingApproval from './components/PendingApproval'
+import { ForgetPass } from './form/ForgetPass'
+import { ResetPass } from './form/ResetPass'
+import { ToastContainer } from 'react-toastify'
 
 
 // import './App.css'
@@ -83,6 +86,7 @@ function App() {
       setShowNavbar(true)
       setShowTopbar(true)
       setShowAjTopbar(false)
+      setShowLoginBtn(false)
       setIsAuthenticated(false)
     }
     else if (role === null) {
@@ -94,7 +98,7 @@ function App() {
     else {
       setUserRole(null)
       setIsAuthenticated(false)
-      setShowLoginBtn(true)
+      
       setShowNavbar(true)
       setShowTopbar(true)
       setShowAjTopbar(false)
@@ -133,6 +137,17 @@ function App() {
       {/* <button onClick={handlerole}>Click</button>
       <button onClick={handlerole1}>Click1</button> */}
       {/* <button onClick={handlerole2}>Click2</button> */}
+      <ToastContainer
+        position="top-left"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       {showTopbar && <Topbar />}
       {showNavbar && <Navbar login={showLoginBtn}/>}
       {showAjTopbar ? <AjTopbar />: <></>}
@@ -144,6 +159,8 @@ function App() {
         <Route path='/' element={<Navigate to="/home" />}></Route>
         <Route path='/home' element={<Home />}></Route>
         <Route path='/categories' element={<Categories />}></Route>
+        <Route path='/forget' element={<ForgetPass setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar} setShowAjTopbar={setShowAjTopbar}/>}></Route>
+        <Route path='//resetpassword/:token' element={<ResetPass setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar} setShowAjTopbar={setShowAjTopbar}/>}></Route>
         <Route path='/pendingapprovals' element={<PendingApproval />}></Route>
         <Route path='/category/:categoryName' element={<Category />}></Route>
         {/* <Route path='/category' element={<Category/>}></Route> */}

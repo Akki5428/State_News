@@ -3,43 +3,56 @@ import '../css/login.css'
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import { Loader } from '../components/Loader';
+import { toast } from 'react-toastify';
+import "../css/toaster.css"
 
-export const Login = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
+export const Login = ({ setShowNavbar, setShowTopbar, setShowAjTopbar }) => {
   useEffect(() => {
     setShowNavbar(false); // Hide navbar when Login is mounted
     setShowTopbar(false); // Hide topbar when Login is mounted
     setShowAjTopbar(false); // Hide AjTopbar when Login is mounted
-    return () => 
-      {setShowNavbar(true)
+    return () => {
+      setShowNavbar(true)
       setShowTopbar(true)
-      }; // Show navbar again when Login unmounts
+    }; // Show navbar again when Login unmounts
   }, []);
 
+  const [isLoading, setIsLoading] = React.useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm()
 
   const navigate = useNavigate()
 
   const login_data = async (data) => {
     console.log(data)
-
+    setIsLoading(true);
     const res = await axios.post("http://127.0.0.1:8000/user/login/", data);
-    console.log(res.data.user._id); 
-    console.log(res.data); 
-    if(res.status === 200){
-        
-        localStorage.setItem('userId', res.data.user._id); // Store the user ID in local storage
-        localStorage.setItem('name', res.data.user.firstName); // Store the token in local storage
-        localStorage.setItem('role', res.data.user.role.role)
-        localStorage.setItem('status', res.data.user.status)
-        if(res.data.user.role.role === "admin"){
-          navigate('/admindash')
-        }
-        else if(res.data.user.role.role === "journalist" || res.data.user.role.role === "citizen_journalist"){
-          navigate('/journalistdash')
-        }
-        else {navigate('/home')}
+    console.log(res.data.user._id);
+    console.log(res.data);
+    if (res.status === 200) {
+
+      localStorage.setItem('userId', res.data.user._id); // Store the user ID in local storage
+      localStorage.setItem('name', res.data.user.firstName); // Store the token in local storage
+      localStorage.setItem('role', res.data.user.role.role)
+      localStorage.setItem('status', res.data.user.status)
+      // toast.success("Login successful!");
+      toast("Login successful!", {
+        className: "red-toast",
+        bodyClassName: "red-toast-body",
+        progressClassName: "red-toast-progress",
+      });
+      
+      
+      if (res.data.user.role.role === "admin") {
+        navigate('/admindash')
+      }
+      else if (res.data.user.role.role === "journalist" || res.data.user.role.role === "citizen_journalist") {
+        navigate('/journalistdash')
+      }
+      else { navigate('/home') }
 
     }
+    setIsLoading(false);
   }
 
   const validationRules = {
@@ -59,7 +72,6 @@ export const Login = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
     <>
       <div className='login-con'>
         <div className="container">
-
           <div className="title">Login</div>
           <div className="content">
             {/* Registration form */}
@@ -69,20 +81,24 @@ export const Login = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
                 {/* Input for Email */}
                 <div className="input-box">
                   <span className="details">Email</span>
-                  <input type="text" placeholder="Enter your email" {...register('email',validationRules.email)}/>
+                  <input type="text" placeholder="Enter your email" {...register('email', validationRules.email)} />
                   {errors.email && <p className='error_mes'>*{errors.email.message}</p>}
                 </div>
 
                 {/* Input for Password */}
                 <div className="input-box">
                   <span className="details">Password</span>
-                  <input type="password" placeholder="Enter your password" {...register('password',validationRules.password)}/>
+                  <input type="password" placeholder="Enter your password" {...register('password', validationRules.password)} />
                   {errors.password && <p className='error_mes'>*{errors.password.message}</p>}
 
                 </div>
                 <div className='dont_txt'>
                   <span >Dont have Account? </span>
                   <Link to="/signup">Signup</Link>
+                </div>
+
+                <div className='dont_txt'>
+                  <Link to="/forget" style={{ color: "blue" }}>Forgot Password?</Link>
                 </div>
 
                 {/* Submit button */}
@@ -92,7 +108,8 @@ export const Login = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
               </div>
             </form>
           </div>
-        </div>
+          {isLoading && <Loader />}
+        </div> 
       </div>
     </>
 

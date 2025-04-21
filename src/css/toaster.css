@@ -1,0 +1,16 @@
+.red-toast {
+    background-color: #e53935 !important;   /* Bold red background */
+    color: #ffffff !important;              /* White text for contrast */
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+  }
+  
+  .red-toast-body {
+    font-weight: 500;
+  }
+  
+  .red-toast-progress {
+    background: #ffffff !important;         /* White progress bar */
+  }
+  

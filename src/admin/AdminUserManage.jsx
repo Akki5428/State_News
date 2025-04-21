@@ -2,22 +2,29 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { GetStatusClass } from '../utils/getStatusClass';
 import { Link, useNavigate } from 'react-router-dom';
+import { set } from 'react-hook-form';
+import { Loader } from '../components/Loader';
 
 export const AdminUserManage = () => {
     const [user, setUser] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate()
 
     const fetchUser = async () => {
+        setLoading(true)
         try {
             const response = await axios.get("http://127.0.0.1:8000/user/new/");
             console.log(response.data)
             setUser(response.data); // Assuming backend sends JSON with these keys
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
+        }
+        finally {
+            setLoading(false)
         }
     };
 
@@ -45,6 +52,7 @@ export const AdminUserManage = () => {
 
     return (
         <div className="container mt-4">
+            {loading && <Loader/>}
             <h2 className="mb-4 text-center text-primary">User Management</h2>
             {/* Search & Filter Section */}
             <div className="row mb-3">

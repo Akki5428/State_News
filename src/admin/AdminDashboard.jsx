@@ -3,6 +3,7 @@ import '../css/admin.css'
 import axios from 'axios';
 import { GetStatusClass } from '../utils/getStatusClass';
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '../components/Loader';
 
 export const AdminDashboard = () => {
     const [stats, setStats] = useState({
@@ -13,10 +14,12 @@ export const AdminDashboard = () => {
     });
     const [recentNews, setRecentNews] = useState([]);
     const [recentUsers, setRecentUsers] = useState([]);
+    const [loading, setLoading] = useState(false);   
     const navigate = useNavigate()
 
     // Fetch dashboard stats from backend
     const fetchStats = async () => {
+        
         try {
             const response = await axios.get("http://127.0.0.1:8000/dash/stats/");
             console.log(response.data)
@@ -24,9 +27,11 @@ export const AdminDashboard = () => {
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }
+        
     };
 
     const fetchRecentData = async () => {
+        setLoading(true)
         try {
             const newsResponse = await axios.get("http://127.0.0.1:8000/news/recent/");
             const usersResponse = await axios.get("http://127.0.0.1:8000/user/recent/");
@@ -38,6 +43,9 @@ export const AdminDashboard = () => {
             setRecentUsers(usersResponse.data);
         } catch (error) {
             console.error("Error fetching recent data:", error);
+        }
+        finally {
+        setLoading(false)
         }
     };
 
@@ -61,6 +69,7 @@ export const AdminDashboard = () => {
         <div className="container mt-4 mb-4">
             {/* Summary Cards */}
             <div className="row g-4">
+                {loading && <Loader />}
                 <div className="col-md-3 col-sm-6 mb-4">
                     <div className="card h-100 text-center shadow">
                         <div className="card-body d-flex flex-column justify-content-center align-items-center">
@@ -116,7 +125,7 @@ export const AdminDashboard = () => {
                         {recentNews.map((news, index) => (
                             <tr key={index} onClick={() => handleNewsClick(news._id)} style={{ cursor: 'pointer' }}>
                                 <td>{news.title}</td>
-                                <td>{news.user.firstName}</td>
+                                <td>{news.user?.firstName}</td>
                                 <td>{news.news_date.split("T")[0]}</td>
                                 <td>
                                     <span className={`badge ${GetStatusClass(news.status)}`}>

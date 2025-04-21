@@ -3,22 +3,28 @@ import '../css/admin.css'
 import axios from 'axios';
 import { GetStatusClass } from '../utils/getStatusClass';
 import { Link, useNavigate } from 'react-router-dom';
+import { Loader } from '../components/Loader';
 
 export const AdminNewsManage = () => {
     const [news, setNews] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const [loading,setLoading] = useState(false)
     const navigate = useNavigate();
 
     // Fetch dashboard stats from backend
     const fetchNews = async () => {
+        setLoading(true)
         try {
             const response = await axios.get("http://127.0.0.1:8000/news/new/");
             console.log(response.data)
             setNews(response.data); // Assuming backend sends JSON with these keys
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
+        }
+        finally{
+            setLoading(false)
         }
     };
 
@@ -69,6 +75,7 @@ export const AdminNewsManage = () => {
 
     return (
         <div className="container mt-4">
+            {loading && <Loader/>}
             <h2 className="mb-4 text-center text-primary">News Management</h2>
             {/* Search and Filter */}
             <div className="row mb-3">
