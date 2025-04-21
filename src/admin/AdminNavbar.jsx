@@ -42,6 +42,12 @@ export const AdminNavbar = () => {
                                 <Link to='/login'>
                                     <button
                                         className="input-group-text text-secondary ms-auto"
+                                        onClick={() => {
+                                            localStorage.removeItem("userId")
+                                            localStorage.removeItem("name")
+                                            localStorage.removeItem("role")
+                                            localStorage.removeItem("status")
+                                        }}
                                     >
                                         <i className="fa fa-user" />
                                         LogOut

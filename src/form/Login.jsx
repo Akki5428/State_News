@@ -30,6 +30,7 @@ export const Login = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
         localStorage.setItem('userId', res.data.user._id); // Store the user ID in local storage
         localStorage.setItem('name', res.data.user.firstName); // Store the token in local storage
         localStorage.setItem('role', res.data.user.role.role)
+        localStorage.setItem('status', res.data.user.status)
         if(res.data.user.role.role === "admin"){
           navigate('/admindash')
         }

@@ -35,6 +35,7 @@ import { JournEditw } from './Journalist/JournEditw'
 import { AjTopbar } from './components/AjTopbar'
 import { AdminFullEdit } from './admin/AdminFullEdit'
 import { ManyNews } from './user/ManyNews'
+import PendingApproval from './components/PendingApproval'
 
 
 // import './App.css'
@@ -52,23 +53,24 @@ function App() {
   var id = localStorage.getItem('userId')
   var name = localStorage.getItem('name')
   const role = localStorage.getItem('role')
+  const status = localStorage.getItem('status')
   useEffect(() => {
 
-    if (role === "admin") {
+    if (role === "admin" && status === "approved") {
       setUserRole("admin")
       setIsAuthenticated(true)
       setShowNavbar(false)
       setShowTopbar(false)
       setShowAjTopbar(true)
       navigate("/admindash")
-    } else if (role === "journalist") {
+    } else if (role === "journalist" && status === "approved") {
       setUserRole("journalist")
       setIsAuthenticated(true)
       setShowNavbar(false)
       setShowTopbar(false)
       setShowAjTopbar(true)
       navigate("/journdash")
-    } else if (role === "citizen_journalist") {
+    } else if (role === "citizen_journalist" && status === "approved") {
       setUserRole("citizen_journalist")
       setIsAuthenticated(true)
       setShowNavbar(false)
@@ -76,7 +78,7 @@ function App() {
       setShowAjTopbar(true)
       navigate("/journdash")
     }
-    else if (role === "reader") {
+    else if (role === "reader" && status === "approved") {
       setUserRole("reader")
       setShowNavbar(true)
       setShowTopbar(true)
@@ -87,6 +89,16 @@ function App() {
       setUserRole(null)
       setIsAuthenticated(false)
       setShowLoginBtn(true)
+      
+    }
+    else {
+      setUserRole(null)
+      setIsAuthenticated(false)
+      setShowLoginBtn(true)
+      setShowNavbar(true)
+      setShowTopbar(true)
+      setShowAjTopbar(false)
+      navigate("/pendingapprovals")
     }
     }, [role])
 
@@ -117,7 +129,7 @@ function App() {
 
   return (
     <>
-      {showAjTopbar ?"Hello" : "Bye"}
+      {/* {showAjTopbar ?"Hello" : "Bye"} */}
       {/* <button onClick={handlerole}>Click</button>
       <button onClick={handlerole1}>Click1</button> */}
       {/* <button onClick={handlerole2}>Click2</button> */}
@@ -126,12 +138,13 @@ function App() {
       {showAjTopbar ? <AjTopbar />: <></>}
 
       {userRole == "admin" && <AdminNavbar />}
-      {userRole == "journalist" && <JournalistNavbar />}
-      {userRole == "citizen" && <CitizenNav />}
+      {(userRole == "journalist" || userRole == "citizen_journalist")&& <JournalistNavbar />}
+      {/* {userRole == "citizen" && <CitizenNav />} */}
       <Routes>
         <Route path='/' element={<Navigate to="/home" />}></Route>
         <Route path='/home' element={<Home />}></Route>
         <Route path='/categories' element={<Categories />}></Route>
+        <Route path='/pendingapprovals' element={<PendingApproval />}></Route>
         <Route path='/category/:categoryName' element={<Category />}></Route>
         {/* <Route path='/category' element={<Category/>}></Route> */}
         <Route path='/states' element={<State_City />}></Route>
@@ -171,13 +184,13 @@ function App() {
           <Route path='/journSubmit/:id' element={<JournalistSubmit />} />
         </Route>
 
-        <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["citizen"]} userRole={userRole} />}>
-          <Route path='/citizendash' element={<CitizenDashboard />} />
-          <Route path='/citizensubmit' element={<CitizenSubmit />} />
-          <Route path='/citizennews' element={<CitizenNewsManage />} />
-          <Route path='/citizencomment' element={<CitizenComment />} />
+        {/* <Route element={<RoleBasedRoute isAuthenticated={isAuthenticated} allowedRoles={["citizen"]} userRole={userRole} />}> */}
+          {/* <Route path='/citizendash' element={<CitizenDashboard />} /> */}
+          {/* <Route path='/citizensubmit' element={<CitizenSubmit />} /> */}
+          {/* <Route path='/citizennews' element={<CitizenNewsManage />} /> */}
+          {/* <Route path='/citizencomment' element={<CitizenComment />} /> */}
           {/* <Route path='/citizennav' element={<CitizenNav/>} />  */}
-        </Route>
+        {/* </Route> */}
 
 
       </Routes>
