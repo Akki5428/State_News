@@ -26,33 +26,56 @@ export const Login = ({ setShowNavbar, setShowTopbar, setShowAjTopbar }) => {
   const login_data = async (data) => {
     console.log(data)
     setIsLoading(true);
-    const res = await axios.post("http://127.0.0.1:8000/user/login/", data);
-    console.log(res.data.user._id);
-    console.log(res.data);
-    if (res.status === 200) {
-
-      localStorage.setItem('userId', res.data.user._id); // Store the user ID in local storage
-      localStorage.setItem('name', res.data.user.firstName); // Store the token in local storage
-      localStorage.setItem('role', res.data.user.role.role)
-      localStorage.setItem('status', res.data.user.status)
-      // toast.success("Login successful!");
-      toast("Login successful!", {
-        className: "red-toast",
-        bodyClassName: "red-toast-body",
-        progressClassName: "red-toast-progress",
-      });
+    try{
       
-      
-      if (res.data.user.role.role === "admin") {
-        navigate('/admindash')
+      const res = await axios.post("http://127.0.0.1:8000/user/login/", data);
+      console.log(res.data.user._id);
+      console.log(res.data);
+      if (res.status === 200) {
+  
+        localStorage.setItem('userId', res.data.user._id); // Store the user ID in local storage
+        localStorage.setItem('name', res.data.user.firstName); // Store the token in local storage
+        localStorage.setItem('role', res.data.user.role.role)
+        localStorage.setItem('status', res.data.user.status)
+        // toast.success("Login successful!");
+        toast("Login successful!", {
+          className: "red-toast",
+          bodyClassName: "red-toast-body",
+          progressClassName: "red-toast-progress",
+        });
+        
+        
+        if (res.data.user.role.role === "admin") {
+          navigate('/admindash')
+        }
+        else if (res.data.user.role.role === "journalist" || res.data.user.role.role === "citizen_journalist") {
+          navigate('/journalistdash')
+        }
+        else { navigate('/home') }
+  
       }
-      else if (res.data.user.role.role === "journalist" || res.data.user.role.role === "citizen_journalist") {
-        navigate('/journalistdash')
+    }catch (error) {
+      console.log(error.response.data.error)
+      if (error.response.status === 404) {
+        // toast.error("Invalid credentials!");
+        toast("Invalid credentials!", {
+          className: "red-toast",
+          bodyClassName: "red-toast-body",
+          progressClassName: "red-toast-progress",
+        });
+      } else if (error.response.status === 500) {
+        // toast.error("Server error, please try again later.");
+        toast("Server error, please try again later.", {
+          className: "red-toast",
+          bodyClassName: "red-toast-body",
+          progressClassName: "red-toast-progress",
+        });
       }
-      else { navigate('/home') }
-
     }
-    setIsLoading(false);
+    finally {
+      setIsLoading(false);
+    }
+   
   }
 
   const validationRules = {

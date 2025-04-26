@@ -290,7 +290,7 @@ export const Navbar = ({ login }) => {
                             </div>
 
                             <Link to='/contact' className="nav-item nav-link">
-                                Contact
+                            Advertise With Us
                             </Link>
                         </div>
                         <div

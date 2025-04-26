@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 import { GetStatusClass } from '../utils/getStatusClass'
+import { set } from 'react-hook-form'
+import { toast } from 'react-toastify'
 
 export const AdminSingleNews = () => {
     const [news, setNews] = useState({})
@@ -15,12 +17,14 @@ export const AdminSingleNews = () => {
     const [content, setContent] = useState("");
     const [images, setImages] = useState([]); // List of image URLs
     const [selectedImages, setSelectedImages] = useState([]); // Images to remove
+    const [isLoading, setIsLoading] = useState(false)
 
     const { id } = useParams()
-    console.log(id)
+    // console.log(id)
     const navigate = useNavigate()
 
     const fetchNews = async () => {
+        setIsLoading(true)
         try {
             const response = await axios.get(`http://127.0.0.1:8000/news/${id}`);
             console.log(response.data)
@@ -32,6 +36,8 @@ export const AdminSingleNews = () => {
             setShowRejectForm(searchParams.get("reject_form") === "true" ? true : false)
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
+        }finally {
+            setIsLoading(false)
         }
     };
 
@@ -39,54 +45,90 @@ export const AdminSingleNews = () => {
         fetchNews()
     }, [])
 
-    useEffect(() => {
-        console.log(news)
-    }, [news])
+    // useEffect(() => {
+    //     console.log(news)
+    // }, [news])
 
     const handleDelete = async () => {
-        if (window.confirm("Are you sure you want to delete this news?")) {
-            await axios.delete(`http://127.0.0.1:8000/news/${id}`);
-            alert("News deleted!");
-            navigate('/adminnewsmanage'); // Redirect to News Management Page
+        try{
+            if (window.confirm("Are you sure you want to delete this news?")) {
+                setIsLoading(true)
+                await axios.delete(`http://127.0.0.1:8000/news/${id}`);
+                // alert("News deleted!");
+                toast("News deleted!", {
+                    className: "red-toast",
+                    bodyClassName: "red-toast-body",
+                    progressClassName: "red-toast-progress",
+                });
+                
+                navigate('/adminnewsmanage'); // Redirect to News Management Page
+            }
+        }catch (error) {
+            console.error("Error deleting news:", error.response?.data || error.message);
+            // alert("Failed to delete news.");
+            toast("Failed to delete news.", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
         }
+        
     };
 
     const handleApprove = async () => {
         try {
+            setIsLoading(true)
             await axios.patch(`http://127.0.0.1:8000/news/approve/${id}`);
-            alert("News approved!");
+            // alert("News approved!");
+            toast.success("News approved!")
             navigate('/adminnewsmanage');
         } catch (error) {
             console.error("Error approving news:", error.response?.data || error.message);
-            alert("Failed to approve news.");
+            // alert("Failed to approve news.");
+            toast.error("Failed to approve news.")
         }
     };
 
     const handleRejection = async () => {
         try {
+            setIsLoading(true)
             await axios.patch("http://127.0.0.1:8000/news/rejected/", { id: id, rejectReason: rejectionReason });
-            alert("News Rejected!");
+            // alert("News Rejected!");
+            toast("News Rejected!", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
+            
             navigate('/adminnewsmanage');
         } catch (error) {
             console.error("Error approving news:", error.response?.data || error.message);
-            alert("Failed to approve news.");
+            // alert("Failed to Reject news.");
+            toast.error("Failed to Reject news.")
         }
     };
 
     const handleUpdate = async () => {
         try {
-            await axios.put("http://127.0.0.1:8000/news/update/", {
+            setIsLoading(true)
+            await axios.put("http://127.0.0.1:8000/news/update/short/", {
                 id: id,
                 title: title || undefined,
                 content: content || undefined,
                 removeImages: selectedImages, // Send images to remove
             });
 
-            alert("News updated successfully!");
+            // alert("News updated successfully!");
+            toast("News updated successfully!", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
             navigate("/adminnewsmanage")
         } catch (error) {
             console.error("Error updating news:", error.response?.data || error.message);
-            alert("Failed to update news.");
+            // alert("Failed to update news.");
+            toast.error("Failed to update news.")
         }
     };
 

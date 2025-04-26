@@ -39,6 +39,7 @@ import PendingApproval from './components/PendingApproval'
 import { ForgetPass } from './form/ForgetPass'
 import { ResetPass } from './form/ResetPass'
 import { ToastContainer } from 'react-toastify'
+import { Footer } from './components/Footer'
 
 
 // import './App.css'
@@ -185,7 +186,7 @@ function App() {
           <Route path='/admindash' element={<AdminDashboard />}></Route>
           <Route path='/adminnewsmanage' element={<AdminNewsManage />}></Route>
           <Route path='/adminusermanage' element={<AdminUserManage />}></Route>
-          <Route path="/adminsingleuser/:id" element={<AdminSingleUser />} />
+          <Route path="/adminsingleuser/:id/:stat" element={<AdminSingleUser />} />
           <Route path="/adminsingle/:id" element={<AdminSingleNews />} />
           <Route path='/adminfulledit/:id' element={<AdminFullEdit />} />
         </Route>
@@ -209,8 +210,9 @@ function App() {
           {/* <Route path='/citizennav' element={<CitizenNav/>} />  */}
         {/* </Route> */}
 
-
+        
       </Routes>
+      {showNavbar && <Footer/>}
       {/* <Home/> */}
     </>
   )

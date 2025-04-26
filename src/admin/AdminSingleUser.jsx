@@ -2,15 +2,21 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FormatDate } from "../components/FormatDate"
+import { toast } from 'react-toastify';
+import { Loader } from '../components/Loader';
 
 export const AdminSingleUser = () => {
-    const { id } = useParams()
+    const { id ,stat} = useParams()
     const [user, setUser] = useState({})
     const [showRejectForm, setShowRejectForm] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
+    const[isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate()
 
+    
+
     const fetchUser = async () => {
+        setIsLoading(true);
         try {
             const response = await axios.get(`http://127.0.0.1:8000/user/${id}`);
             console.log(response.data)
@@ -18,68 +24,138 @@ export const AdminSingleUser = () => {
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }
+        finally {
+            setIsLoading(false);
+        }
     };
 
     const handleDelete = async () => {
-        if (window.confirm("Are you sure you want to delete this User?")) {
-            await axios.delete(`http://127.0.0.1:8000/user/${id}`);
-            alert("User deleted!");
-            navigate('/adminusermanage'); // Redirect to News Management Page
+        try{
+            if (window.confirm("Are you sure you want to delete this User?")) {
+                await axios.delete(`http://127.0.0.1:8000/user/${id}`);
+                setIsLoading(true);
+                // alert("User deleted!");
+                toast.success("User deleted!", {
+                    className: "red-toast", 
+                    bodyClassName: "red-toast-body",
+                    progressClassName: "red-toast-progress",
+                });
+                navigate('/adminusermanage'); // Redirect to News Management Page
+            }    
+        }catch (error) {
+            console.error("Error deleting user:", error.response?.data || error.message);
+            alert("Failed to delete user.");
         }
+        finally {   
+            setIsLoading(false);
+        }
+        
     };
 
     const handleBlock = async () => {
-        if (user.status == "approved") {
-            if (window.confirm("Are you sure you want to Block this User?")) {
+        try{
+            if (user.status == "approved") {
+                if (window.confirm("Are you sure you want to Block this User?")) {
+                    await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+                    // alert("User Blocked!");
+                    toast.success("User Blocked!", {
+                        className: "red-toast",
+                        bodyClassName: "red-toast-body",
+                        progressClassName: "red-toast-progress",
+                    });
+                    navigate('/adminusermanage');
+                }
+            }
+            else if (user.status == "rejected") {
+                if (window.confirm("Are you sure you want to Reconsider this User?")) {
+                    await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+                    // alert("User Reconsider!");
+                    toast.success("User Reconsider!")
+                    navigate('/adminusermanage');
+                }
+            }
+            else {
                 await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
-                alert("User Blocked!");
+                // alert("User UnBlocked!");
+                toast.success("User UnBlocked!")
                 navigate('/adminusermanage');
             }
+            setIsLoading(true);
+        }catch (error) {
+            console.error("Error blocking user:", error.response?.data || error.message);
+            // alert("Failed to Perform action on user.");
+            toast.error("Failed to Perform action on user.", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
         }
-        else if (user.status == "rejected") {
-            if (window.confirm("Are you sure you want to Reconsider this User?")) {
-                await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
-                alert("User Reconsider!");
-                navigate('/adminusermanage');
-            }
+        finally {
+            setIsLoading(false);
         }
-        else {
-            await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
-            alert("User UnBlocked!");
-            navigate('/adminusermanage');
-        }
+
+        
     }
 
     const handleApprove = async () => {
+        setIsLoading(true);
         try {
             await axios.patch(`http://127.0.0.1:8000/user/approve/${id}`);
-            alert("User approved!");
+            // alert("User approved!");
+           
+            toast.success("User approved!");
             navigate('/adminusermanage');
         } catch (error) {
             console.error("Error approving news:", error.response?.data || error.message);
-            alert("Failed to approve User.");
+            // alert("Failed to approve User.");
+            toast.error("Failed to approve User.", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
     const handleRejection = async () => {
+        setIsLoading(true);
         try {
             await axios.put("http://127.0.0.1:8000/user/rejected/", { id: id, rejectReason: rejectionReason });
-            alert("News Rejected!");
+            // alert("News Rejected!");
+            
+            toast.success("User Rejected!", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
             navigate('/adminusermanage');
         } catch (error) {
             console.error("Error approving news:", error.response?.data || error.message);
-            alert("Failed to approve news.");
+            // alert("Failed to approve news.");
+            toast.error("Failed to Reject news.", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
 
     useEffect(() => {
         fetchUser()
+        console.log(stat)
+        setShowRejectForm(stat=="yes"?true:false)
     }, [])
 
 
     return (
         <div className="container mt-4">
+            {isLoading && <Loader/>}
             <h2 className="mb-4 text-center">User Approval</h2>
 
             {/* User Details Section */}

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { GetStatusClass } from '../utils/getStatusClass';
 import { Link, useNavigate } from 'react-router-dom';
 import { Loader } from '../components/Loader';
+import { toast } from 'react-toastify';
 
 export const AdminNewsManage = () => {
     const [news, setNews] = useState([]);
@@ -29,21 +30,50 @@ export const AdminNewsManage = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this news? You can see details using the 'Eye' button.")) {
-            await axios.delete(`http://127.0.0.1:8000/news/${id}`);
-            alert("News deleted!");
-            fetchNews()
+        setLoading(true)
+        try {
+            if (window.confirm("Are you sure you want to delete this news? You can see details using the 'Eye' button.")) {
+                await axios.delete(`http://127.0.0.1:8000/news/${id}`);
+                await fetchNews()
+                toast("News Deleted!", {
+                    className: "red-toast",
+                    bodyClassName: "red-toast-body",
+                    progressClassName: "red-toast-progress",
+                    autoClose: 2000,});
+            }
+        }
+        catch (error) {
+            console.error("Error deleting news:", error.response?.data || error.message);
+            toast("Failed to Delete", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+                autoClose: 2000,});
+        }
+        finally{
+            setLoading(false)
         }
     };
 
     const handleApprove = async (id) => {
         try {
             await axios.patch(`http://127.0.0.1:8000/news/approve/${id}`);
-            alert("News approved!");
-            fetchNews()
+            // alert("News approved!");
+            await fetchNews()
+            toast("News Approved!", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+                autoClose: 2000,});
+            
         } catch (error) {
             console.error("Error approving news:", error.response?.data || error.message);
-            alert("Failed to approve news.");
+            // alert("Failed to approve news.");
+            toast("Failed to Approve", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+                autoClose: 2000,});
         }
     };
 
@@ -53,9 +83,9 @@ export const AdminNewsManage = () => {
         fetchNews()
     }, [])
 
-    useEffect(() => {
-        console.log("op", news)
-    }, [news])
+    // useEffect(() => {
+    //     console.log("op", news)
+    // }, [news])
 
     const filteredNews = news.filter(n => {
         return (

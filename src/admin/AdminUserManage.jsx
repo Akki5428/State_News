@@ -4,6 +4,7 @@ import { GetStatusClass } from '../utils/getStatusClass';
 import { Link, useNavigate } from 'react-router-dom';
 import { set } from 'react-hook-form';
 import { Loader } from '../components/Loader';
+import { toast } from 'react-toastify';
 
 export const AdminUserManage = () => {
     const [user, setUser] = useState([]);
@@ -28,8 +29,105 @@ export const AdminUserManage = () => {
         }
     };
 
-    const handleViewClick = (userId) => {
-        navigate(`/adminsingleuser/${userId}`); // Replace with your actual route
+    const handleViewClick = (userId,stat) => {
+        console.log("Stat:",stat)
+        navigate(`/adminsingleuser/${userId}/${stat}`); // Replace with your actual route
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            if (window.confirm("Are you sure you want to delete this User?")) {
+                await axios.delete(`http://127.0.0.1:8000/user/${id}`);
+                setLoading(true);
+                await fetchUser()
+                // alert("User deleted!");
+                toast.success("User deleted!", {
+                    className: "red-toast",
+                    bodyClassName: "red-toast-body",
+                    progressClassName: "red-toast-progress",
+                });
+                navigate('/adminusermanage'); // Redirect to News Management Page
+            }
+
+        } catch (error) {
+            console.error("Error deleting user:", error.response?.data || error.message);
+            alert("Failed to delete user.");
+        }
+        finally {
+            setLoading(false);
+        }
+
+    };
+
+    const handleBlock = async (id,status) => {
+        setLoading(true);
+        try {
+            if (status == "approved") {
+                if (window.confirm("Are you sure you want to Block this User?")) {
+                    await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+                    // alert("User Blocked!");
+                    await fetchUser()
+                    toast.success("User Blocked!", {
+                        className: "red-toast",
+                        bodyClassName: "red-toast-body",
+                        progressClassName: "red-toast-progress",
+                    });
+                    navigate('/adminusermanage');
+                }
+            }
+            else if (status == "rejected") {
+                if (window.confirm("Are you sure you want to Reconsider this User?")) {
+                    await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+                    // alert("User Reconsider!");
+                    await fetchUser()
+                    toast.success("User Reconsider!")
+                    navigate('/adminusermanage');
+                }
+            }
+            else {
+                await axios.patch(`http://127.0.0.1:8000/user/block/${id}`);
+                // alert("User UnBlocked!");
+                await fetchUser()
+                toast.success("User UnBlocked!")
+                navigate('/adminusermanage');
+            }
+            
+            
+        } catch (error) {
+            console.error("Error blocking user:", error.response?.data || error.message);
+            // alert("Failed to Perform action on user.");
+            toast.error("Failed to Perform action on user.", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
+        }
+        finally {
+            setLoading(false);
+        }
+
+
+    }
+
+    const handleApprove = async (id) => {
+        setLoading(true);
+        try {
+            await axios.patch(`http://127.0.0.1:8000/user/approve/${id}`);
+            // alert("User approved!");
+            toast.success("User approved!");
+            await fetchUser()
+        } catch (error) {
+            console.error("Error approving news:", error.response?.data || error.message);
+            // alert("Failed to approve User.");
+            toast.error("Failed to approve User.", {
+                className: "red-toast",
+                bodyClassName: "red-toast-body",
+                progressClassName: "red-toast-progress",
+            });
+        }
+        finally {
+            setLoading(false);
+        }
     };
 
 
@@ -37,9 +135,9 @@ export const AdminUserManage = () => {
         fetchUser()
     }, [])
 
-    useEffect(() => {
-        console.log("opp", user)
-    }, [user])
+    // useEffect(() => {
+    //     console.log("opp", user)
+    // }, [user])
 
     const filteredUser = user.filter(u => {
         return (
@@ -52,7 +150,7 @@ export const AdminUserManage = () => {
 
     return (
         <div className="container mt-4">
-            {loading && <Loader/>}
+            {loading && <Loader />}
             <h2 className="mb-4 text-center text-primary">User Management</h2>
             {/* Search & Filter Section */}
             <div className="row mb-3">
@@ -60,7 +158,7 @@ export const AdminUserManage = () => {
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="Search by name or email"
+                        placeholder="Search by Name"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -113,55 +211,55 @@ export const AdminUserManage = () => {
                                     <span className={`badge ${GetStatusClass(u.status)}`}>{u.status}</span>
                                 </td>
                                 <td>
-                                    
+
                                     {u.status === "approved" &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
-                                            <button className="btn btn-info btn-sm text-nowrap mr-1"  onClick={() => handleViewClick(u._id)}>
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id,"no")}>
                                                 <i className="fas fa-eye" /> View
                                             </button>
-                                            <button className="btn btn-secondary btn-sm text-nowrap mr-1" >
+                                            <button className="btn btn-secondary btn-sm text-nowrap mr-1" onClick={() => handleBlock(u._id,u.status)}>
                                                 <i className="fas fa-ban" /> Block
                                             </button>
-                                            <button className="btn btn-danger btn-sm text-nowrap mr-1">
+                                            <button className="btn btn-danger btn-sm text-nowrap mr-1" onClick={() => handleDelete(u._id)}>
                                                 <i className="fas fa-trash" /> Delete
                                             </button>
                                         </div>
                                     }
                                     {u.status === "pending" &&
-                                        <div className="d-flex flex-column flex-md-row gap-2" onClick={() => handleViewClick(u._id)}>
-                                            <button className="btn btn-info btn-sm text-nowrap mr-1" >
+                                        <div className="d-flex flex-column flex-md-row gap-2" >
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id,"no")}>
                                                 <i className="fas fa-eye" /> View
                                             </button>
-                                            <button className="btn btn-success btn-sm text-nowrap mr-1" >
+                                            <button className="btn btn-success btn-sm text-nowrap mr-1"  onClick={() => handleApprove(u._id)}>
                                                 <i className="fas fa-check" /> Approve
                                             </button>
-                                            <button className="btn btn-danger btn-sm text-nowrap mr-1">
+                                            <button className="btn btn-danger btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id,"yes")}>
                                                 <i className="fas fa-times" /> Reject
                                             </button>
                                         </div>
                                     }
                                     {u.status === "rejected" &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
-                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id)}>
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id,"no")}>
                                                 <i className="fas fa-eye" /> View
                                             </button>
-                                            <button className="btn btn-warning btn-sm text-nowrap mr-1" >
+                                            <button className="btn btn-warning btn-sm text-nowrap mr-1" onClick={() => handleBlock(u._id,u.status)}>
                                                 <i className="fas fa-undo" /> Reconsider
                                             </button>
-                                            <button className="btn btn-danger btn-sm text-nowrap mr-1">
+                                            <button className="btn btn-danger btn-sm text-nowrap mr-1" onClick={() => handleDelete(u._id)}>
                                                 <i className="fas fa-trash" /> Delete
                                             </button>
                                         </div>
                                     }
                                     {u.status === "block" &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
-                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id)}>
+                                            <button className="btn btn-info btn-sm text-nowrap mr-1" onClick={() => handleViewClick(u._id,"no")}>
                                                 <i className="fas fa-eye" /> View
                                             </button>
-                                            <button className="btn btn-success btn-sm text-nowrap mr-1" >
+                                            <button className="btn btn-success btn-sm text-nowrap mr-1" onClick={() => handleBlock(u._id,u.status)}>
                                                 <i className="fas fa-undo" /> Unblock
                                             </button>
-                                            <button className="btn btn-danger btn-sm text-nowrap mr-1">
+                                            <button className="btn btn-danger btn-sm text-nowrap mr-1" onClick={() => handleDelete(u._id)}>
                                                 <i className="fas fa-trash" /> Delete
                                             </button>
                                         </div>
