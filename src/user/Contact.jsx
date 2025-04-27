@@ -1,16 +1,36 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import { Loader } from '../components/Loader'
 
 export const Contact = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const { register, handleSubmit, formState: { errors },reset } = useForm()
+    const [loading, setLoading] = useState(false)
 
-    const onSubmit = (data) => {
+
+
+    const onsubmit = async(data) => {
+        setLoading(true)
         console.log(data) // Handle form submission
+        try{
+            const ad = await axios.post(`http://127.0.0.1:8000/advertise`,data)
+            // alert("Data Submitted")
+            toast.success("Data Submitted")
+            reset()
+        }
+        catch(error)
+        {
+            console.error("Error fetching Data:", error);
+        }finally{
+            setLoading(false)
+        }
     }
     
     return (
         <>
             {/* Breadcrumb Start */}
+            {loading && <Loader/>}
             <div className="container-fluid">
                 <div className="container">
                     <nav className="breadcrumb bg-transparent m-0 p-0">
@@ -64,7 +84,7 @@ export const Contact = () => {
                         {/* Right Side Form */}
                         <div className="col-md-7">
                             <div className="contact-form bg-light mb-3" style={{ padding: 30 }}>
-                                <form name="adInquiryForm" id="adInquiryForm" noValidate="novalidate" onSubmit={handleSubmit(onSubmit)}>
+                                <form name="adInquiryForm" id="adInquiryForm" noValidate="novalidate" onSubmit={handleSubmit(onsubmit)}>
                                     <div className="form-row">
                                         <div className="col-md-6">
                                             <div className="control-group mb-2">
@@ -181,9 +201,9 @@ export const Contact = () => {
                                             rows={4}
                                             id="message"
                                             placeholder="Additional Details or Message"
-                                            // required="required"
-                                            defaultValue={""}
-                                            {...register('message', { required: 'Please enter your message' })}
+                                        
+                                            // defaultValue={""}
+                                            {...register('message')}
 
                                         />
                                         {/* <p className="help-block text-danger" /> */}

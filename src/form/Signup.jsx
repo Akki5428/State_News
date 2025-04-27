@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../css/signup.css'
 import { set, useForm } from 'react-hook-form';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Loader } from '../components/Loader';
 
 
 export const Signup = ({ setShowNavbar, setShowTopbar }) => {
@@ -15,9 +17,11 @@ export const Signup = ({ setShowNavbar, setShowTopbar }) => {
     } // Show navbar again when Login unmounts
   }, []);
 
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate()
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({ defaultValues: { role_id: '' } })
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({ defaultValues: { role_id: '67cf074ecbd63e6e033ef9e6' } })
 
   const role = watch('role_id');
   const isJournalist = role === '67cf072ccbd63e6e033ef9e4';
@@ -25,15 +29,24 @@ export const Signup = ({ setShowNavbar, setShowTopbar }) => {
 
   const sign_data = async (data) => {
     console.log(data)
+    setLoading(true);
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/user/", data);
+      console.log(res); //axios
+      console.log(res.data); //api response
+      if (res.status === 200) {
+        // alert("Signup success");
+        toast.success("Signup successful!")
+        navigate("/login") // check in app.j slogin...
+      }
 
-    const res = await axios.post("http://127.0.0.1:8000/user/", data);
-    console.log(res); //axios
-    console.log(res.data); //api response
-    if (res.status === 200) {
-      alert("Signup success");
-      navigate("/login") // check in app.j slogin...
-    } else {
-      alert("Signup failed");
+
+    } catch (error) {
+      console.log(error.response.data.error)
+      toast.error(error.response.data.error)
+    }
+    finally {
+      setLoading(false);
     }
   }
 
@@ -66,6 +79,7 @@ export const Signup = ({ setShowNavbar, setShowTopbar }) => {
 
   return (
     <div className='sign-con'>
+      {loading && <Loader />}
 
       <div className="container">
 
@@ -155,6 +169,10 @@ export const Signup = ({ setShowNavbar, setShowTopbar }) => {
                 </label>
               </div>
               {errors.role && <p className='error_mes'>*{errors.role.message}</p>}
+            </div>
+            <div className='dont_txt text-center'>
+              <span >Already have an Account? </span>
+              <Link to="/login">Login</Link>
             </div>
             {/* Submit button */}
             <div className="button">

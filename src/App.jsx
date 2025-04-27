@@ -40,6 +40,10 @@ import { ForgetPass } from './form/ForgetPass'
 import { ResetPass } from './form/ResetPass'
 import { ToastContainer } from 'react-toastify'
 import { Footer } from './components/Footer'
+import { AboutUs } from './user/AboutUs'
+import { TermCond } from './user/TermCond'
+import { Privacy } from './user/Privacy'
+import { ContactOnly } from './user/ContactOnly'
 
 
 // import './App.css'
@@ -159,9 +163,13 @@ function App() {
       <Routes>
         <Route path='/' element={<Navigate to="/home" />}></Route>
         <Route path='/home' element={<Home />}></Route>
+        <Route path='/about' element={<AboutUs />}></Route>
+        <Route path='/term' element={<TermCond />}></Route>
+        <Route path='/privacy' element={<Privacy />}></Route>
+        <Route path='/contactonly' element={<ContactOnly />}></Route>
         <Route path='/categories' element={<Categories />}></Route>
         <Route path='/forget' element={<ForgetPass setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar} setShowAjTopbar={setShowAjTopbar}/>}></Route>
-        <Route path='//resetpassword/:token' element={<ResetPass setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar} setShowAjTopbar={setShowAjTopbar}/>}></Route>
+        <Route path='/resetpassword/:token' element={<ResetPass setShowNavbar={setShowNavbar} setShowTopbar={setShowTopbar} setShowAjTopbar={setShowAjTopbar}/>}></Route>
         <Route path='/pendingapprovals' element={<PendingApproval />}></Route>
         <Route path='/category/:categoryName' element={<Category />}></Route>
         {/* <Route path='/category' element={<Category/>}></Route> */}

@@ -1,19 +1,24 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { createRequestHandler, Link, useNavigate } from 'react-router-dom';
 import { GetStatusClass } from '../utils/getStatusClass';
+import { set } from 'react-hook-form';
+import { Loader } from '../components/Loader';
+import { toast } from 'react-toastify';
 
 export const JournalistNewsManage = () => {
     const [news, setNews] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     // const id = "67d03086eeb4bbc43d6ec3a5"
     const id = localStorage.getItem("userId")
 
     // Fetch dashboard stats from backend
     const fetchNews = async () => {
+        setLoading(true)
         try {
             const response = await axios.get(`http://127.0.0.1:8000/news/user/${id}`);
             console.log(response.data)
@@ -21,14 +26,46 @@ export const JournalistNewsManage = () => {
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }
+        finally {
+            setLoading(false)
+        }
+
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this news? You can see details using the 'Eye' button.")) {
-            await axios.delete(`http://127.0.0.1:8000/news/${id}`);
-            alert("News deleted!");
-            fetchNews()
+        try {
+            if (window.confirm("Are you sure you want to delete this news? You can see details using the 'Eye' button.")) {
+                await axios.delete(`http://127.0.0.1:8000/news/${id}`);
+                // alert("News deleted!");
+                toast.error("News deleted!");
+                fetchNews()
+            }
         }
+        catch (error) {
+            console.error("Error deleting news:", error);
+            toast.error("Error deleting news!");
+        }
+        finally {
+            setLoading(false)
+        }
+    };
+
+    const handleApprove = async (id) => {
+        setLoading(true)
+        try {
+            await axios.patch(`http://127.0.0.1:8000/news/approve/${id}`);
+            // alert("News Published!");
+            toast.success("News Published!");
+            fetchNews()
+        } catch (error) {
+            console.error("Error Publishing news:", error.response?.data || error.message);
+            // alert("Failed to Published news.");
+            toast.error("Failed to Publish news.");
+        }
+        finally {
+            setLoading(false)
+        }
+
     };
 
 
@@ -52,7 +89,7 @@ export const JournalistNewsManage = () => {
     const handleViewClick = (newsId, edit) => {
         navigate(`/journsinglenews/${newsId}?edit=${edit}`); // Replace with your actual route
     };
-    
+
     const handleEdit = (newsId) => {
         navigate(`/journSubmit/${newsId}`); // Replace with your actual route
     };
@@ -61,8 +98,28 @@ export const JournalistNewsManage = () => {
         navigate(`/adminsingle/${newsId}?reject_form=${reject}`); // Replace with your actual route
     };
 
+    const handleSubmit = async (id) => {
+        setLoading(true)
+        try {
+            await axios.patch(`http://127.0.0.1:8000/news/submit/${id}`);
+            // alert("News Submitted!");
+            toast.success("News Submitted!");
+          
+            fetchNews()
+        } catch (error) {
+            console.error("Error Submiting news:", error.response?.data || error.message);
+            // alert("Failed to Submit news.");
+            toast.error("Failed to Submit news.");
+        }
+        finally {
+            setLoading(false)
+        }
+
+    };
+
     return (
         <div className="container mt-4">
+            {loading && <Loader />}
             <h2 className="mb-4 text-center text-primary">News Management</h2>
             {/* Search and Filter */}
             <div className="row mb-3">
@@ -110,7 +167,7 @@ export const JournalistNewsManage = () => {
                             <tr key={index}>
                                 <td>{n.title}</td>
                                 <td>{n.category}</td>
-                                <td>{n.status=="published" ? n.views : 0} </td>
+                                <td>{n.status == "published" ? n.views : 0} </td>
                                 <td>
                                     <span className={`badge ${GetStatusClass(n.status)}`}>
                                         {n.status}
@@ -127,7 +184,7 @@ export const JournalistNewsManage = () => {
                                             </button> */}
                                         </div>
                                     }
-                                    {(n.status !== "published") &&
+                                    {(n.status == "inProgress") &&
                                         <div className="d-flex flex-column flex-md-row gap-2">
                                             <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id)}>
                                                 <i className="fas fa-eye" />
@@ -137,6 +194,25 @@ export const JournalistNewsManage = () => {
                                             </button>
                                             <button className="btn btn-danger btn-sm  mr-1 mb-1" onClick={() => handleDelete(n._id)}>
                                                 <i className="fas fa-trash" />
+                                            </button>
+                                            <button className="btn btn-success btn-sm  mr-1 mb-1" onClick={() => handleApprove(n._id)}>
+                                                <i className="fas fa-check" />
+                                            </button>
+                                        </div>
+                                    }
+                                    {(n.status == "draft") &&
+                                        <div className="d-flex flex-column flex-md-row gap-2">
+                                            <button className="btn btn-info btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id)}>
+                                                <i className="fas fa-eye" />
+                                            </button>
+                                            <button className="btn btn-secondary btn-sm mr-1 mb-1" onClick={() => handleViewClick(n._id, true)}>
+                                                <i className="fas fa-edit" />
+                                            </button>
+                                            <button className="btn btn-danger btn-sm  mr-1 mb-1" onClick={() => handleDelete(n._id)}>
+                                                <i className="fas fa-trash" />
+                                            </button>
+                                            <button className="btn btn-primary btn-sm  mr-1 mb-1" onClick={() => handleSubmit(n._id)}>
+                                                <i className="fas fa-paper-plane" />
                                             </button>
                                         </div>
                                     }

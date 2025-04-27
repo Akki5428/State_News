@@ -2,22 +2,33 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { FormatDate } from '../components/FormatDate'
 import { Link, useNavigate } from 'react-router-dom'
+import { Loader } from '../components/Loader'
 
 export const Categories = () => {
     const [catNews, setCatNews] = useState([])
     const [trendingNews, setTrendingNews] = useState([])
+    const [loading, setLoading] = useState(false)
     const [currentPage, setCurrentPage] = useState(0)
     const itemsPerPage = 6 // 2 big + 4 small
     const navigate = useNavigate()
 
     const fetchNews = async () => {
-        const news = await axios.get("http://127.0.0.1:8000/news/category/")
-        const res = await axios.get("http://127.0.0.1:8000/news/trending/")
-        $(".carousel-item-2").trigger("destroy.owl.carousel");
-        console.log(res.data)
-        setTimeout(initOwlCarousel, 500);
-        setCatNews(news.data)
-        setTrendingNews(res.data)
+        setLoading(true)
+        try {
+            const news = await axios.get("http://127.0.0.1:8000/news/category/")
+            const res = await axios.get("http://127.0.0.1:8000/news/trending/")
+            $(".carousel-item-2").trigger("destroy.owl.carousel");
+            console.log(res.data)
+            setTimeout(initOwlCarousel, 500);
+            setCatNews(news.data)
+            setTrendingNews(res.data)
+        }
+        catch (error) {
+            console.error("Error fetching news:", error);
+        }
+        finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -67,6 +78,7 @@ export const Categories = () => {
     return (
         <>
             <div className="container-fluid">
+                {loading && <Loader/>}
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-6 py-3">

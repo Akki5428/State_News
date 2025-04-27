@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/login.css';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { Loader } from '../components/Loader';
 
 export const ForgetPass = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
    useEffect(() => {
       setShowNavbar(false); // Hide navbar when Login is mounted
@@ -17,13 +20,24 @@ export const ForgetPass = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => 
     }, []);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const res = await axios.post(`http://127.0.0.1:8000/user/forget/${data.email}`);
       console.log(res.data.email);
-      alert("Password reset link sent to your email.");
+      // alert("Password reset link sent to your email.");
+      toast.success("Password reset link sent to your email.")
     } catch (error) {
       console.error(error);
-      alert("Error sending reset link. Please try again.");
+      // alert("Error sending reset link. Please try again.");
+      if(error.response.status === 404) {
+        toast.error(error.response.data.detail);
+      }
+      else{
+        toast.error("Error sending reset link. Please try again.");
+      }
+      
+    }finally {
+      setIsLoading(false);
     }
 
   };
@@ -40,6 +54,7 @@ export const ForgetPass = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => 
 
   return (
     <div className="login-con">
+    {isLoading && <Loader />}
       <div className="container">
         <div className="title">Forget Password</div>
         <div className="content">

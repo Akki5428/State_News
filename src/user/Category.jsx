@@ -2,10 +2,12 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
+import { Loader } from '../components/Loader'
 
 export const Category = () => {
     const [catNews, setCatNews] = useState([])
     const [trendingNews, setTrendingNews] = useState([])
+    const [loading, setLoading] = useState(false)
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 14; // 4 big + 10 small
     const navigate = useNavigate()
@@ -13,10 +15,19 @@ export const Category = () => {
     const category = useParams()
 
     const fetchNews = async () => {
-        const news = await axios.get(`http://127.0.0.1:8000/news/category/${category.categoryName}`)
-        const res = await axios.get("http://127.0.0.1:8000/news/trending/")
-        setCatNews(news.data)
-        setTrendingNews(res.data)
+        setLoading(true)
+        try {
+            const news = await axios.get(`http://127.0.0.1:8000/news/category/${category.categoryName}`)
+            const res = await axios.get("http://127.0.0.1:8000/news/trending/")
+            setCatNews(news.data)
+            setTrendingNews(res.data)
+        }
+        catch (error) {
+            console.error("Error fetching news:", error);
+        }
+        finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -44,6 +55,7 @@ export const Category = () => {
         <>
             {/* Breadcrumb Start */}
             <div className="container-fluid">
+                {loading && <Loader/>}
                 <div className="container">
                     <nav className="breadcrumb bg-transparent m-0 p-0">
                         <a className="breadcrumb-item" href="#">

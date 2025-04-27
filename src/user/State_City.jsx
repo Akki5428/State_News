@@ -3,11 +3,14 @@ import '../css/style.css'
 import axios from 'axios';
 import { FormatDate } from '../components/FormatDate';
 import { Link, useNavigate } from 'react-router-dom';
+import { set } from 'react-hook-form';
+import { Loader } from '../components/Loader';
 
 export const State_City = () => {
     const [breakingNews, setBreakingNews] = useState([]);
     const [trendingNews, setTrendingNews] = useState([]);
     const [popularNews, setPopularNews] = useState([]);
+    const [loading, setLoading] = useState(false); // Track loading state
     const [currentPage, setCurrentPage] = useState(0); // Track the current page
     const navigate = useNavigate()
 
@@ -32,6 +35,7 @@ export const State_City = () => {
 
     // Function to fetch live news from API
     const fetchBreakingNews = async () => {
+        setLoading(true) // Set loading to true when fetching data
         try {
             const response = await axios.get("http://127.0.0.1:8000/news/breaking/");
             $(".carousel-item-3").trigger("destroy.owl.carousel");
@@ -49,6 +53,10 @@ export const State_City = () => {
         } catch (error) {
             console.error("Error fetching news:", error);
         }
+        finally {
+            setLoading(false) // Set loading to false after fetching data
+        }
+
     };
 
 
@@ -106,6 +114,7 @@ export const State_City = () => {
         <>
             {/* Trending   */}
             <div className="container-fluid py-3">
+                {loading && <Loader />}
                 <div className="container">
                     <div className="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                         <h3 className="m-0">Trending</h3>

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import '../css/journalist.css';
+import { toast } from 'react-toastify';
+import { Loader } from '../components/Loader';
 
 export const JournalistSubmit = () => {
   const {
@@ -17,6 +19,8 @@ export const JournalistSubmit = () => {
   const [cities, setCities] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const[saving, setSaving] = useState(false)
+  const[loading, setLoading] = useState(false)
 
   const selectedStateId = watch('stateId');
 
@@ -86,7 +90,9 @@ export const JournalistSubmit = () => {
   };
 
   const onSubmit = async (data,status) => {
+    setLoading(true)
     setUploading(true);
+    setSaving(true)
     const imageUrls = await uploadImagesToCloudinary();
     var payload = {}
     if(status == "draft")
@@ -108,23 +114,34 @@ export const JournalistSubmit = () => {
 
     console.log(data)
     
-
+    
     try {
       await axios.post('http://127.0.0.1:8000/news', payload);
-      alert('News submitted successfully!');
+      // alert('News submitted successfully!');
+      if(status == "draft")
+      {
+        toast.info("Draft Saved")
+      }
+      else{
+        toast.success("News Submitted")
+      }
       reset();
       setImageFiles([]);
     } catch (err) {
       console.error('Submission failed:', err);
-      alert('Submission failed.');
+      // alert('Submission failed.');
+      toast.error("Submission failed")
     } finally {
       setUploading(false);
+      setSaving(false)
+      setLoading(false)
     }
   };
 
   return (
     <>
       <div className="container mt-4">
+        {loading && <Loader/>}
         <div className="guidelines">
           <h4>News Submission Guidelines</h4>
           <ul>
@@ -248,7 +265,7 @@ export const JournalistSubmit = () => {
 
             <div className="d-flex justify-content-between">
               <button type="button" className="btn btn-secondary" onClick={handleSaveDraft}>
-                <i className="fas fa-file-alt" /> Save as Draft
+                <i className="fas fa-file-alt" /> {saving ? 'Saving...' : 'Save as Draft'}
               </button>
               <button type="submit" className="btn btn-danger" disabled={uploading}>
                 <i className="fas fa-paper-plane" /> {uploading ? 'Submitting...' : 'Submit'}

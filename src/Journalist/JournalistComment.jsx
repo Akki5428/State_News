@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Loader } from '../components/Loader';
 
 export const JournalistComment = () => {
     const [commentVisibility, setCommentVisibility] = useState({});
@@ -8,11 +9,13 @@ export const JournalistComment = () => {
     const [searchText, setSearchText] = useState("");
     const [articlesData, setArticlesData] = useState([]);
     const [replyText, setReplyText] = useState({});
+    const [loading, setLoading] = useState(false);
     // const id = "67d03086eeb4bbc43d6ec3a5";
     const id = localStorage.getItem("userId")
     const { articleId, commentId } = useParams(); 
 
     const fetchComments = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`http://127.0.0.1:8000/comments/news/${id}`);
             console.log(response.data);
@@ -20,6 +23,10 @@ export const JournalistComment = () => {
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }
+        finally {
+            setLoading(false);
+        }
+
     };
 
     const postReply = async (comment, newsId) => {
@@ -69,7 +76,9 @@ export const JournalistComment = () => {
     }, [articlesData, articleId, commentId]);
 
     return (
+        
         <div className="container journ-container shadow-lg">
+            {loading && <Loader />}
             <h2 className="text-center text-danger">
                 <i className="fas fa-comments" /> Comments &amp; Feedback
             </h2>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FormatDate } from "../components/FormatDate"
 import { GetStatusClass } from '../utils/getStatusClass';
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '../components/Loader';
 
 
 export const JournalistDash = () => {
@@ -14,10 +15,12 @@ export const JournalistDash = () => {
     });
     // const id = "67d03086eeb4bbc43d6ec3a5"
     const id = localStorage.getItem("userId")
+
     const navigate = useNavigate();
 
     const [recentNews, setRecentNews] = useState([]);
     const [recentComments, setRecentComments] = useState([]);
+    const[loading, setLoading] = useState(false)
 
     // Fetch dashboard stats from backend
     const fetchStats = async () => {
@@ -31,6 +34,7 @@ export const JournalistDash = () => {
     };
 
     const fetchRecentData = async () => {
+        setLoading(true)
         try {
             const newsResponse = await axios.get(`http://127.0.0.1:8000/news/recent/user/${id}`);
             const commentsResponse = await axios.get(`http://127.0.0.1:8000/comments/recent/${id}`);
@@ -43,6 +47,10 @@ export const JournalistDash = () => {
         } catch (error) {
             console.error("Error fetching recent data:", error);
         }
+        finally {
+            setLoading(false)
+        }
+
     };
 
     const handleRowClick = (id) => {
@@ -60,6 +68,7 @@ export const JournalistDash = () => {
 
     return (
         <div className="container mt-4 mb-4">
+            {loading && <Loader/>}
             {/* Summary Cards */}
             <div className="row g-4">
                 <div className="col-md-3 col-sm-6 mb-4">

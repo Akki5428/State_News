@@ -54,23 +54,16 @@ export const Login = ({ setShowNavbar, setShowTopbar, setShowAjTopbar }) => {
         else { navigate('/home') }
   
       }
-    }catch (error) {
-      console.log(error.response.data.error)
-      if (error.response.status === 404) {
-        // toast.error("Invalid credentials!");
-        toast("Invalid credentials!", {
-          className: "red-toast",
-          bodyClassName: "red-toast-body",
-          progressClassName: "red-toast-progress",
-        });
-      } else if (error.response.status === 500) {
-        // toast.error("Server error, please try again later.");
-        toast("Server error, please try again later.", {
-          className: "red-toast",
-          bodyClassName: "red-toast-body",
-          progressClassName: "red-toast-progress",
-        });
-      }
+      
+    }
+    catch(error) {
+      console.log(error.response.data.detail)
+      console.log(error.response.status)
+      toast.error(error.response.data.detail, {
+        className: "red-toast",
+        bodyClassName: "red-toast-body",
+        progressClassName: "red-toast-progress",
+      });
     }
     finally {
       setIsLoading(false);
@@ -98,7 +91,7 @@ export const Login = ({ setShowNavbar, setShowTopbar, setShowAjTopbar }) => {
           <div className="title">Login</div>
           <div className="content">
             {/* Registration form */}
-            <form action="#" onSubmit={handleSubmit(login_data)}>
+            <form  onSubmit={handleSubmit(login_data)}>
               <div className="user-details">
 
                 {/* Input for Email */}
@@ -126,7 +119,7 @@ export const Login = ({ setShowNavbar, setShowTopbar, setShowAjTopbar }) => {
 
                 {/* Submit button */}
                 <div className="button">
-                  <input type="submit" defaultValue="Login" />
+                  <input type="submit" value="login" />
                 </div>
               </div>
             </form>

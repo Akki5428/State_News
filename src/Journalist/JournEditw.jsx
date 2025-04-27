@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import '../css/journalist.css';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Loader } from '../components/Loader';
 
 export const JournEditw = () => {
   // const newsId = "67f90741c0cdb2465cd4346e"; // Static for testing
@@ -24,6 +26,7 @@ export const JournEditw = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const selectedStateId = watch('stateId');
 
@@ -96,6 +99,7 @@ export const JournEditw = () => {
   };
 
   const fetchNewsData = async (id) => {
+    setLoading(true);
     try {
       const res = await axios.get(`http://127.0.0.1:8000/news/${id}`);
       const newsData = res.data;
@@ -115,6 +119,10 @@ export const JournEditw = () => {
     } catch (err) {
       console.error('Error fetching news data:', err);
     }
+    finally {
+      setLoading(false);
+    }
+
   };
 
   const handleSaveDraft = () => {
@@ -137,6 +145,7 @@ export const JournEditw = () => {
 
   const onSubmit = async (data, status) => {
     setUploading(true);
+    setLoading(true);
     const imageUrls = await uploadImagesToCloudinary();
     const allImages = [...existingImages, ...imageUrls];
     let payload = {};
@@ -189,16 +198,24 @@ export const JournEditw = () => {
       try {
         await axios.put('http://127.0.0.1:8000/news/update/', payload);
         console.log(status)
-        alert(mess);
+        // alert(mess);
+        if (status === "draft" && news.status === "inProgress") {
+          toast.info(mess);
+        }
+        else{
+          toast.success(mess);
+        }
         reset();
         setImageFiles([]);
         setExistingImages([]);
         navigate("/journalistNewsManage");
       } catch (err) {
         console.error('Edit failed:', err);
-        alert('Edit failed.');
+        // alert('Edit failed.');
+        toast.error("Edit failed.")
       } finally {
         setUploading(false);
+        setLoading(false);
       }
     }
   };
@@ -206,6 +223,7 @@ export const JournEditw = () => {
   return (
     <>
       <div className="container mt-4">
+        {loading && <Loader/>}
         <div className="guidelines">
           <h4>News Submission Guidelines</h4>
           <ul>

@@ -2,12 +2,13 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
+import { Loader } from '../components/Loader'
 
 export const State_City_One = () => {
     const [stateNews, setStateNews] = useState([])
     const [trendingNews, setTrendingNews] = useState([])
     const [cityBar, setCityBar] = useState(false)
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1); // Pagination state
     const itemsPerPage = 14; // 4 big + 10 small
 
@@ -16,6 +17,7 @@ export const State_City_One = () => {
     const { type, name } = useParams();
 
     const fetchNews = async () => {
+        setLoading(true);
         try {
             setLoading(true);
             setStateNews([]); // clear old news instantly    
@@ -48,6 +50,7 @@ export const State_City_One = () => {
         // setStateNews(response.data)
         console.log(res.data[0].city.name)
         setTrendingNews(res.data)
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -74,6 +77,7 @@ export const State_City_One = () => {
     return (
         <>
             {/* Breadcrumb Start */}
+            {loading && <Loader/>}
             <div className="container-fluid">
                 <div className="container">
                     <nav className="breadcrumb bg-transparent m-0 p-0">

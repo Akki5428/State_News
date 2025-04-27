@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/login.css';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Loader } from '../components/Loader';
 
 export const ResetPass = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
   const { token } = useParams(); // Get token from URL
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
      useEffect(() => {
         setShowNavbar(false); // Hide navbar when Login is mounted
@@ -20,18 +23,25 @@ export const ResetPass = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
       }, []);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const res = await axios.post("http://127.0.0.1:8000/user/reset/", {
         token: token,
         password: data.password
       });
       console.log(res.data);
-      alert("Password has been reset successfully.");
+      // alert("Password has been reset successfully.");
+      toast.success("Password has been reset successfully.");
       navigate('/login'); // Redirect to login page after successful reset
     } catch (error) {
       console.error(error);
-      alert("Error resetting password. Please try again.");
+      // alert("Error resetting password. Please try again.");
+      toast.error("Error resetting password. Please try again.");
     }
+    finally {
+      setIsLoading(false);
+    }
+
   };
 
   const validationRules = {
@@ -46,7 +56,9 @@ export const ResetPass = ({ setShowNavbar , setShowTopbar,setShowAjTopbar}) => {
   };
 
   return (
+    
     <div className="login-con">
+      {isLoading && <Loader />}
       <div className="container">
         <div className="title">Reset Password</div>
         <div className="content">

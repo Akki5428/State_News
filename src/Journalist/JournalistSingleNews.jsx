@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { FormatDate } from '../components/FormatDate'
 import { GetStatusClass } from '../utils/getStatusClass'
+import { toast } from 'react-toastify'
+import { set } from 'react-hook-form'
+import { Loader } from '../components/Loader'
 
 export const JournalistSingleNews = () => {
     const [news, setNews] = useState({})
@@ -13,12 +16,14 @@ export const JournalistSingleNews = () => {
     const [content, setContent] = useState("");
     const [images, setImages] = useState([]); // List of image URLs
     const [selectedImages, setSelectedImages] = useState([]); // Images to remove
+    const [loading, setLoading] = useState(false);
 
     const { id } = useParams()
     console.log(id)
     const navigate = useNavigate()
 
     const fetchNews = async () => {
+        setLoading(true)
         try {
             const response = await axios.get(`http://127.0.0.1:8000/news/${id}`);
             console.log(response.data)
@@ -31,6 +36,10 @@ export const JournalistSingleNews = () => {
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }
+        finally {
+            setLoading(false)
+        }
+
     };
 
     useEffect(() => {
@@ -43,36 +52,63 @@ export const JournalistSingleNews = () => {
     }, [news])
 
     const handleDelete = async () => {
-        if (window.confirm("Are you sure you want to delete this news?")) {
-            await axios.delete(`http://127.0.0.1:8000/news/${id}`);
-            alert("News deleted!");
-            navigate('/adminnewsmanage'); // Redirect to News Management Page
+        
+        try{
+            if (window.confirm("Are you sure you want to delete this news?")) {
+                await axios.delete(`http://127.0.0.1:8000/news/${id}`);
+                // alert("News deleted!");
+                toast.error("News deleted!");
+                navigate('/journalistNewsManage'); // Redirect to News Management Page
+            }
+        }
+        catch (error) {
+            console.error("Error deleting news:", error.response?.data || error.message);
+            // alert("Failed to delete news.");
+            toast.error("Failed to delete news.");
+        }
+        finally {
+            setLoading(false)
         }
     };
 
     const handleApprove = async () => {
+        setLoading(true)
         try {
             await axios.patch(`http://127.0.0.1:8000/news/approve/${id}`);
-            alert("News Published!");
+            // alert("News Published!");
+            toast.success("News Published!");
             navigate('/journalistNewsManage'); // Redirect to News Management Page
         } catch (error) {
             console.error("Error Publishing news:", error.response?.data || error.message);
-            alert("Failed to Published news.");
+            // alert("Failed to Published news.");
+            toast.error("Failed to Publish news.");
         }
+        finally {
+            setLoading(false)
+        }
+
     };
 
     const handleSubmit = async () => {
+        setLoading(true)
         try {
             await axios.patch(`http://127.0.0.1:8000/news/submit/${id}`);
-            alert("News Submitted!");
+            // alert("News Submitted!");
+            toast.success("News Submitted!");
             navigate('/journalistNewsManage');
         } catch (error) {
             console.error("Error Submiting news:", error.response?.data || error.message);
-            alert("Failed to Submit news.");
+            // alert("Failed to Submit news.");
+            toast.error("Failed to Submit news.");
         }
+        finally {
+            setLoading(false)
+        }
+
     };
 
     const handleUpdate = async () => {
+        setLoading(true)
         try {
             await axios.put("http://127.0.0.1:8000/news/update/short/", {
                 id: id,
@@ -81,11 +117,16 @@ export const JournalistSingleNews = () => {
                 removeImages: selectedImages, // Send images to remove
             });
 
-            alert("News updated successfully!");
+            // alert("News updated successfully!");
+            toast.success("News updated successfully!");
             navigate("/journalistNewsManage")
         } catch (error) {
             console.error("Error updating news:", error.response?.data || error.message);
-            alert("Failed to update news.");
+            // alert("Failed to update news.");
+            toast.error("Failed to update news.");
+        }
+        finally {
+            setLoading(false)
         }
     };
 
@@ -104,6 +145,7 @@ export const JournalistSingleNews = () => {
 
     return (
         <div className="container mt-4">
+            {loading && <Loader />}
             <h2 className="mb-4 text-center">News Details</h2>
             <div className="p-4 shadow-sm bg-white">
                 <h3 className="text-primary">{news.title}</h3>

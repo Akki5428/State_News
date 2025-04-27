@@ -3,11 +3,13 @@ import '../css/style.css'
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormatDate } from './FormatDate';
+import { Loader } from './Loader';
 
 export const Home = () => {
     const [breakingNews, setBreakingNews] = useState([]);
     const [trendingNews, setTrendingNews] = useState([]);
     const [popularNews, setPopularNews] = useState([]);
+    const [isLoading, setIsLoading] = useState(false); // Loading state for popular news
     const [popularNewsPage, setPopularNewsPage] = useState(0); // Current page for popular news
     const itemsPerPage = 6; // Number of items per page
     const navigate = useNavigate()
@@ -15,6 +17,7 @@ export const Home = () => {
 
     // Function to fetch live news from API
     const fetchBreakingNews = async () => {
+        setIsLoading(true); // Set loading state to true
         try {
             const response = await axios.get("http://127.0.0.1:8000/news/breaking/");
             $(".carousel-item-3").trigger("destroy.owl.carousel");
@@ -34,6 +37,10 @@ export const Home = () => {
         } catch (error) {
             console.error("Error fetching news:", error);
         }
+        finally {
+            setIsLoading(false); // Set loading state to false
+        }
+
     };
 
 
@@ -122,6 +129,7 @@ export const Home = () => {
 
     return (
         <>
+            {isLoading && <Loader/>}
             {/* Top News Slider Start */}
             <div className="container-fluid py-3">
                 <div className="container">
